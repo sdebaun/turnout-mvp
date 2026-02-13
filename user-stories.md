@@ -2,25 +2,13 @@
 
 _Future History Books_
 
-This document contains "slice-of-life" narratives of NewPlatform users.
-
-## Terms
-
-_Activist_, _Activism_: a broad category of people who engage in any sort of community or street activism activities.
-
-_Organizer_, _Organizing_: a subset of activists who actually, you know, organize various activist events and activities.
-
-_Mutual Aid_: things like food distribution, skill-sharing workshops
-
-_Protest_, _March_, _Vigil_: public presence voicing opinions
-
-_Participant_: a subset of activists who don't organize, but will show up to events
+This document contains "slice-of-life" narratives of the turnout.network users.
 
 ## Individual Stories
 
 ### Alice
 
-Alice has never done any sort of activism before in her life. A friend texts Alice, "want to come to this anti-ice protest?" and sends Alice a link. Alice follows that to the event page on newplatform.
+Alice has never done any sort of activism before in her life. A friend texts Alice, "want to come to this anti-ice protest?" and sends Alice a link. Alice follows that to the event page on the turnout.network.
 
 That event page shows her the where and when of the event (10 AM, Main Street), the what of the workspace and organizers for that workspace, and the what of the event. There's a big RSVP now! button.
 
@@ -28,7 +16,7 @@ She clicks on the button and theres a dialog. It asks for her phone number so we
 
 After she clicks OK, she gets taken to a "check your messages" screen that tells her to check her damn messages and follow the link there.
 
-At the same time, she gets a single SMS message: click here to confirm! She clicks, and it takes her to newplatform.org where she is prompted to add newplatform to her home screen and allow notifications. She does so.
+At the same time, she gets a single SMS message: click here to confirm! She clicks, and it takes her to turnout.network where she is prompted to add turnout.network to her home screen and allow notifications. She does so.
 
 Then, she gets an app notification "You're signed up for this anti-ice protest! Add it to your calendar?" and she gets a single click that will add it to her google calendar or whatever the apple walled garden equivalent is. The calendar event will include the address of the protest.
 
@@ -56,7 +44,7 @@ Bob lives in a small town in rural Oregon. Population 8,000. There's no local ac
 
 But the town council just approved a new gravel mine on the edge of town that's going to destroy the local creek, and Bob is pissed. And he's got a group chat with five friends who are also mad about this mine. They've been complaining in the chat for two weeks.
 
-Finally Bob says "fuck it, we should do something." One of his friends says "yeah but like what?" After a couple beers on Thursday night, Bob googles on his android "how to organize a protest". He finds some articles. He finds some tooling websites that want him to pay $50/month. He finds NewPlatform, which says "free forever" and "start in 2 minutes." He clicks "Start Organizing."
+Finally Bob says "fuck it, we should do something." One of his friends says "yeah but like what?" After a couple beers on Thursday night, Bob googles on his android "how to organize a protest". He finds some articles. He finds some tooling websites that want him to pay $50/month. He finds the turnout.network, which says "free forever" and "start in 2 minutes." He clicks "Start Organizing."
 
 The platform starts with the helpful hint of "dont think too hard about this, you can change it later" and then asks him a few things:
 
