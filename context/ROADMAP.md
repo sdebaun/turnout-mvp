@@ -1,6 +1,6 @@
 # Turnout.Network MVP Roadmap
 
-_Last updated: 2026-02-13 (revised: added organizer auth, collaboration, multi-moment dashboard to MVP)_
+_Last updated: 2026-02-13 (revised: added organizer auth, collaboration, multi-turnout dashboard to MVP)_
 
 ---
 
@@ -8,9 +8,9 @@ _Last updated: 2026-02-13 (revised: added organizer auth, collaboration, multi-m
 
 **What I pulled from your files:**
 
-- **Vision:** A living network of showing up—helping people create moments, commit to them, and build momentum through action (VISION.md)
+- **Vision:** A living network of showing up—helping people create turnouts, commit to them, and build momentum through action (VISION.md)
 - **Core user flows:** Bob (first-time organizer), Alice (first-time participant), Cathy (experienced organizer - incomplete) (user-stories.md)
-- **Ubiquitous language:** Moment, Opportunity, Turnout, Participant, Organizer, Testimonial, Profile (UL.md)
+- **Ubiquitous language:** Turnout, Opportunity, Engagement, Location, Participant, Organizer, Testimonial, Profile (UL.md)
 - **Philosophical foundation:** Converting "caring" from sentiment to action, providing logistics for collective coordination (INSPIRATION.md)
 
 **Current state:**
@@ -48,8 +48,8 @@ See [@context/ARCHITECTURE.md](./context/ARCHITECTURE.md) for detailed stack dec
 
 | Objective                                                                  | Source                      | Key Metric                                                         |
 | -------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------ |
-| Validate that turnout.network enables real coordination and follow-through | User research, vision docs  | 70% of moments get ≥1 RSVP; 60% of RSVPs result in actual check-in |
-| Prove the core loop works: create → share → commit → show up               | User stories (Bob + Alice)  | 10+ real-world moments created, 50+ participants RSVPd             |
+| Validate that turnout.network enables real coordination and follow-through | User research, vision docs  | 70% of turnouts get ≥1 RSVP; 60% of RSVPs result in actual check-in |
+| Prove the core loop works: create → share → commit → show up               | User stories (Bob + Alice)  | 10+ real-world turnouts created, 50+ participants RSVPd             |
 | Demonstrate that reminders drive follow-through                            | Alice's user story, line 25 | Measurable difference in show-up rate with vs without reminders    |
 
 ---
@@ -60,11 +60,11 @@ _The measurable product changes that will indicate whether the business objectiv
 
 | Outcome                                 | Drives Objective               | Current           | Target      | How We'll Measure                                         |
 | --------------------------------------- | ------------------------------ | ----------------- | ----------- | --------------------------------------------------------- |
-| Moments successfully created and shared | Validate core loop             | 0                 | 10+ moments | Count of moments with ≥1 RSVP                             |
+| Turnouts successfully created and shared | Validate core loop             | 0                 | 10+ turnouts | Count of turnouts with ≥1 RSVP                             |
 | RSVPs convert to check-ins              | Coordination actually works    | 0% (no data)      | ≥60%        | Check-ins / RSVPs                                         |
 | Participants respond to reminders       | Reminders drive follow-through | 0% (no data)      | ≥40%        | % of reminder recipients who confirm/interact             |
-| Organizers see value and return         | Validate organizer experience  | 0% (no data)      | ≥30%        | % of organizers who create a 2nd moment within 30 days    |
-| Time from moment creation to first RSVP | Shareability validation        | N/A (no baseline) | <24 hours   | Median time-to-first-RSVP across all moments              |
+| Organizers see value and return         | Validate organizer experience  | 0% (no data)      | ≥30%        | % of organizers who create a 2nd turnout within 30 days    |
+| Time from turnout creation to first RSVP | Shareability validation        | N/A (no baseline) | <24 hours   | Median time-to-first-RSVP across all turnouts              |
 | Participants would recommend to others  | Network growth potential       | 0% (no data)      | ≥70% "yes"  | Post-event survey: "Would you invite others to use this?" |
 
 ---
@@ -75,13 +75,13 @@ _The absolute minimum to validate the concept_
 
 ### What We're Building
 
-The smallest possible slice that lets Bob organize a moment and Alice show up to it. Everything else is deferred.
+The smallest possible slice that lets Bob organize a turnout and Alice show up to it. Everything else is deferred.
 
 | Initiative                             | Drives Outcome                    | Owner | Dependencies                   | Effort |
 | -------------------------------------- | --------------------------------- | ----- | ------------------------------ | ------ |
 | **Organizer phone-based auth**         | Organizers return, durability     | You   | None                           | 1w     |
-| **Group & moment creation**            | Moments successfully created      | You   | Organizer auth                 | 1-2w   |
-| **Public moment pages + RSVP**         | Time to first RSVP, RSVPs convert | You   | Group & moment creation        | 1-2w   |
+| **Group & turnout creation**            | Turnouts successfully created      | You   | Organizer auth                 | 1-2w   |
+| **Public turnout pages + RSVP**         | Time to first RSVP, RSVPs convert | You   | Group & turnout creation        | 1-2w   |
 | **SMS verification + reminder system** | Reminders drive follow-through    | You   | RSVP flow, Twilio account      | 1w     |
 | **Check-in system**                    | RSVPs convert to check-ins        | You   | RSVP flow                      | 1w     |
 | **Group dashboard**                    | Organizers return, create more    | You   | Organizer auth, group creation | 3-5d   |
@@ -100,13 +100,13 @@ Detailed feature specifications have been extracted into individual PRD files fo
    - Non-expiring session cookies
    - Phone number as universal identity
 
-2. **Group & Moment Creation Flow** [prd/prd0002-group-moment-creation.md](../prd/prd0002-group-moment-creation.md)
+2. **Group & Turnout Creation Flow** [prd/prd0002-group-turnout-creation.md](../prd/prd0002-group-turnout-creation.md)
    - First-time organizer experience
    - Single-page form with psychological ordering (vision → action → identity)
    - Resources created after phone verification
 
-3. **Public Moment Pages + RSVP** [prd/prd0003-public-moment-rsvp.md](../prd/prd0003-public-moment-rsvp.md)
-   - Public moment page requirements
+3. **Public Turnout Pages + RSVP** [prd/prd0003-public-turnout-rsvp.md](../prd/prd0003-public-turnout-rsvp.md)
+   - Public turnout page requirements
    - RSVP modal with phone verification
    - Calendar .ics file generation
 
@@ -122,8 +122,8 @@ Detailed feature specifications have been extracted into individual PRD files fo
 
 6. **Group Dashboard** [prd/prd0006-group-dashboard.md](../prd/prd0006-group-dashboard.md)
    - Multi-group selection
-   - Upcoming/past moments view
-   - Single-moment dashboard with RSVP management
+   - Upcoming/past turnouts view
+   - Single-turnout dashboard with RSVP management
 
 7. **Group-Level Collaboration** [prd/prd0007-collaboration.md](../prd/prd0007-collaboration.md)
    - Co-organizer invitation and access
@@ -142,14 +142,14 @@ _After validating the core loop, make it easier to use and more likely to stick_
 | **Participant profiles (opt-in)**     | Network effects start to emerge  | You   | MVP core loop       |
 | **Post-event feedback collection**    | Learn what's working/not working | You   | Check-in system     |
 | **SMS reply intelligence**            | Reduce friction, better data     | You   | SMS reminder system |
-| **Calendar integration improvements** | Increase show-up rate            | You   | Public moment pages |
+| **Calendar integration improvements** | Increase show-up rate            | You   | Public turnout pages |
 | **Organizer permissions/roles**       | Safety for larger organizing     | You   | Group collaboration |
 
 ### Why Next
 
 These features improve the experience for people who've already used the MVP and found value.
 
-**Group branding & public pages:** MVP has basic groups (name + organizers). This adds branding (logos, colors), public group pages (like "Save Willow Creek" landing page), about sections, and featured moments. Important for established organizing groups, but not needed to validate the core loop.
+**Group branding & public pages:** MVP has basic groups (name + organizers). This adds branding (logos, colors), public group pages (like "Save Willow Creek" landing page), about sections, and featured turnouts. Important for established organizing groups, but not needed to validate the core loop.
 
 **Organizer permissions/roles:** MVP gives all group organizers equal permissions. If this causes problems (bad actors, accidental deletions), add owner/admin/editor roles. Don't build it until the problem is real.
 
@@ -163,10 +163,10 @@ _The vision stuff—deferred until we've proven the core loop works_
 
 | Initiative                          | Drives Outcome                           | Reason for Deferral                                  |
 | ----------------------------------- | ---------------------------------------- | ---------------------------------------------------- |
-| **Moment discovery**                | Participant retention, cross-pollination | Requires critical mass of moments to be useful       |
+| **Turnout discovery**                | Participant retention, cross-pollination | Requires critical mass of turnouts to be useful       |
 | **Testimonials**                    | Trust-building, organizer credibility    | Only valuable if people are coming back              |
-| **Turnout history (reputation)**    | Network effects, repeat participation    | Requires multiple moments per participant            |
-| **Opportunities (multiple roles)**  | Enable complex moments (medics, etc.)    | Adds complexity; validate simple case first          |
+| **Engagement history (reputation)**    | Network effects, repeat participation    | Requires multiple turnouts per participant            |
+| **Opportunities (multiple roles)**  | Enable complex turnouts (medics, etc.)    | Adds complexity; validate simple case first          |
 | **Privacy/security hardening**      | Safety for high-risk organizing          | Important, but not blocking for low-risk MVP testing |
 | **Advanced reminder customization** | Improve show-up rates                    | Optimize after we know baseline rates                |
 
@@ -174,7 +174,7 @@ _The vision stuff—deferred until we've proven the core loop works_
 
 These are all important to the long-term vision, but they're premature before we validate that:
 
-1. People will create moments
+1. People will create turnouts
 2. People will RSVP
 3. People will actually show up
 
@@ -187,9 +187,9 @@ Build the network, then build the network effects.
 | Risk                                            | Impact | Mitigation                                                                  | Owner |
 | ----------------------------------------------- | ------ | --------------------------------------------------------------------------- | ----- |
 | SMS costs spiral with spam RSVPs                | High   | Phone verification, rate limiting, honeypot fields                          | You   |
-| No one creates moments (organizers don't adopt) | High   | User testing with real organizers, pre-recruit pilot users                  | You   |
+| No one creates turnouts (organizers don't adopt) | High   | User testing with real organizers, pre-recruit pilot users                  | You   |
 | RSVPs don't convert to check-ins                | High   | This is what we're testing—if it fails, pivot or kill                       | You   |
-| Co-organizer abuse (bad actors delete moments)  | Medium | For MVP, accept the risk. Add roles/permissions in Next if it happens       | You   |
+| Co-organizer abuse (bad actors delete turnouts)  | Medium | For MVP, accept the risk. Add roles/permissions in Next if it happens       | You   |
 | Magic link phishing/account takeover            | Medium | Short token expiry (15min), single-use tokens, HTTPS only                   | You   |
 | Geolocation/check-in feels creepy               | Medium | Make check-in manual/opt-in, clear privacy messaging                        | You   |
 | Solo dev burnout                                | Medium | Ruthless scope discipline, celebrate small wins, timebox MVP to 10-12 weeks | You   |
@@ -204,12 +204,12 @@ Build the network, then build the network effects.
 
 | Metric                                  | Target             | How to Measure                                   |
 | --------------------------------------- | ------------------ | ------------------------------------------------ |
-| Real moments created                    | ≥10                | Count of moments with ≥1 RSVP                    |
+| Real turnouts created                    | ≥10                | Count of turnouts with ≥1 RSVP                    |
 | Real participants                       | ≥50                | Count of unique phone numbers that RSVPd         |
-| RSVP → Check-in conversion              | ≥60%               | Checked-in turnouts / Confirmed RSVPs            |
-| Organizer return rate                   | ≥30%               | % of organizers who create 2nd moment in 30 days |
+| RSVP → Check-in conversion              | ≥60%               | Checked-in engagements / Confirmed RSVPs            |
+| Organizer return rate                   | ≥30%               | % of organizers who create 2nd turnout in 30 days |
 | Participants would recommend            | ≥70% "yes"         | Post-event survey (manual outreach for MVP)      |
-| Time from moment creation to first RSVP | <24 hours (median) | Timestamp difference                             |
+| Time from turnout creation to first RSVP | <24 hours (median) | Timestamp difference                             |
 
 **If we hit these targets:** The concept is validated. Proceed to "Next" features and start thinking about growth.
 
@@ -241,7 +241,7 @@ _Ideas considered but explicitly deferred:_
 
 ⚠️ **Geolocation for check-in:** Assuming participants will allow location access. If not, manual check-in must be frictionless.
 
-⚠️ **"Free forever" is sustainable:** With pay-as-you-go SMS and serverless hosting, MVP costs should be <$50/month for 10 moments, 50 participants, assuming moderate SMS volume (3 reminders/participant + auth messages). Validate this with real usage.
+⚠️ **"Free forever" is sustainable:** With pay-as-you-go SMS and serverless hosting, MVP costs should be <$50/month for 10 turnouts, 50 participants, assuming moderate SMS volume (3 reminders/participant + auth messages). Validate this with real usage.
 
 ⚠️ **Phone-based identity is acceptable:** We're betting that phone-number-based magic link auth is "good enough" for MVP. No passwords, no email verification. If organizers feel this is too insecure for sensitive organizing, we'll need to add proper auth (email, 2FA, etc.).
 
@@ -258,10 +258,10 @@ _Ideas considered but explicitly deferred:_
 
 3. **Build the MVP in phases:**
    - Week 1: Organizer auth (magic links)
-   - Week 2-3: Moment creation + public pages
+   - Week 2-3: Turnout creation + public pages
    - Week 4-5: RSVP + SMS verification
    - Week 6: Reminders + check-in
-   - Week 7: Multi-moment dashboard + collaboration
+   - Week 7: Multi-turnout dashboard + collaboration
    - Week 8-9: Polish, bug fixes, pilot prep
 
 4. **Recruit pilot organizers:** Find 3-5 people planning real events in the next 30-60 days. Offer to build this for them in exchange for feedback.

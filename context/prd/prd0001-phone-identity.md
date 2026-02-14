@@ -26,7 +26,7 @@ _What I found in your files:_
 ## Problem
 
 **What problem are we solving?**
-People need a way to authenticate and maintain identity across the platform—both organizers creating moments and participants RSVPing to them. Authentication must be:
+People need a way to authenticate and maintain identity across the platform—both organizers creating turnouts and participants RSVPing to them. Authentication must be:
 
 1. **Universal:** Works for everyone, regardless of technical sophistication
 2. **Frictionless:** No barriers to entry (no passwords to remember, no email verification delays)
@@ -36,14 +36,14 @@ People need a way to authenticate and maintain identity across the platform—bo
 
 **Who experiences this problem?**
 
-- **Alice (first-time participant):** Gets a moment link from a friend, wants to RSVP in <30 seconds without creating an account or remembering a password
-- **Bob (first-time organizer):** Wants to create a moment and share it without friction—needs persistent access to manage RSVPs over time
+- **Alice (first-time participant):** Gets a turnout link from a friend, wants to RSVP in <30 seconds without creating an account or remembering a password
+- **Bob (first-time organizer):** Wants to create a turnout and share it without friction—needs persistent access to manage RSVPs over time
 - **Both:** May return weeks or months later and expect to still be logged in
 
 **In what situation?**
 
 - Alice clicks an RSVP link while standing on a street corner—she's on mobile, distracted, and has never used the platform before
-- Bob creates a moment on his phone Thursday night, then checks RSVPs from his laptop on Saturday morning—needs seamless cross-device access
+- Bob creates a turnout on his phone Thursday night, then checks RSVPs from his laptop on Saturday morning—needs seamless cross-device access
 - Neither has time or patience for "create an account, verify your email, set a password, enable 2FA" flows
 
 ---
@@ -55,7 +55,7 @@ People need a way to authenticate and maintain identity across the platform—bo
 - **Vision doc explicitly prioritizes accessibility over security:** "Open Door Principle: turnout.network prioritizes participation over protection... We don't promise secrecy or strong identity guarantees. It's open by design—and fragile by necessity."
 - **User stories show phone-first flows:** Alice and Bob both authenticate via SMS magic links—no mention of passwords or email verification
 - **Architecture doc confirms sporadic usage:** "Sporadic usage patterns, phone number is the weak point anyway, accessibility over hardened security"
-- **MVP success metrics require low friction:** ROADMAP.md targets "<24 hours from moment creation to first RSVP"—can't hit this with high-friction auth
+- **MVP success metrics require low friction:** ROADMAP.md targets "<24 hours from turnout creation to first RSVP"—can't hit this with high-friction auth
 
 ⚠️ **Assumed:**
 
@@ -83,7 +83,7 @@ People need a way to authenticate and maintain identity across the platform—bo
 | Twilio SMS delivery success in dev/stage  | N/A     | ≥98%   | Production delivery reliability          |
 | Auth flow completion rate (phone → click) | N/A     | ≥90%   | Real users will complete RSVP flow       |
 | Session cookie persistence in testing     | N/A     | 100%   | Users won't get logged out unexpectedly  |
-| Token generation/validation speed         | N/A     | <100ms | Auth won't bottleneck moment creation    |
+| Token generation/validation speed         | N/A     | <100ms | Auth won't bottleneck turnout creation    |
 
 💡 **Leading indicators help you course-correct before launch.** If Twilio delivery fails in staging, fix SMS provider issues before going live.
 
@@ -97,7 +97,7 @@ People need a way to authenticate and maintain identity across the platform—bo
 
 **Flow:**
 
-1. User enters phone number (organizer creating moment, or participant RSVPing)
+1. User enters phone number (organizer creating turnout, or participant RSVPing)
 2. System generates cryptographically secure magic link token (random, single-use, 15-min expiry)
 3. SMS sent via Twilio: "Tap to continue: [magic link]"
 4. User clicks link → authenticated session created (persistent cookie, no expiration)
@@ -112,17 +112,17 @@ People need a way to authenticate and maintain identity across the platform—bo
 
 ### User Stories (Examples)
 
-**Story 1: Alice RSVPs to her first moment**
+**Story 1: Alice RSVPs to her first turnout**
 
-- **As a** first-time participant who just received a moment link from a friend
+- **As a** first-time participant who just received a turnout link from a friend
 - **I want to** RSVP with just my phone number and one SMS click
 - **So that** I can commit to showing up in <30 seconds without creating an account or remembering credentials
 
-**Story 2: Bob creates a moment and returns later to manage it**
+**Story 2: Bob creates a turnout and returns later to manage it**
 
-- **As an** organizer who created a moment on my phone Thursday night
+- **As an** organizer who created a turnout on my phone Thursday night
 - **I want to** check RSVPs from my laptop Saturday morning without re-authenticating
-- **So that** I can manage my moment across devices without friction
+- **So that** I can manage my turnout across devices without friction
 
 **Story 3: Alice protects her privacy with a pseudonym**
 
@@ -231,55 +231,6 @@ Before you ship this PRD, double-check:
 | Product     | Solo Founder  | ✅       |
 | Engineering | Solo Founder  | ✅       |
 | Design      | Solo Founder  | ✅       |
-
----
-
-## Technical Implementation Notes
-
-_Added for engineering handoff—not part of standard PRD template, but useful for solo dev context._
-
-### Data Models
-
-**`users` table:**
-- `id` (UUID, primary key)
-- `phone_number` (string, unique, E.164 format: +1234567890)
-- `display_name` (string, nullable—defaults to random name like "BlueWombat")
-- `created_at` (timestamp)
-- `last_seen_at` (timestamp)
-
-**`magic_links` table:**
-- `id` (UUID, primary key)
-- `token` (string, unique, cryptographically secure random)
-- `user_id` (foreign key to users)
-- `expires_at` (timestamp, 15 minutes from creation)
-- `used_at` (timestamp, nullable—null if unused, set on first click)
-- `created_at` (timestamp)
-
-**`sessions` table (optional—can use cookie-only):**
-- `id` (UUID, primary key)
-- `user_id` (foreign key to users)
-- `created_at` (timestamp)
-- `last_active_at` (timestamp)
-
-### Security Requirements
-
-- **Token generation:** Use `crypto.randomBytes(32).toString('hex')` (Node.js) or equivalent—minimum 128 bits of entropy
-- **Cookie settings:** `httpOnly: true, secure: true, sameSite: 'lax', maxAge: undefined` (no expiration)
-- **Rate limiting:** Max 5 SMS per phone number per hour (prevent abuse)
-- **HTTPS only:** Reject any HTTP requests to auth endpoints
-- **Token cleanup:** Cron job to delete expired/used tokens (prevent database bloat)
-
-### Cost Estimates
-
-**Assumptions:**
-- 10 moments in MVP
-- 50 participants total
-- Average 2 auth SMS per user (initial + one re-auth)
-- Twilio cost: $0.0079/SMS
-
-**Total SMS cost:** 50 users × 2 SMS = 100 SMS × $0.0079 = **$0.79**
-
-**Headroom for growth:** Even at 500 users × 3 SMS = 1,500 SMS = **$11.85**—well within <$50/month budget.
 
 ---
 
