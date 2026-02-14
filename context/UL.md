@@ -2,6 +2,10 @@
 
 This is a reference glossary for terms and structures in turnout.network, designed for both technical agents and human-facing applications.
 
+## Group
+
+A named organizing entity containing multiple moments and managed by one or more organizers. Represents an ongoing organizing effort—whether a goal-oriented campaign, mutual aid network, community project, or any collective action. Examples include "Save Willow Creek" (fighting a gravel mine), "Local Love Project" (food distribution), or "North Avenue Tool Library" (resource sharing). Groups enable collaboration by allowing multiple organizers to share the work of creating and managing moments, and maintain a consistent thread and reputation across those moments over time.
+
 ## Moment
 
 A specific call to action in space and time—like a protest, meeting, shift, or event. The person who creates it is considered its organizer. They define the opportunities for it. People who commit to those opportunites start a turnout.  This is the smallest unit of collective coordination on the network.
@@ -20,7 +24,7 @@ Anyone who commits to a moment by selecting an opportunity. Participants can be 
 
 ## Organizer
 
-Anyone who creates and maintains a moment. Organizers define opportunities, send invites, manage check-ins, and can view participant turnout histories (depending on visibility settings). Organizers may work alone or as part of a distributed team.
+Anyone who creates and maintains a group and its moments. Organizers define opportunities, send invites, manage check-ins, and can view participant turnout histories (depending on visibility settings). Organizers may work alone or collaboratively—multiple organizers can co-manage a group.
 
 ## Testimonial
 
