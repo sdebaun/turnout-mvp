@@ -74,24 +74,24 @@ Participants face massive friction when trying to commit to collective action:
 
 ### Lagging Indicators (post-launch outcomes)
 
-| Metric                                  | Current | Target  | Timeframe  |
-| --------------------------------------- | ------- | ------- | ---------- |
-| Time from turnout creation to first RSVP | N/A     | <24 hrs | MVP launch |
-| RSVP completion rate - unauthenticated (click → confirmed) | N/A     | ≥80%    | MVP launch |
-| RSVP completion rate - authenticated (click → confirmed) | N/A     | ≥95%    | MVP launch |
-| Magic link click rate (submit → click SMS, unauth only) | N/A   | ≥95%    | MVP launch |
-| Calendar file download rate             | N/A     | ≥60%    | MVP launch |
-| Turnouts with ≥1 RSVP                   | 0       | ≥10     | MVP lifetime |
+| Metric                                                     | Current | Target  | Timeframe    |
+| ---------------------------------------------------------- | ------- | ------- | ------------ |
+| Time from turnout creation to first RSVP                   | N/A     | <24 hrs | MVP launch   |
+| RSVP completion rate - unauthenticated (click → confirmed) | N/A     | ≥80%    | MVP launch   |
+| RSVP completion rate - authenticated (click → confirmed)   | N/A     | ≥95%    | MVP launch   |
+| Magic link click rate (submit → click SMS, unauth only)    | N/A     | ≥95%    | MVP launch   |
+| Calendar file download rate                                | N/A     | ≥60%    | MVP launch   |
+| Turnouts with ≥1 RSVP                                      | 0       | ≥10     | MVP lifetime |
 
 ### Leading Indicators (pre-launch signals)
 
-| Metric                                       | Current | Target | What This Predicts                          |
-| -------------------------------------------- | ------- | ------ | ------------------------------------------- |
-| Page load time (mobile, 3G)                  | N/A     | <2 sec | Alice won't abandon before seeing content   |
+| Metric                                       | Current | Target | What This Predicts                              |
+| -------------------------------------------- | ------- | ------ | ----------------------------------------------- |
+| Page load time (mobile, 3G)                  | N/A     | <2 sec | Alice won't abandon before seeing content       |
 | Link preview renders in messaging apps       | N/A     | 100%   | Shareability—link looks good in Signal/WhatsApp |
-| User testing: RSVP flow without instructions | N/A     | ≥80%   | Flow is self-explanatory                    |
-| .ics file compatibility across calendar apps | N/A     | 100%   | Calendar invites work for everyone          |
-| SSR rendering for social meta tags           | N/A     | 100%   | Link previews work (critical for sharing)   |
+| User testing: RSVP flow without instructions | N/A     | ≥80%   | Flow is self-explanatory                        |
+| .ics file compatibility across calendar apps | N/A     | 100%   | Calendar invites work for everyone              |
+| SSR rendering for social meta tags           | N/A     | 100%   | Link previews work (critical for sharing)       |
 
 💡 **Leading indicators help you course-correct before launch.** If link previews don't render in Signal, fix OpenGraph tags before going live. If .ics files don't import to Apple Calendar, debug the RFC 5545 format.
 
@@ -101,53 +101,47 @@ Participants face massive friction when trying to commit to collective action:
 
 ### How It Works
 
-**Public turnout pages with authentication-aware RSVP flow** using phone-based magic links (prd0001) for first-time users and instant RSVP for authenticated users.
+**Authentication-aware RSVP flow:** First-time users verify their phone number (spam prevention), returning users RSVP instantly.
 
-**Public Page (same for everyone):**
+**Public Turnout Page:**
 
-1. **Alice receives link** from friend: `turnout.network/m/abc123`
-2. **Public page loads** (server-side rendered for fast load + link previews):
-   - **What:** "Melt ICE Protest" (turnout name + description)
-   - **When:** "Saturday, February 18, 2026 at 10:00 AM" (with relative time: "in 3 days")
-   - **Where:** "City Park, 123 Main St" (with embedded map showing location pin)
-   - **Who:** "Organized by Save Willow Creek" (group name + organizer display name)
-   - **Social proof:** RSVP count displayed as soft number (e.g., "Over 20 people RSVP'd!" for 23 RSVPs, "A few people RSVP'd" for 3 RSVPs)
-   - **CTA:** Big "RSVP Now" button (primary action, impossible to miss)
+Anyone can view turnout pages without authentication. Page must be server-side rendered for fast load and link preview compatibility (Signal, WhatsApp, messaging apps).
 
-**Flow A: Unauthenticated User (First Time or No Session)**
+**Required page content:**
 
-3. **Alice clicks RSVP** → Check for session cookie → None found → Modal appears:
-   - "Your phone number" (required, for SMS verification via prd0001)
-   - "Your name" (pre-filled with random pseudonym like "BlueWombat", editable—this becomes her global display name)
-   - Help text: "We'll text you a confirmation link"
-4. **Alice submits** → Modal closes, "Check your messages!" screen appears
-5. **SMS sent** (via prd0001 phone identity system):
-   ```
-   Turnout: Click to confirm your RSVP for Melt ICE Protest on Feb 18:
-   [magic link]
-   ```
-6. **Alice clicks magic link** → Create user (with display_name), create engagement, authenticate Alice (create session), redirect to confirmation page
-7. **Confirmation page** (see below)
+- Turnout name and description
+- Date/time (with human-readable relative time: "in 3 days", "tomorrow at 6pm")
+- Location with map (for directions)
+- Organizer/group name
+- RSVP count (exact or softened: "Over 20 people RSVP'd")
+- Clear RSVP call-to-action
 
-**Flow B: Authenticated User (Has Session from Previous RSVP or Organizing)**
+**Unauthenticated RSVP Flow (First-Time Users):**
 
-3. **Alice clicks RSVP** → Check for session cookie → Found → Engagement created immediately in DB (no modal, no SMS)
-4. **Inline confirmation message appears:** "You're signed up as BlueWombat! 🎉" (shows current display name)
-5. **Page updates:** RSVP count increments, "RSVP" button changes to "You're Going" (with option to cancel)
-6. **Optional:** User can click through to confirmation page for calendar download + directions, or just stay on turnout page
+User indicates intent to RSVP → System detects no authentication → Collect required data:
 
-**Confirmation Page (same for both flows):**
+- Phone number (for verification)
+- Display name (pre-filled with random pseudonym, editable)
 
-- "You're signed up for Melt ICE Protest! 🎉"
-- "Add to calendar" button → downloads .ics file with event details + location + reminder
-- "Get Directions" button → opens Google Maps with turnout location
-- "Add turnout.network to homescreen" prompt (PWA install for reminders)
-- Link back to turnout page (now shows updated RSVP count)
+Send SMS with OTP code (via prd0001) → User enters code (or taps autofill on mobile) → Create user account, create engagement record, authenticate session → Confirmation
+
+**Authenticated RSVP Flow (Returning Users):**
+
+User indicates intent to RSVP → System detects existing authentication → Create engagement record immediately (no phone verification needed) → Show confirmation with current display name
+
+**Post-RSVP:**
+
+User receives confirmation and access to:
+
+- Calendar file (.ics) with turnout details, location, and 1-hour reminder
+- Directions link (opens maps app with turnout location)
+- Option to install PWA for push notifications (reminders, prd0004)
+- Updated RSVP count on turnout page
 
 **Key decisions:**
 
 - **Public turnout pages, no login wall:** Anyone can view turnout pages without authentication. Aligns with "Open Door Principle" from VISION.md.
-- **Authentication-aware RSVP flow:** Check for session cookie before RSVP. If authenticated, instant RSVP (no modal). If not, phone magic link verification (prd0001). Reduces friction for returning users.
+- **Authentication-aware RSVP flow:** Check for session cookie before RSVP. If authenticated, instant RSVP (no modal). If not, phone OTP verification (prd0001). Reduces friction for returning users.
 - **Phone verification only for unauthenticated users:** Prevents spam (no DB writes until phone verified) but only when needed. Authenticated users RSVP with one click.
 - **No public participant lists:** MVP shows only RSVP count (softened: "Over 20 people RSVP'd!"), not participant names. Protects privacy, reduces complexity. Organizers see names in dashboard (prd0006), but other participants don't.
 - **One global display name per user:** Set at first RSVP or group creation, used for all turnouts. No per-turnout pseudonyms (overengineered). Want to change it? Settings (post-MVP).
@@ -201,14 +195,12 @@ What we're explicitly **NOT** doing in MVP:
 
 _These features are not in scope for MVP, but are likely enough in the near term that they should influence your architectural decisions today. Don't over-engineer for them, but don't paint yourself into a corner either._
 
-| Future Capability | Likelihood | Design Hint |
-| ----------------- | ---------- | ----------- |
-| **Capacity limits** (e.g., "50 spots, 12 remaining") | High (Next phase) | Add nullable `max_participants` field to `opportunities` table now (already exists from prd0002). Frontend doesn't need to render it, but the schema is ready. When capacity comes, it's just UI + validation logic, not a migration. |
-| **Multiple opportunities per turnout** (street medic, legal observer, etc.) | High (Later phase) | Don't hardcode RSVP flow to assume single opportunity. When creating engagement, link to `opportunity_id` (foreign key). MVP creates a default "Show Up" opportunity, but data model supports many. See prd0002 Future Considerations for details. |
-| **RSVP cancellation via web** (cancel from turnout page, not just SMS) | Medium (Next phase) | MVP allows cancellation via SMS reply ("CANCEL" keyword, prd0004). Post-MVP: add "Cancel RSVP" button on turnout page for authenticated users. Just updates `engagements.status` to "canceled" and sets `canceled_at` timestamp. Schema already supports this. |
-| **Participant profiles** (public history of turnouts attended) | Medium (Later phase) | When creating `engagements`, include `participant_id` (foreign key to `users`). For MVP, this enables us to dedupe RSVPs (same phone = same participant). For "Later," it enables profile pages ("Alice has attended 12 turnouts"). |
-| **Comments/Q&A on turnout pages** | Low (Next phase, if requested) | Add `comments` table with `turnout_id`, `author_id`, `body`, `created_at`. Don't build UI, just leave the door open. If organizers ask for it post-MVP, the schema is ready. |
-| **Custom vanity URLs** (e.g., `/save-willow-creek/protest`) | Low (Later phase) | Add nullable `custom_slug` field to `turnouts` table. MVP leaves it null (uses `short_slug` only). When vanity URLs come, check `custom_slug` first, fall back to `short_slug`. URL routing layer stays simple. |
+| Future Capability                                                           | Likelihood           | Design Hint                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Capacity limits** (e.g., "50 spots, 12 remaining")                        | High (Next phase)    | Don't hardcode unlimited capacity assumption in validation logic. When capacity limits come, you'll add a field to the `opportunities` table and check it before allowing RSVPs. Modern ORMs make this migration trivial - don't add unused fields preemptively. |
+| **Multiple opportunities per turnout** (street medic, legal observer, etc.) | High (Later phase)   | Don't hardcode RSVP flow to assume single opportunity. When creating engagement, link to `opportunity_id` (foreign key). MVP creates a default "Show Up" opportunity, but data model supports many. See prd0002 Future Considerations for details.             |
+| **RSVP cancellation via web** (cancel from turnout page, not just SMS)      | Medium (Next phase)  | MVP allows cancellation via SMS reply ("CANCEL" keyword, prd0004). Post-MVP: add "Cancel RSVP" button on turnout page for authenticated users. Just updates `engagements.status` to "canceled" and sets `canceled_at` timestamp. Schema already supports this. |
+| **Participant profiles** (public history of turnouts attended)              | Medium (Later phase) | When creating `engagements`, include `participant_id` (foreign key to `users`). For MVP, this enables us to dedupe RSVPs (same phone = same participant). For "Later," it enables profile pages ("Alice has attended 12 turnouts").                            |
 
 💡 **The pattern:** Build the **data model** for extensibility (costs ~zero), but don't build the **UI/logic** until needed. This prevents painful migrations later.
 
@@ -227,11 +219,11 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 ### External Dependencies
 
-- **Twilio SMS API (via prd0001):** Required for magic link delivery. If SMS fails, participants can't confirm RSVPs.
+- **Twilio SMS API (via prd0001):** Required for OTP code delivery. If SMS fails, participants can't confirm RSVPs.
 - **Google Maps Embed API:** REQUIRED for MVP. Public pages show embedded map with turnout location pin. When Alice clicks map, opens Google Maps app for directions. **Cost:** Maps Embed API is free (unlimited embeds). **Why required:** Alice's user story shows "Give me Directions" button—can't provide this without map integration. **Risk if delayed:** Participants can't get directions, show-up rate drops.
 - **Domain + HTTPS certificate:** Required for OpenGraph previews and PWA. Vercel provides automatic HTTPS, so no blocker.
 
-**Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Embed API**. If magic links don't deliver, RSVP flow breaks. If map embeds don't load, participants can't get directions (breaks Alice's flow).
+**Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Embed API**. If OTP codes don't deliver, RSVP flow breaks. If map embeds don't load, participants can't get directions (breaks Alice's flow).
 
 💡 **Flag dependencies early to avoid last-minute surprises.** Test the full RSVP flow (public page → RSVP modal → SMS → click → confirmation → calendar download → map directions) in staging before going live.
 
@@ -241,19 +233,19 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 _Risk types: V=Value, U=Usability, F=Feasibility, B=Business Viability. Impact: H=High, M=Medium, L=Low_
 
-| Risk                                                                 | Type | Impact | Mitigation                                                                                                                                        |
-| -------------------------------------------------------------------- | ---- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No one RSVPs (turnouts created but 0 participants)                  | V    | H      | **This kills the MVP.** Pre-recruit pilot participants before launch. If organizers create turnouts but nobody RSVPs, problem is shareability (bad link previews?) or trust (who is this org?). Test with real users. |
-| Public pages load slowly (>3 sec on mobile) → Alice abandons        | U    | H      | **Critical for mobile.** Use SSR (Next.js), optimize images, minimize JS bundle. Test on real 3G network (not just fast wifi). Target <2 sec load time. |
-| Link previews don't render in messaging apps (Signal, WhatsApp)     | U    | H      | **Breaks shareability.** Implement OpenGraph + Twitter Card meta tags. SSR required (client-side React won't work). Test link previews in Signal, WhatsApp, iMessage before launch. |
-| Calendar .ics files don't import correctly (Apple Calendar, Google) | U    | M      | **Alice won't remember to show up.** Follow RFC 5545 spec strictly. Test .ics import in Apple Calendar, Google Calendar, Outlook. Include VALARM reminder (1 hour before). |
-| Phone-only RSVP blocks privacy-conscious users                      | V    | M      | Same risk as prd0001. Accept for MVP—aligns with "open door" principle. If users reject phone-only, add email option in "Next" phase. Random pseudonyms by default help ("BlueWombat" vs "Alice Smith"). |
-| Softened counts feel imprecise / reduce trust ("Over 20" = 23 or 200?) | V    | L      | Test with pilot users: does "Over 20 people" feel trustworthy vs "23 people"? Exact count might be better. Easy to A/B test post-launch. |
-| Map embeds don't load (API key issues, rate limits)                 | U    | M      | **Fallback:** If Maps Embed API fails, show location as text with "Get Directions" link to `maps.google.com/?q=[address]`. Still works, just less polished. |
-| RSVP completion rate <80% (people click RSVP but abandon modal)     | U    | M      | Track analytics: where do people drop off? If phone number field is the blocker, add help text ("We'll text you a link, no account needed"). If abandonment is >20%, simplify further. |
-| Spam RSVPs (bots submitting fake phone numbers)                     | B    | M      | Phone verification (prd0001) blocks most spam. Add honeypot fields (hidden inputs bots fill). Rate limiting: max N RSVPs per phone per day. Monitor for abuse. |
-| Social proof backfires ("only 2 people going, I'll skip")           | V    | L      | For low-RSVP turnouts, consider hiding count until threshold (e.g., don't show "2 people" but do show "23 people"). Test with pilot users. Post-MVP: let organizers toggle visibility. |
-| Session expiry breaks authenticated RSVP (Alice thinks she's logged in but isn't) | U | M | Sessions are non-expiring (prd0001), so this should be rare. If it happens, fallback gracefully: detect expired session, show phone number modal instead. Monitor session expiry rate. |
+| Risk                                                                              | Type | Impact | Mitigation                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------- | ---- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No one RSVPs (turnouts created but 0 participants)                                | V    | H      | **This kills the MVP.** Pre-recruit pilot participants before launch. If organizers create turnouts but nobody RSVPs, problem is shareability (bad link previews?) or trust (who is this org?). Test with real users. |
+| Public pages load slowly (>3 sec on mobile) → Alice abandons                      | U    | H      | **Critical for mobile.** Use SSR (Next.js), optimize images, minimize JS bundle. Test on real 3G network (not just fast wifi). Target <2 sec load time.                                                               |
+| Link previews don't render in messaging apps (Signal, WhatsApp)                   | U    | H      | **Breaks shareability.** Implement OpenGraph + Twitter Card meta tags. SSR required (client-side React won't work). Test link previews in Signal, WhatsApp, iMessage before launch.                                   |
+| Calendar .ics files don't import correctly (Apple Calendar, Google)               | U    | M      | **Alice won't remember to show up.** Follow RFC 5545 spec strictly. Test .ics import in Apple Calendar, Google Calendar, Outlook. Include VALARM reminder (1 hour before).                                            |
+| Phone-only RSVP blocks privacy-conscious users                                    | V    | M      | Same risk as prd0001. Accept for MVP—aligns with "open door" principle. If users reject phone-only, add email option in "Next" phase. Random pseudonyms by default help ("BlueWombat" vs "Alice Smith").              |
+| Softened counts feel imprecise / reduce trust ("Over 20" = 23 or 200?)            | V    | L      | Test with pilot users: does "Over 20 people" feel trustworthy vs "23 people"? Exact count might be better. Easy to A/B test post-launch.                                                                              |
+| Map embeds don't load (API key issues, rate limits)                               | U    | M      | **Fallback:** If Maps Embed API fails, show location as text with "Get Directions" link to `maps.google.com/?q=[address]`. Still works, just less polished.                                                           |
+| RSVP completion rate <80% (people click RSVP but abandon modal)                   | U    | M      | Track analytics: where do people drop off? If phone number field is the blocker, add help text ("We'll text you a link, no account needed"). If abandonment is >20%, simplify further.                                |
+| Spam RSVPs (bots submitting fake phone numbers)                                   | B    | M      | Phone verification (prd0001) blocks most spam. Add honeypot fields (hidden inputs bots fill). Rate limiting: max N RSVPs per phone per day. Monitor for abuse.                                                        |
+| Social proof backfires ("only 2 people going, I'll skip")                         | V    | L      | For low-RSVP turnouts, consider hiding count until threshold (e.g., don't show "2 people" but do show "23 people"). Test with pilot users. Post-MVP: let organizers toggle visibility.                                |
+| Session expiry breaks authenticated RSVP (Alice thinks she's logged in but isn't) | U    | M      | Sessions are non-expiring (prd0001), so this should be rare. If it happens, fallback gracefully: detect expired session, show phone number modal instead. Monitor session expiry rate.                                |
 
 ---
 
@@ -261,45 +253,11 @@ _Risk types: V=Value, U=Usability, F=Feasibility, B=Business Viability. Impact: 
 
 _For each unknown, suggest a validation approach to turn assumptions into testable hypotheses._
 
-| Question                                                              | Assumption                                              | How to Validate                                                                                  | Timeline           |
-| --------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------ |
-| Does social proof (RSVP count) increase RSVP conversion?       | Yes, people want to know they're not showing up alone  | A/B test: 50% see count, 50% don't. Measure RSVP rate. If no difference or negative, hide counts. | Week 5-6 (staging) |
-| Should counts be exact ("23 people") or softened ("Over 20 people")? | Softened feels less precise but more approachable | A/B test exact vs softened. Measure RSVP rate and user trust. If no difference, exact is simpler. | Week 5-6 (staging) |
-| Will participants download calendar .ics files, or ignore them?       | Most will download (helps with follow-through)         | Track download rate post-launch. If <30%, calendar integration isn't valuable. If >60%, it's working. | Post-launch (analytics) |
+| Question                                                              | Assumption                                                     | How to Validate                                                                                                           | Timeline                |
+| --------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Does social proof (RSVP count) increase RSVP conversion?              | Yes, people want to know they're not showing up alone          | A/B test: 50% see count, 50% don't. Measure RSVP rate. If no difference or negative, hide counts.                         | Week 5-6 (staging)      |
+| Should counts be exact ("23 people") or softened ("Over 20 people")?  | Softened feels less precise but more approachable              | A/B test exact vs softened. Measure RSVP rate and user trust. If no difference, exact is simpler.                         | Week 5-6 (staging)      |
+| Will participants download calendar .ics files, or ignore them?       | Most will download (helps with follow-through)                 | Track download rate post-launch. If <30%, calendar integration isn't valuable. If >60%, it's working.                     | Post-launch (analytics) |
 | Do link previews (OpenGraph) in messaging apps increase shareability? | Yes, seeing image/title/description in Signal increases clicks | Track referrer data: how many clicks come from messaging apps? If low, investigate why (maybe previews aren't rendering). | Post-launch (analytics) |
-| Will "private by default" reduce social proof effectiveness?          | Yes, but privacy is more important for MVP              | Track: what % of participants opt-in to public? If >50%, social proof might be working. If <10%, consider making public default with opt-out. | Post-launch (analytics) |
 
 ---
-
-## Before Finalizing
-
-Before you ship this PRD, double-check:
-
-- [x] Does `competitors.md` show competitors have this? — **No competitors.md file, but Eventbrite / Mobilize / Action Network all have public event pages + RSVP. Ours is simpler (no account required, phone-only verification).**
-- [x] Did you miss any recent user feedback that contradicts this approach? — **No user feedback yet (greenfield project). Alice's user story is the only validated input.**
-
----
-
-## Sign-off
-
-| Role        | Name          | Approved |
-| ----------- | ------------- | -------- |
-| Product     | Solo Founder  | ✅       |
-| Engineering | Solo Founder  | ✅       |
-| Design      | Solo Founder  | ✅       |
-
----
-
-## Post-MVP Evolution
-
-**If this approach succeeds:**
-- Add capacity limits ("50 spots, 12 remaining") in "Next" phase
-- Add web-based RSVP cancellation (cancel button on turnout page, not just SMS) in "Next" phase
-- Add user profile settings (change global display name) in "Next" phase
-- Add multiple opportunities per turnout (street medic, legal observer) in "Later" phase
-- Add participant profiles (public RSVP history) in "Later" phase
-
-**If this approach fails:**
-- **If RSVP completion <80% (unauthenticated):** Simplify modal further (auto-generate name, just phone number). Or remove phone verification (accept spam risk).
-- **If time to first RSVP >24 hours:** Improve shareability (better link previews, share templates, pre-written messages).
-- **If turnouts get RSVPs but low show-up rate:** Problem might be reminders (prd0004) or check-in UX (prd0005), not RSVP flow.

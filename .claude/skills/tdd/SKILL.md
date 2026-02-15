@@ -9,30 +9,44 @@ Write technical design docs to guide an implementer. Use this skill when you hav
 
 ## When to Use This Skill
 
-- After PRD approval, before engineering starts
-- PMs working closely with engineering
-- Technical product managers
-- Teams shipping backend features or APIs
+- After PRD is drafted, before implementation starts
+- When you need to design how a feature will actually work
+- Before handing off to an agent team to build the feature
 
 ## The Problem
 
-PRDs describe **what** to build. Engineers need specs that describe **how** to build it. Without a TDD, engineering makes assumptions that may not align with product intent.
+PRDs describe **what** to build and **why**. Implementation needs specs that describe **how** to build it - what schema changes, what API routes, what components. Without a TDD, you make assumptions that may not align with product intent or architectural constraints.
 
 ## What You'll Need
 
 **Critical inputs (ask if not provided):**
 
-- Feature name and PRD link/summary
+- Feature name and PRD reference (e.g., "prd0001")
 - High-level requirements (what should the system do?)
-- User actions that trigger the system
+- User flows (what actions trigger what behaviors?)
+- Existing schema/code this feature touches
 
-**Nice-to-have inputs:**
+**Context you'll gather yourself:**
 
-- Existing architecture context
-- Performance requirements
-- Integration constraints
+- `context/ARCHITECTURE.md` (stack constraints)
+- `context/VISION.md` and `context/INSPIRATION.md` (philosophy)
+- `context/ROADMAP.md` (where this fits in the plan)
+- Existing Prisma schema (if database changes needed)
+- Related TDDs (if this builds on previous work)
 
 ## Process
+
+### Step 0: Check for Arguments
+
+**If the user provided a PRD reference** (e.g., `/tdd prd0001`), you already know what to work on. Jump straight to Step 1 and read that PRD along with the other context files.
+
+**If no PRD reference was provided**, ask:
+
+> "Which PRD should I write a TDD for? I can see these PRDs in `context/prd/`:
+> - prd0001: [name]
+> - prd0002: [name]
+>
+> Or tell me the feature name and I'll find the relevant PRD."
 
 ### Step 1: Check Your Context
 
@@ -45,11 +59,11 @@ First, read the user's context files. most importantly:
 
 Next, see if a TDD already exists for this feature. If so, read it and use it as a starting point. If not, look for any related TDDs that might provide relevant context. TDD's can be found in and should live in `context/tdd`.
 
-Also read any prd's that the user has called out. For example, if they say "this is for prd0001", read that prd. Those files can be found in `context/prd`. If the user has not called out a prd, look for one that matches the feature name or description.
+Also read any PRDs that the user has called out. If they invoked with `/tdd prd0001`, read `context/prd/prd0001-*.md`. If they didn't specify, look in `context/prd/` for one that matches the feature name or description.
 
 **Tell the user what you found.** For example:
 
-> "I found 'Resource Planning v2' in your product.md roadmap. Your Jordan persona (PM) needs to see team workload at a glance. I'll design the API and data model around Jordan's workflow."
+> "I read PRD0001 (Phone Identity System). This is an MVP feature from ROADMAP.md. The PRD defines magic-link phone auth with non-expiring sessions. Architecture constraint from ARCHITECTURE.md: we're using Next.js API routes and Prisma. I'll design the schema, API routes, and auth flow."
 
 ### Step 2: Gather Feature Details
 
@@ -71,283 +85,295 @@ Think critically about the PRD. Along with the rest of the context you have, suc
 
 **Do NOT generate a spec with placeholder architecture. Get the requirements first.**
 
-### Step 3: Define Scope and Components
+### Step 3: Identify Components
 
-Identify all system components involved:
+Figure out what parts of the system this touches:
 
-- Frontend changes
-- Backend services
-- Database changes
-- Third-party integrations
-- Background jobs/workers
+- **Database:** New tables? Changes to existing schema?
+- **API routes:** What Next.js API endpoints are needed?
+- **Frontend:** New pages/components? Changes to existing ones?
+- **Background jobs:** Any scheduled tasks (Vercel cron)?
+- **Auth:** Who can access this? (Phone-based auth, simple rules)
 
-### Step 4: Design Data Model
+### Step 4: Design the Database
 
-Create database schema with:
+Use Prisma schema syntax. Include:
 
-- Table definitions
-- Field types and constraints
-- Indexes for performance
-- Relationships (foreign keys)
-- Migration strategy
+- Model definitions (tables)
+- Field types, defaults, constraints
+- Relations (foreign keys)
+- Indexes (if needed for performance)
+- Migration considerations (safe to add? need data backfill?)
 
-### Step 5: Specify API Endpoints
+### Step 5: Design API Routes
 
-For each endpoint, define:
+For each Next.js API route, specify:
 
-- HTTP method and path
-- Request parameters and body
-- Response shape with status codes
-- Authentication requirements
-- Rate limiting considerations
+- Path and HTTP method
+- Request shape (query params, body)
+- Response shape (success and error cases)
+- Auth requirements (who can call this?)
+- Validation rules
 
-### Step 6: Document Authorization
+### Step 6: Design Frontend Components
 
-Create permission matrix — connect to personas:
+Identify:
 
-- Who can access what (reference personas.md roles)
-- Role-based access control
-- Resource-level permissions
-- Edge cases (owner vs admin, etc.)
+- New pages/routes needed
+- Components to create or modify
+- User interactions and state management
+- Form validation and error display
 
-### Step 7: Handle Edge Cases and Errors
+### Step 7: Handle Edge Cases
 
-Document:
+Think through:
 
 - Error states and messages
 - Validation rules
-- Concurrency considerations
-- Rollback scenarios
+- What happens when things go wrong
+- Migration safety (can this be deployed without breaking existing data?)
 
-### Step 8: Performance and Migration
+### Step 8: Write the TDD
 
-Address:
+Create the TDD file at `context/tdd/tdd[NUMBER]-[slug].md`, where:
+- `[NUMBER]` matches the PRD number (e.g., if working from prd0001, use tdd0001)
+- `[slug]` is a kebab-case description (e.g., `phone-identity`, `group-creation`)
 
-- Expected load and scale
-- Caching strategy
-- Database migration plan
-- Feature flag strategy
-- Rollback plan
+Example: For PRD0001 (Phone Identity), create `context/tdd/tdd0001-phone-identity.md`
 
 ## Output Template
 
 ```markdown
-# Technical Spec: [Feature Name]
+# TDD: [Feature Name]
 
-**Status:** Draft | In Review | Approved
-**Author:** [Name]
-**Reviewers:** [Engineering Leads]
-**PRD:** [Link]
+**PRD:** [prd000X reference]
+**Status:** Draft | Ready for Implementation
 **Last Updated:** [Date]
 
 ## Context
 
-_What I found in your files:_
+_What I found:_
 
-- **Roadmap status:** [From product.md]
-- **Target persona:** [From personas.md]
-- **Persona workflow:** [How they'll use this]
+- **Vision alignment:** [How this connects to VISION.md]
+- **Roadmap phase:** [MVP/Next/Later from ROADMAP.md]
+- **Architecture constraints:** [Key constraints from ARCHITECTURE.md]
 
 ---
 
 ## Overview
 
-**Problem:** [One sentence — from PRD or personas.md]
-**Solution:** [One sentence]
-**Scope:** [In scope vs out of scope]
+**Problem:** [One sentence from PRD]
+**Solution:** [One sentence - how we'll build it]
+**Scope:** [What's in vs out]
 
 ---
 
-## Architecture
+## Components
 
-### System Components
-```
+**What this touches:**
 
-[ASCII diagram or description of components]
-
-Example:
-Client → API Gateway → Feature Service → Database
-↓
-Notification Worker → Email Service
-
-````
-
-### Component Responsibilities
-
-| Component | Responsibility | Owner |
-|-----------|---------------|-------|
-| [Service] | [What it does] | [Team] |
+- [ ] Database (Prisma schema changes)
+- [ ] API routes (Next.js `/app/api/*`)
+- [ ] Frontend (pages/components)
+- [ ] Background jobs (Vercel cron)
+- [ ] Auth/permissions
 
 ---
 
-## Data Model
+## Database Schema
 
-### New Tables
+### Prisma Models
 
-```sql
-CREATE TABLE resource_allocations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    project_id UUID NOT NULL REFERENCES projects(id),
-    user_id UUID NOT NULL REFERENCES users(id),
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    hours_per_day DECIMAL(4,2) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
+```prisma
+// Example - replace with actual schema
 
-    CONSTRAINT valid_date_range CHECK (end_date >= start_date),
-    CONSTRAINT valid_hours CHECK (hours_per_day > 0 AND hours_per_day <= 24)
-);
+model Example {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-CREATE INDEX idx_allocations_project ON resource_allocations(project_id);
-CREATE INDEX idx_allocations_user ON resource_allocations(user_id);
-CREATE INDEX idx_allocations_dates ON resource_allocations(start_date, end_date);
-````
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 
-### Schema Changes to Existing Tables
-
-| Table   | Change   | Reason |
-| ------- | -------- | ------ |
-| [table] | [change] | [why]  |
-
-### Migration Plan
-
-1. Create new tables (non-breaking)
-2. Backfill data from [source]
-3. Add new columns to existing tables
-4. Deploy new code
-5. Clean up old columns (future PR)
-
----
-
-## API Design
-
-### Endpoints
-
-#### Create Allocation
-
-```
-POST /api/v1/projects/{project_id}/allocations
-
-Request:
-{
-    "user_id": "uuid",
-    "start_date": "2026-04-01",
-    "end_date": "2026-04-30",
-    "hours_per_day": 6.0
+  // Indexes
+  @@index([userId])
 }
-
-Response (201 Created):
-{
-    "id": "uuid",
-    "project_id": "uuid",
-    "user_id": "uuid",
-    "start_date": "2026-04-01",
-    "end_date": "2026-04-30",
-    "hours_per_day": 6.0,
-    "created_at": "2026-03-15T10:30:00Z"
-}
-
-Errors:
-- 400 Bad Request: Invalid dates or hours
-- 404 Not Found: Project or user not found
-- 409 Conflict: Overlapping allocation exists
 ```
 
----
+### Changes to Existing Models
 
-## Authorization
+_If modifying existing schema:_
 
-### Permission Matrix
+| Model | Change | Reason | Safe? |
+|-------|--------|--------|-------|
+| [Model] | [add field / change type] | [why] | [yes/no - migration plan] |
 
-_Based on personas.md roles:_
+### Migration Notes
 
-| Action            | Admin (Alex) | Manager (Jordan) | Member (Sam) | Client |
-| ----------------- | ------------ | ---------------- | ------------ | ------ |
-| View allocations  | Yes          | Own projects     | Own          | No     |
-| Create allocation | Yes          | Own projects     | No           | No     |
-| Update allocation | Yes          | Own projects     | No           | No     |
-| Delete allocation | Yes          | Own projects     | No           | No     |
+_If this needs data migration or has breaking changes:_
 
-### Edge Cases
-
-- **Project archived:** No new allocations, existing remain read-only
-- **User deactivated:** Allocations preserved for historical data
+- [ ] Safe to deploy without breaking existing data?
+- [ ] Need to backfill data?
+- [ ] Can roll back safely?
 
 ---
 
-## Error Handling
+## API Routes
 
-| Error               | HTTP Status | Message                             | Recovery       |
-| ------------------- | ----------- | ----------------------------------- | -------------- |
-| Invalid date range  | 400         | "End date must be after start date" | Fix input      |
-| User not found      | 404         | "User does not exist"               | Verify user ID |
-| Allocation conflict | 409         | "Overlapping allocation exists"     | Modify dates   |
+### Next.js API Endpoints
+
+#### Example Route: `POST /api/example`
+
+**File:** `app/api/example/route.ts`
+
+**Request:**
+```typescript
+{
+  field: string
+  optionalField?: number
+}
+```
+
+**Response (success):**
+```typescript
+{
+  id: string
+  field: string
+  createdAt: string
+}
+```
+
+**Response (error):**
+```typescript
+{
+  error: string
+  details?: string
+}
+```
+
+**Auth:** Phone-verified user required (check session cookie)
+
+**Validation:**
+- `field` required, max 100 chars
+- `optionalField` if provided, must be > 0
+
+**Errors:**
+- `400`: Validation failed
+- `401`: Not authenticated
+- `403`: Not authorized (if applicable)
+- `409`: Conflict (duplicate, etc.)
 
 ---
 
-## Performance Considerations
+## Frontend Components
 
-**Expected Load:**
+### Pages/Routes
 
-- [x] API calls per minute at peak
-- [Y] records in database at 12 months
+_What pages or routes need to be added or modified:_
 
-**Caching Strategy:**
+| Route | Component | Purpose | Auth Required |
+|-------|-----------|---------|---------------|
+| `/example` | `ExamplePage` | [Description] | Yes/No |
 
-- Cache allocation lookups by project (5 min TTL)
-- Invalidate on create/update/delete
+### Components
+
+_What React components need to be created or modified:_
+
+- **`ComponentName`** - [Purpose and key props]
+- **`AnotherComponent`** - [Purpose and key props]
+
+### User Interactions
+
+_Key user flows and interactions:_
+
+1. User does X
+2. System validates Y
+3. System shows Z
+4. User confirms/cancels
 
 ---
 
-## Rollout Plan
+## Auth & Permissions
 
-### Phase 1: Internal Beta
+**Who can access this feature?**
 
-- Feature flag: `resource_planning_v2`
-- Enable for internal team only
+- Phone-verified users only (check session)
+- Public (no auth required)
+- Organizers only (check ownership)
+- Specific conditions: [describe]
 
-### Phase 2: Limited Rollout
+**Access rules:**
 
-- Enable for 10% of customers
+- User can view their own [resource]
+- Organizer can manage their group's [resources]
+- Public turnout pages are accessible to anyone
 
-### Phase 3: General Availability
+---
 
-- Enable for all customers
+## Edge Cases & Error Handling
 
-### Rollback Plan
+**What could go wrong?**
 
-**Trigger:** Error rate > 1% or P50 latency > 500ms
-**Process:** Disable feature flag
+| Scenario | Expected Behavior | Error Message |
+|----------|------------------|---------------|
+| [Bad input] | Return 400 | "[User-friendly message]" |
+| [Not found] | Return 404 | "[User-friendly message]" |
+| [Permission denied] | Return 403 | "[User-friendly message]" |
+| [Conflict] | Return 409 | "[User-friendly message]" |
+
+**Validation rules:**
+
+- [ ] [Field] must be [constraint]
+- [ ] [Field] must be [constraint]
+
+---
+
+## Background Jobs
+
+_If this needs scheduled tasks (Vercel cron):_
+
+**Job:** [Job name]
+- **Schedule:** [cron expression or description]
+- **Purpose:** [What it does]
+- **Implementation:** [Which file/function]
+
+_Example: "Send SMS reminders for turnouts happening in 24 hours"_
 
 ---
 
 ## Open Questions
 
-- [ ] [Question] — Owner: [Name], Due: [Date]
+_Things that need clarification before implementation:_
+
+- [ ] [Question] - [Why this matters]
+- [ ] [Question] - [Why this matters]
 
 ---
 
 ## Related Context
 
-- **PRD:** [Link]
-- **Persona workflow:** [From personas.md]
-- **Roadmap:** [From product.md]
-
+- **PRD:** [prd000X reference]
+- **Roadmap Phase:** [MVP/Next/Later]
+- **Related TDDs:** [Other TDDs this depends on or relates to]
 ```
 
-## Framework Reference
+---
 
-**Engineering Spec Best Practices:**
-- Architecture before implementation
-- API contracts before code
-- Migration plan before deployment
-- Rollback plan before launch
+## Key Principles
+
+When writing TDDs for turnout.network MVP:
+
+1. **Serverless constraints** - Design for Vercel (no long-running processes, cold starts matter)
+2. **Simple auth** - Phone-based magic links, no complex RBAC yet
+3. **Prisma-first** - Schema is source of truth, migrations should be safe
+4. **Edge cases matter** - Think through what breaks, not just happy path
+5. **Handoff-ready** - Agent team should be able to implement from this doc alone
 
 ## Tips for Best Results
 
-1. **Use your context files** — I'll connect the spec to personas and roadmap
-2. **Have the PRD ready** — Specs follow requirements, not the other way around
-3. **Include engineers early** — They should review the spec before it's "final"
-4. **Think about edge cases** — What happens when things go wrong?
-```
+1. **Read the context files first** - ARCHITECTURE.md, VISION.md, ROADMAP.md, and the PRD
+2. **Ask questions** - If the PRD is vague, clarify before designing
+3. **Think about migration** - Can this deploy without breaking existing data?
+4. **Keep it lean** - This is MVP, not enterprise SaaS. Simple > clever.

@@ -130,10 +130,12 @@ Output follows this structure:
 4. Success Criteria (Lagging + Leading Indicators)
 5. Proposed Solution (with example user stories)
 6. Non-Goals
-7. Dependencies (Feature, Team, External + Critical Path)
-8. Risks & Mitigations
-9. Open Questions (with validation experiments)
-10. Sign-off Checklist
+7. Future Considerations (forward-looking design hints)
+8. Dependencies (Feature, Team, External + Critical Path)
+9. Risks & Mitigations
+10. Open Questions (with validation experiments)
+
+**Important:** Focus PRDs on WHAT to build and WHY, not HOW to build it. Leave implementation details to designers and engineers.
 
 ## Output Template
 
@@ -192,7 +194,20 @@ _Mark assumptions clearly:_
 
 ### How It Works
 
-[High-level description of the approach]
+[Describe WHAT happens and WHY, not HOW to implement it]
+
+**Focus on:**
+- What data is required
+- What outputs are provided
+- Key constraints (SSR required, phone verification for spam prevention)
+- High-level flow at outcome level (user does X → system does Y → user receives Z)
+
+**Avoid:**
+- UI implementation details (modal vs inline form, specific screens)
+- Exact copy text or button labels
+- Visual design directives (button sizes, colors, "big primary button")
+- Technical implementation (session cookies, database operations)
+- Prescriptive flows that belong in design/engineering specs
 
 ### User Stories (Examples)
 
@@ -219,6 +234,30 @@ _Include 2-3 concrete user stories to illustrate the solution and help engineeri
 ## Non-Goals
 
 - [What we're explicitly NOT doing]
+
+## Future Considerations
+
+_Features not in scope for MVP, but have **explicit evidence** they'll be needed soon enough to influence architectural decisions today._
+
+**IMPORTANT:** Do NOT invent "maybes" without making an explicit choice. Only include features that:
+1. Are **extensions of things already in Non-Goals** (e.g., Non-Goal says "No email auth" → Future Consideration for email auth)
+2. Are **mentioned in user stories or context files** as likely next steps
+3. Have **competitive evidence** (competitors have this, so we'll probably need it)
+4. Are **explicit deferments** from risks or open questions
+
+**Litmus test for Design Hints:** "Does this advice prevent you from painting yourself into a corner, or is it just premature implementation?"
+- ✅ GOOD: "Link engagements to opportunity_id instead of hardcoding 'Show Up'" (structural decision that's hard to change later)
+- ❌ BAD: "Add nullable max_participants field now" (trivial to add when needed, just premature optimization)
+
+**If you think of potential future features but don't have evidence:** ASK the user first. Don't just add them.
+
+**It's OK to have NO Future Considerations section** if nothing meets these criteria. Don't invent work.
+
+| Future Capability | Likelihood | Design Hint |
+| ----------------- | ---------- | ----------- |
+| [Future feature from Non-Goals/Risks/Evidence] | High/Medium/Low (When) | [How to design for this now without building it] |
+
+💡 **The pattern:** Build the **data model** for extensibility now (costs ~zero), but don't build the **UI/logic** until needed.
 
 ## Dependencies
 
@@ -258,21 +297,6 @@ _For each unknown, suggest a validation approach to turn assumptions into testab
 
 **Example:**
 | Do agencies want automated balancing or manual control? | Automated preferred | 5 user interviews + prototype test | Before sprint 1 |
-
-## Before Finalizing
-
-Before you ship this PRD, double-check:
-
-- [ ] Does `competitors.md` show competitors have this? (table stakes check)
-- [ ] Did you miss any recent user feedback that contradicts this approach?
-
-## Sign-off
-
-| Role        | Name | Approved |
-| ----------- | ---- | -------- |
-| Product     |      | ⬜       |
-| Engineering |      | ⬜       |
-| Design      |      | ⬜       |
 ```
 
 ## Framework Reference

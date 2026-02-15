@@ -96,50 +96,53 @@ First-time organizers face overwhelming friction when trying to organize collect
 
 ### How It Works
 
-**Single-page form with psychological ordering** that creates both a group (ongoing organizing entity) and a turnout (first event) in one flow, with phone verification at the end to prevent spam.
+**Single creation flow** that produces both a group (ongoing organizing entity) and a turnout (first event) atomically, with phone verification preventing spam before database writes.
 
-**Flow:**
+**What data is required:**
 
-1. User lands on turnout.network, clicks "Start Organizing" (no login required)
-2. Single form appears with three sections (ordered intentionally):
+_Group data:_
+- Mission/purpose statement (free text describing what the group is organizing for)
+- Group name (can be auto-suggested from mission statement)
 
-   **Section 1: Your Group (Vision/Purpose)**
-   - "What are you organizing for?" → Bob types "Stop the gravel mine from destroying willow creek"
-   - "What are you calling your group?" → Auto-suggested "Save Willow Creek" (editable)
-   - _Psychology: Start with meaning/purpose, not logistics—get Bob emotionally invested first_
+_Turnout data:_
+- Title (can be pre-filled with sensible default like "First Planning Meeting")
+- Description (optional)
+- Location (address or landmark, with geocoding to enable directions)
+- Date and time (must be future)
 
-   **Section 2: Your First Turnout (Action/Logistics)**
-   - "What's happening?" → Pre-filled "First Planning Meeting" (editable)
-   - "Details" → Optional textarea for description
-   - "Where?" → Location text input (geocoded for maps/directions)
-   - "When?" → Date + time picker (local time, must be future)
-   - _Psychology: Now that Bob is invested, concrete logistics feel achievable, not overwhelming_
+_Organizer data (from prd0001):_
+- Phone number (for OTP code verification)
+- Display name (can be randomly generated pseudonym)
 
-   **Section 3: Who Are You? (Identity/Commitment)**
-   - "Your name" → Random pseudonym pre-filled (e.g., "GreenWombat"), editable
-   - "Your phone number" → Required for magic link
-   - Help text: "We'll text you a link to manage 'Save Willow Creek' and share your turnout"
-   - _Psychology: Ask for personal info LAST, after Bob has already invested cognitive effort_
+**What outputs are provided:**
 
-3. Bob clicks "Create & Share" → Form data captured in memory (NOT written to DB yet)
-4. SMS sent via phone-based identity system (prd0001):
-   ```
-   Turnout: Click to confirm and create your turnout "First Planning Meeting": [magic link]
-   ```
-5. Bob clicks magic link → NOW create group + turnout in DB, authenticate Bob, redirect to dashboard
-6. Dashboard shows:
-   - "Your turnout is live! 🎉"
-   - Shareable link: `turnout.network/m/abc123` (copy button, quick share to SMS/email/Facebook)
-   - RSVP count: 0 (updates live)
-   - Next step prompt: "Share this with your group chat to get RSVPs"
+- Group record (with organizer as creator)
+- Turnout record (linked to group, with default "Show Up" opportunity)
+- Authenticated session for organizer
+- Shareable turnout URL (public, short format)
+- Calendar integration data (.ics file capability)
+
+**Key constraints:**
+
+- **No authentication required upfront:** User can fill form without login
+- **Phone verification before database writes:** Prevents spam turnout creation
+- **Psychological ordering principle:** Collect data in order that minimizes abandonment (vision/purpose → logistics/action → identity/commitment). Ask for phone number last, after user has invested cognitive effort.
+- **Geocoding required:** Location must resolve to coordinates for directions and potential check-in features
+- **Google Places Autocomplete required:** Modern UX expectation, provides immediate lat/long data
+- **Atomic creation:** Group and turnout created together in single transaction (both succeed or both fail)
+- **<2 minute target:** From landing page to shareable link must take under 2 minutes
+
+**User experience flow:**
+
+Unauthenticated user lands on creation page → Fills form collecting group mission, turnout details, organizer identity → Submits form → Receives SMS with OTP code → Enters code (or taps autofill on mobile) → Group and turnout atomically created in database → Organizer authenticated → Redirected to dashboard showing shareable link and RSVP count
 
 **Key decisions:**
 
-- **Single-page form, not multi-step wizard:** Reduces cognitive load (Bob can see entire commitment upfront), faster completion
-- **Psychological ordering:** Vision → Action → Identity reduces abandonment (you don't ask for phone number first)
-- **Pre-filled suggestions:** Random name, "First Planning Meeting" reduce friction (Bob can just accept defaults)
-- **Phone verification AFTER form:** Prevents spam (no DB writes until phone verified), but doesn't add friction upfront
-- **Group + turnout created together:** Simplifies mental model for first-time organizers ("I'm creating a thing and it has a first event")
+- **Single-page form, not multi-step wizard:** Reduces cognitive load (user sees entire commitment upfront), faster completion
+- **Psychological ordering (vision → action → identity):** Reduces abandonment by asking for personal info (phone) last
+- **Pre-filled suggestions:** Reduce friction (user can accept defaults without thinking)
+- **Phone verification AFTER form submission:** Prevents spam without adding upfront friction
+- **Group + turnout created atomically:** Simplifies mental model for first-time organizers
 
 ### User Stories (Examples)
 
@@ -173,7 +176,7 @@ What we're explicitly **NOT** doing in MVP:
 - **No turnout templates** — No "Create a protest" vs "Create a cleanup" with pre-filled fields. Just freeform text. Templates deferred to "Next" if organizers ask for them.
 - **No group-level settings** — No privacy controls, no group descriptions beyond mission statement, no group member management. Collaboration (adding co-organizers) is prd0007.
 - **No recurring turnouts** — No "every Tuesday at 6pm" option. Each turnout is one-time. Recurrence deferred to "Later."
-- **No draft mode** — Once Bob clicks the magic link, the turnout is live. No "save as draft, publish later" option.
+- **No draft mode** — Once Bob enters the verification code, the turnout is live. No "save as draft, publish later" option.
 
 ---
 
@@ -187,7 +190,6 @@ _These features are not in scope for MVP, but are likely enough in the near term
 | **Group branding** (logos, colors, public pages) | High (Next phase) | Add nullable `logo_url`, `primary_color`, `secondary_color`, `about` fields to the `groups` table now, even if MVP doesn't use them. Frontend doesn't need to render them, but having the schema ready means "Next" phase is just UI work, not a migration. |
 | **Turnout templates** ("Create a protest" vs "Create a cleanup") | Medium (Next phase) | Store turnout creation flow as **data, not code**. Example: `turnout_templates` table with `name`, `description_prompt`, `default_title`, `suggested_fields`. MVP just has one template ("Blank"), but the system is designed to support many. Don't hardcode form fields in React components. |
 | **Recurring turnouts** ("every Tuesday at 6pm") | Medium (Later phase) | Add optional `recurrence_rule` (nullable JSON or cron-like string) to `turnouts` table now. MVP leaves it null. When recurrence comes, you'll generate turnout instances from the rule. Don't assume one turnout = one event forever. |
-| **Draft mode** (save as draft, publish later) | Low (Later phase) | Add `status` field to `turnouts` table (`draft | published | canceled | completed`) even though MVP only uses `published`. Don't assume all turnouts are public immediately. Future: let organizers save drafts. |
 
 💡 **The pattern:** Model the **data schema** for future extensions now (costs ~zero), but don't build the **UI/logic** until needed. This prevents painful migrations later.
 
@@ -205,10 +207,10 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 ### External Dependencies
 
-- **Twilio SMS API (via prd0001):** Required for magic link delivery. If SMS delivery fails, organizers can't create turnouts.
+- **Twilio SMS API (via prd0001):** Required for OTP code delivery. If SMS delivery fails, organizers can't create turnouts.
 - **Google Maps JavaScript API + Places API:** REQUIRED for MVP. Provides autocomplete widget for location input—Bob starts typing "Foster Library" and gets dropdown suggestions with full addresses. When Bob selects a place, we get `place_id`, `lat/long`, `formatted_address` immediately (no server-side geocoding needed). **Why required:** Alice's user story (user-stories.md line 34) shows "Give me Directions" button in reminders—can't provide maps links without location coordinates. Also needed for calendar invites (prd0003) and potentially check-in geofencing (prd0005). Cost: Places Autocomplete is ~$2.83 per 1,000 requests (well within budget for 10 turnouts in MVP). **Risk if delayed:** Participants can't get directions, breaks Alice's flow.
 
-**Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Places API**. If magic links don't deliver, organizers can't create turnouts. If Places API is unavailable, Bob can't enter location (blocks turnout creation—need fallback to plain text input).
+**Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Places API**. If OTP codes don't deliver, organizers can't create turnouts. If Places API is unavailable, Bob can't enter location (blocks turnout creation—need fallback to plain text input).
 
 💡 **Flag dependencies early to avoid last-minute surprises.** Test the full create-moment flow (form → SMS → click → dashboard) in staging before going live.
 
@@ -223,7 +225,7 @@ _Risk types: V=Value, U=Usability, F=Feasibility, B=Business Viability. Impact: 
 | No one creates turnouts (organizers don't adopt)                     | V    | H      | **This kills the MVP.** Pre-recruit 3-5 pilot organizers before launch. Offer to walk them through creating their first turnout. If they won't use it, pivot or kill. |
 | Single-page form is overwhelming (users abandon mid-form)            | U    | H      | **User test with 5 people before launch.** Watch them fill out the form. If >20% abandon, break into multi-step wizard. Track analytics: measure drop-off at each field. |
 | Psychological ordering doesn't work (users confused by flow)         | U    | M      | User test: can users complete form without instructions? If confused, reorder fields (logistics first, identity last might be more familiar). |
-| Phone verification step loses users (abandon after form submit)      | U    | M      | Track magic link click rate (target ≥95%). If <90%, add messaging: "Check your phone for a text from Turnout!" with visual SMS icon. |
+| Phone verification step loses users (abandon after form submit)      | U    | M      | Track OTP code entry rate (target ≥95%). If <90%, add messaging: "Check your phone for a text from Turnout!" with visual SMS icon. Consider WebOTP autofill to reduce friction. |
 | Pre-filled fields (random name, "First Planning Meeting") feel patronizing | U | M | User test: do users edit pre-filled fields or just accept them? If >50% edit, maybe remove pre-fills. If <20% edit, they're working as intended. |
 | Form validation is too strict (rejects valid input)                  | U    | M      | Be forgiving: accept any text for location (even if geocoding fails—see risk above), accept future dates only (but don't enforce "must be >24 hours from now"). Monitor support requests for validation complaints. |
 | Spam / abuse (bots creating fake turnouts)                            | B    | M      | Phone verification (prd0001) is first line of defense. Add honeypot fields (hidden inputs that bots fill but humans don't). Rate limiting: max N turnouts per phone number per day. |
@@ -249,34 +251,5 @@ _For each unknown, suggest a validation approach to turn assumptions into testab
 
 ---
 
-## Before Finalizing
 
-Before you ship this PRD, double-check:
 
-- [x] Does `competitors.md` show competitors have this? — **No competitors.md file, but Eventbrite / Mobilize / Action Network all have "create event" flows. Ours is simpler (no account required, single form, group + moment together).**
-- [x] Did you miss any recent user feedback that contradicts this approach? — **No user feedback yet (greenfield project). Bob's user story is the only validated input.**
-
----
-
-## Sign-off
-
-| Role        | Name          | Approved |
-| ----------- | ------------- | -------- |
-| Product     | Solo Founder  | ✅       |
-| Engineering | Solo Founder  | ✅       |
-| Design      | Solo Founder  | ✅       |
-
----
-
-## Post-MVP Evolution
-
-**If this approach succeeds:**
-- Add group branding (logos, colors, public pages) in "Next" phase
-- Add turnout templates ("Create a protest" vs "Create a cleanup") if organizers ask for them
-- Add server-side geocoding fallback for plain text location entries (if Places API fails)
-- Add multiple opportunities per turnout (street medic, legal observer) in "Later" phase
-
-**If this approach fails:**
-- **If form completion <90%:** Break into multi-step wizard (reduce cognitive load at each step)
-- **If organizers don't create turnouts:** Simplify even further (remove group creation, just create standalone turnouts)
-- **If organizers create turnouts but don't share them:** Improve post-creation UX (auto-open share dialog, add "share to group chat" templates)

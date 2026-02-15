@@ -96,7 +96,7 @@ The smallest possible slice that lets Bob organize a turnout and Alice show up t
 Detailed feature specifications have been extracted into individual PRD files for AI agent handoffs:
 
 1. **Phone-Based Identity System** [prd/prd0001-phone-identity.md](../prd/prd0001-phone-identity.md)
-   - Magic link authentication for all users
+   - OTP code authentication for all users (WebOTP API for mobile autofill)
    - Non-expiring session cookies
    - Phone number as universal identity
 
@@ -190,7 +190,7 @@ Build the network, then build the network effects.
 | No one creates turnouts (organizers don't adopt) | High   | User testing with real organizers, pre-recruit pilot users                  | You   |
 | RSVPs don't convert to check-ins                | High   | This is what we're testing—if it fails, pivot or kill                       | You   |
 | Co-organizer abuse (bad actors delete turnouts)  | Medium | For MVP, accept the risk. Add roles/permissions in Next if it happens       | You   |
-| Magic link phishing/account takeover            | Medium | Short token expiry (15min), single-use tokens, HTTPS only                   | You   |
+| OTP code interception/account takeover          | Medium | Short code expiry (10min), single-use codes, rate limiting                  | You   |
 | Geolocation/check-in feels creepy               | Medium | Make check-in manual/opt-in, clear privacy messaging                        | You   |
 | Solo dev burnout                                | Medium | Ruthless scope discipline, celebrate small wins, timebox MVP to 10-12 weeks | You   |
 | SMS delivery failures (carrier blocking)        | Medium | Use reputable SMS provider (Twilio), proper opt-in language                 | You   |
@@ -243,7 +243,7 @@ _Ideas considered but explicitly deferred:_
 
 ⚠️ **"Free forever" is sustainable:** With pay-as-you-go SMS and serverless hosting, MVP costs should be <$50/month for 10 turnouts, 50 participants, assuming moderate SMS volume (3 reminders/participant + auth messages). Validate this with real usage.
 
-⚠️ **Phone-based identity is acceptable:** We're betting that phone-number-based magic link auth is "good enough" for MVP. No passwords, no email verification. If organizers feel this is too insecure for sensitive organizing, we'll need to add proper auth (email, 2FA, etc.).
+⚠️ **Phone-based identity is acceptable:** We're betting that phone-number-based OTP auth is "good enough" for MVP. No passwords, no email verification. If organizers feel this is too insecure for sensitive organizing, we'll need to add proper auth (email, 2FA, etc.).
 
 ---
 
@@ -257,7 +257,7 @@ _Ideas considered but explicitly deferred:_
 2. **Pick your tech stack:** Choose your serverless platform, database, and SMS provider. Set up accounts.
 
 3. **Build the MVP in phases:**
-   - Week 1: Organizer auth (magic links)
+   - Week 1: Organizer auth (OTP codes)
    - Week 2-3: Turnout creation + public pages
    - Week 4-5: RSVP + SMS verification
    - Week 6: Reminders + check-in
