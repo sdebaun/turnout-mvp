@@ -2,7 +2,7 @@
 
 **A platform for people who are done watching and ready to show up.**
 
-Create a moment. Share the link. People commit. Reminders land. They actually show up.
+Create a turnout. Share the link. People commit. Reminders land. They actually show up.
 
 And then? That history matters. Every time you turn out, you build a visible track record.
 Every person you show up with becomes part of your network. When you need people for
@@ -17,7 +17,7 @@ The more you use it, the easier it gets to move together.
 
 **For first-time organizers:**
 - No experience required. Start with a planning meeting, build from there.
-- Create a moment in 2 minutes. Get a shareable link. Send it to your people.
+- Create a group and your first turnout in 2 minutes. Get a shareable link. Send it to your people.
 - See who's committed. Know who showed up. Build on that next time.
 
 **For participants:**
@@ -27,7 +27,7 @@ The more you use it, the easier it gets to move together.
 
 **For everyone:**
 - The network learns who keeps their word.
-- When you create your next moment, it surfaces people who've shown up before.
+- When you create your next turnout, it surfaces people who've shown up before.
 - Trust becomes infrastructure. Organizing gets easier over time.
 
 ---
@@ -66,8 +66,9 @@ Turnout.network provides the missing logistics: commitment mechanisms, follow-th
 - Next.js 14+ (App Router), TypeScript
 - Postgres (Neon for production, Docker Compose for local)
 - Prisma ORM
-- Vercel (serverless hosting)
+- SST (Ion) on AWS (serverless hosting via Lambda@Edge + CloudFront)
 - Twilio (SMS), Web Push API (notifications)
+- AWS EventBridge (scheduled reminder jobs)
 
 **Current status:** Greenfield. No code yet. Setup instructions will be added once there's something to set up.
 
@@ -81,12 +82,13 @@ Turnout.network provides the missing logistics: commitment mechanisms, follow-th
 
 We're currently building the MVP core loop:
 - Phone-based authentication
-- Group and moment creation
-- Public moment pages + RSVP
+- Group and turnout creation
+- Public turnout pages + RSVP
 - SMS reminders + check-in system
-- Multi-moment dashboard
+- Group dashboard (multi-turnout view)
+- Group-level collaboration (co-organizers)
 
-Target: Validate with 10+ real-world moments, 50+ participants, ≥60% RSVP-to-check-in conversion.
+Target: Validate with 10+ real-world turnouts, 50+ participants, ≥60% RSVP-to-check-in conversion.
 
 See [ROADMAP.md](./context/ROADMAP.md) for full plan and success metrics.
 
