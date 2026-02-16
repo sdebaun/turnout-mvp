@@ -28,6 +28,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# debug artifacts (don't commit debug sessions)
+CURRENT_DEBUG.md
+.playwright-mcp/*.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

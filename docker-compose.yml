@@ -6,6 +6,7 @@ services:
     container_name: turnout-postgres
     environment:
       POSTGRES_USER: turnout
+      # Local dev only — weak password acceptable (never use in production)
       POSTGRES_PASSWORD: turnout_dev_password
       POSTGRES_DB: turnout_dev
     ports:

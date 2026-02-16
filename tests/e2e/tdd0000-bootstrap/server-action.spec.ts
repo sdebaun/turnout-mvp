@@ -7,8 +7,8 @@ test('server action button is rendered and clickable', async ({ page }) => {
   await expect(button).toBeVisible()
   await expect(button).toHaveText('Test Server Action')
 
-  // Click to prove Server Actions work end-to-end
+  // Click and verify the Server Action actually executed —
+  // the TestForm renders a success message with the timestamp on completion
   await button.click()
-  // Server Action logs to console server-side, doesn't change UI for bootstrap
-  // Real features will have observable UI changes to test
+  await expect(page.getByText(/Server Action executed at/i)).toBeVisible()
 })

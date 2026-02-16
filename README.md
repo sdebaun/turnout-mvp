@@ -71,7 +71,7 @@ Turnout.network provides the missing logistics: commitment mechanisms, follow-th
 
 ## For Developers
 
-**Planned stack:**
+**Stack:**
 - Next.js 14+ (App Router), TypeScript
 - Postgres (Neon for production, Docker Compose for local)
 - Prisma ORM
@@ -79,15 +79,44 @@ Turnout.network provides the missing logistics: commitment mechanisms, follow-th
 - Twilio (SMS), Web Push API (notifications)
 - AWS EventBridge (scheduled reminder jobs)
 
-**Current status:** Greenfield. No code yet. Setup instructions will be added once there's something to set up.
-
 **See [ARCHITECTURE.md](./context/ARCHITECTURE.md) for the reasoning behind these stack decisions.**
+
+### Getting Started
+
+```bash
+pnpm install        # Install all dependencies (monorepo workspaces)
+pnpm dev            # Start local dev server (Next.js at http://localhost:3000)
+pnpm test           # Run integration + unit tests (Vitest)
+pnpm deploy         # Deploy to AWS dev stage via SST
+```
+
+Docker Compose provides a local Postgres instance for development:
+
+```bash
+docker compose up -d   # Start local Postgres on port 5432
+```
+
+### Secrets Management
+
+**Never put real credentials in `.env` files.** All secrets are managed through SST:
+
+```bash
+# Set a secret for the current stage
+sst secret set DatabaseUrl "postgresql://..."
+
+# List current secrets
+sst secret list
+```
+
+SST secrets are encrypted and injected at runtime. The `.env` file is gitignored as a safety net, but should not be used for real credentials. See [ARCHITECTURE.md](./context/ARCHITECTURE.md) for details on credential management.
 
 ---
 
 ## Project Status
 
-🚧 **Pre-MVP / Greenfield**
+**Bootstrap infrastructure complete** ([TDD0000](./context/tdd/tdd0000-bootstrap.md))
+
+Monorepo with pnpm workspaces, Next.js app, Lambda cron handler, Prisma + Docker Postgres, SST deployment to AWS, Vitest tests, and GitHub Actions CI.
 
 We're currently building the MVP core loop:
 - Phone-based authentication

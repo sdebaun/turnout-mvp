@@ -137,7 +137,7 @@ No inline comments required. Nothing to fix, nothing to justify.
 1. **🚫 BLOCKER: Production Database Credentials Exposed in Local .env**
    - File: `.env` (not in git, but present on disk)
    - Line: 4
-   - Issue: Real Neon production database URL with credentials (`npg_e3aGywmp8Mbi`) exists in unencrypted local file
+   - Issue: Real Neon production database URL with credentials (`[REDACTED]`) exists in unencrypted local file
    - Risk: If developer machine compromised, production database is accessible
    - Mitigation:
      - IMMEDIATELY rotate the exposed credential via Neon dashboard
@@ -428,7 +428,7 @@ The test infrastructure is solid and demonstrates good engineering practices. Th
 
 **1. Production Database Credentials Exposed** (Security)
 - **File:** `.env` (local file, not in git)
-- **Issue:** Neon production database password `npg_e3aGywmp8Mbi` is in plaintext on disk
+- **Issue:** Neon production database password `[REDACTED]` is in plaintext on disk
 - **Required Action:**
   1. Rotate credential in Neon dashboard immediately
   2. Delete `.env` file
