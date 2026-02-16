@@ -91,23 +91,26 @@ The following setup steps require external services and cannot be completed auto
 
 ---
 
-### 1. Neon Database Setup
+### 1. Neon Database Setup (Production Only)
 
-**🧑 Human must do this before agent starts:**
+**🧑 Human must do this before deploying to production:**
 
 1. Go to https://neon.tech and create a free account
-2. Create a new project called "turnout-dev"
+2. Create a new project called "turnout-production"
 3. Copy the connection string (starts with `postgresql://`)
-4. Save it securely - you'll provide it to the agent as an environment variable
+4. Save it securely - you'll set it as an SST secret for production stage
 
 **Expected output:** A connection string like:
 ```
 postgresql://user:password@ep-cool-name-12345.us-east-2.aws.neon.tech/turnoutdb?sslmode=require
 ```
 
+**Note:** Local development and testing use Docker Postgres (see Phase 0), not Neon. Neon is only for deployed stages (production, and optionally per-developer dev stages).
+
 **Alternative with Neon MCP server (if available):**
-- Agent could create database via MCP
+- Agent could create production database via MCP
 - Agent could retrieve connection string via MCP
+- Agent could create per-developer dev databases for `sst dev` usage
 
 ### 2. AWS Credentials Setup
 
@@ -131,17 +134,24 @@ postgresql://user:password@ep-cool-name-12345.us-east-2.aws.neon.tech/turnoutdb?
 
 **If any are missing, agent should halt and request human install them.**
 
-### 4. Environment Variables
+### 4. SST Secret Strategy
 
-**🧑 Human must provide to agent:**
+**Architecture decision:** All configuration comes from SST secrets, not `.env` files.
 
-Create a `.env` file at project root with:
-```bash
-DATABASE_URL="<neon-connection-string-from-step-1>"
-AWS_REGION="us-east-1"  # or your preferred region
-```
+**Per-developer stages:**
+- Each developer gets their own SST stage: `--stage $USER`
+- Prevents collisions when multiple developers work on the project
+- Stage examples: `--stage sdebaun`, `--stage alice`, `--stage production`
 
-**Agent will use these values when setting up SST secrets and running migrations.**
+**Database strategy:**
+- **Local development/testing:** Docker Postgres (fast, isolated)
+  - SST secret points to `postgresql://localhost:5432/turnout_dev`
+  - Agent sets this in Phase 0
+- **Production deployment:** Neon Postgres (serverless, managed)
+  - Human sets `sst secret set DatabaseUrl "<neon-url>" --stage production`
+  - Only needed when ready to deploy to production
+
+**No `.env` file needed.** All secrets managed through SST.
 
 ---
 
@@ -189,7 +199,6 @@ turnout-mvp/
 ├── docker-compose.yml            # Local Postgres
 ├── vitest.config.ts              # Vitest configuration
 ├── playwright.config.ts          # Playwright configuration
-├── .env.example                  # Example environment variables
 └── README.md                     # Setup instructions
 ```
 
@@ -212,6 +221,120 @@ turnout-mvp/
 
 **Follow these phases sequentially. Verify each phase before moving to the next.**
 
+---
+
+## Parallelization Strategy for Agent Teams
+
+**IMPORTANT:** When multiple agents are available, parallelize aggressively to maximize velocity.
+
+### Phase Dependencies
+
+**Sequential phases (must run in order):**
+- Phase 0: Prerequisites → Phase 1: Project Init → **[Parallel Block]** → Phase 5: Testing → Phase 7: Deployment → Phase 8: CI
+
+**Parallel block (Phases 2-4 can run simultaneously):**
+- Phase 2: Database layer (lib/db)
+- Phase 3: Next.js app (apps/web)
+- Phase 4: Lambda functions (apps/functions)
+
+These three phases are **independent** - they create separate directories and don't depend on each other's outputs.
+
+### Team Allocation
+
+**Recommended for 3-agent team:**
+- **Agent 1 (Database specialist):** Phase 2 - Set up Prisma, migrations, db tests
+- **Agent 2 (Frontend specialist):** Phase 3 - Set up Next.js app, Server Actions, E2E tests
+- **Agent 3 (Backend specialist):** Phase 4 - Set up Lambda functions, cron handler
+
+**Synchronization point:** All three agents must complete and report success before **any** agent proceeds to Phase 5 (Testing).
+
+**For solo agent:** Execute Phases 2-4 sequentially (order doesn't matter).
+
+### Communication Protocol for Parallel Work
+
+When running in parallel:
+1. Each agent claims their phase: "Starting Phase X"
+2. Each agent reports completion: "Phase X complete, verification passed"
+3. Team lead (or coordinating agent) waits for all three completions
+4. Once all report success, proceed to Phase 5
+
+**If any parallel phase fails:** All agents halt, debug the failure, then restart parallel block.
+
+---
+
+### Phase 0: Prerequisite Verification & SST Setup
+
+**Agent must verify or halt before proceeding:**
+
+**1. Check required tools:**
+```bash
+# Verify Node.js 20+
+node --version  # Should be >=20
+
+# Verify pnpm 8+
+pnpm --version  # Should be >=8
+
+# Verify Git
+git --version
+
+# Verify Docker (and start if needed)
+docker ps 2>/dev/null || {
+  echo "Docker not running. Please start Docker Desktop."
+  exit 1
+}
+```
+
+**If any tool is missing or wrong version: HALT and report to human.**
+
+**2. Check AWS credentials:**
+```bash
+aws sts get-caller-identity
+# Should return account info without errors
+```
+
+**If AWS credentials not configured: HALT and ask human to run `aws configure`.**
+
+**3. Start Docker Postgres:**
+```bash
+docker compose up -d
+```
+
+Wait for healthy status:
+```bash
+# Wait up to 30 seconds for postgres to be healthy
+timeout 30 bash -c 'until docker compose ps | grep -q "healthy"; do sleep 1; done'
+```
+
+**4. Set up SST stage and secrets:**
+```bash
+# Use username as stage name to prevent collisions
+export SST_STAGE=$USER
+echo "Using SST stage: $SST_STAGE"
+
+# Install SST first (needed for secret commands)
+pnpm add -D sst
+
+# Set DATABASE_URL secret pointing to local Docker
+sst secret set DatabaseUrl "postgresql://turnout:turnout_dev_password@localhost:5432/turnout_dev" --stage $SST_STAGE
+```
+
+**5. Verify secret was set:**
+```bash
+sst secret list --stage $SST_STAGE
+# Should show: DatabaseUrl
+```
+
+**Verify Phase 0:**
+- [ ] Node.js 20+, pnpm 8+, Git, Docker all present
+- [ ] AWS credentials configured (`aws sts get-caller-identity` works)
+- [ ] Docker Postgres running and healthy
+- [ ] SST_STAGE environment variable set to username
+- [ ] DatabaseUrl secret exists for your stage (`sst secret list` shows it)
+
+**If all checks pass, proceed to Phase 1.**
+
+---
+
 ### Phase 1: Project Initialization
 
 **Create root files:**
@@ -230,24 +353,29 @@ packages:
 
 3. Create `tsconfig.json` (base config - see Root tsconfig.json section below)
 
-4. Create `.env` file with DATABASE_URL from prerequisites
-
-5. Create `.env.example` (without actual credentials)
-
-6. Create `.gitignore`:
+4. Create `.gitignore`:
 ```
 node_modules
 .next
 .sst
 dist
-.env
 .DS_Store
 ```
+
+**Note:** No `.env` file needed - all configuration comes from SST secrets (set in Phase 0).
 
 **Verify Phase 1:**
 - [ ] `pnpm --version` works
 - [ ] `pnpm-workspace.yaml` exists
-- [ ] `.env` has DATABASE_URL
+- [ ] `.gitignore` exists
+
+**Commit checkpoint:**
+```bash
+git add .
+git commit -m "chore: project initialization (workspace, tsconfig, gitignore)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
 
 ---
 
@@ -269,11 +397,13 @@ pnpm add -D prisma @prisma/client
 pnpm prisma generate
 ```
 
-5. Create initial migration:
+5. Create initial migration (uses DATABASE_URL from SST secret):
 ```bash
-pnpm prisma migrate dev --name init
+sst shell --stage $SST_STAGE -- pnpm prisma migrate dev --name init
 ```
 (This will prompt for migration name - use "init")
+
+**Note:** `sst shell` injects the DatabaseUrl secret as DATABASE_URL environment variable.
 
 6. Create `lib/db/client.ts` (see Prisma Client Singleton section)
 
@@ -285,7 +415,20 @@ pnpm prisma migrate dev --name init
 - [ ] `node_modules/.prisma/client` directory exists
 - [ ] `lib/db/migrations/` directory exists with migration files
 - [ ] Docker Postgres running: `docker compose ps`
-- [ ] Can connect: `pnpm prisma studio` opens (then close it)
+- [ ] Can connect: `sst shell --stage $SST_STAGE -- pnpm prisma studio` opens (then close it)
+
+**Commit checkpoint:**
+```bash
+git add lib/ package.json pnpm-lock.yaml
+git commit -m "feat: database layer with Prisma
+
+- Add Prisma schema with User model
+- Create database client singleton
+- Add initial migration
+- Add database connection test
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
 
 ---
 
@@ -325,6 +468,19 @@ pnpm --filter @turnout/web dev
 - [ ] Click button, check browser console for Server Action log
 - [ ] Stop server (Ctrl+C)
 
+**Commit checkpoint:**
+```bash
+git add apps/web
+git commit -m "feat: Next.js app with hello world page
+
+- Add Next.js 14 app with App Router
+- Add hello world page
+- Add Server Action calling Prisma
+- Configure TypeScript paths for shared lib
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
 ---
 
 ### Phase 4: Lambda Functions
@@ -342,6 +498,18 @@ pnpm --filter @turnout/web dev
 **Verify Phase 4:**
 - [ ] TypeScript compiles: `pnpm tsc --noEmit` (from root)
 - [ ] No type errors in apps/functions
+
+**Commit checkpoint:**
+```bash
+git add apps/functions
+git commit -m "feat: Lambda functions with hello cron handler
+
+- Add functions package with TypeScript config
+- Add hello-cron handler that queries Prisma
+- Configure path aliases for shared lib
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
 
 ---
 
@@ -375,23 +543,65 @@ mkdir -p tests/e2e/journeys
 
 8. Create E2E test files (see E2E Tests section)
 
-9. Run tests:
+9. Run tests (using SST shell to inject DATABASE_URL):
 ```bash
 # Unit tests (lib/db/db.test.ts)
-pnpm test:unit
+sst shell --stage $SST_STAGE -- pnpm test:unit
 
 # E2E tests
-pnpm test:e2e
+sst shell --stage $SST_STAGE -- pnpm test:e2e
 ```
+
+**Note:** `sst shell` injects the DatabaseUrl secret as DATABASE_URL before running tests.
+
+**If tests fail:**
+1. **Read the output carefully** - Test failures contain specific error messages and stack traces
+2. **Attempt to fix** - Try to resolve the issue (max 2 attempts):
+   - Check file paths and imports
+   - Verify database connection (is Docker running?)
+   - Check for typos in test expectations
+   - Review the code being tested
+3. **If still failing after 2 fix attempts:**
+   - **HALT** - Do not proceed to next phase
+   - **Report to human** with:
+     - Full test output (copy/paste the error)
+     - What you tried to fix (be specific)
+     - Current hypothesis on root cause
+     - Relevant file contents if helpful
+4. **Never skip tests or proceed with failures** - Tests are acceptance criteria
 
 **Verify Phase 5:**
 - [ ] Unit tests pass (db.test.ts)
 - [ ] E2E tests pass (homepage, server-action)
 - [ ] No test failures
 
+**Commit checkpoint:**
+```bash
+git add tests/ vitest.config.ts vitest.setup.ts playwright.config.ts package.json pnpm-lock.yaml
+git commit -m "test: add testing infrastructure and bootstrap smoke tests
+
+- Configure Vitest for unit tests
+- Configure Playwright for E2E tests
+- Add database connection test
+- Add homepage and server action E2E tests
+- All tests passing
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
 ---
 
-### Phase 6: Docker Compose (Local Postgres)
+### Phase 6: Docker Compose (Already Complete)
+
+**Docker Postgres was started in Phase 0.** No additional steps needed.
+
+**Verify Phase 6 (if not already done):**
+- [ ] `docker compose ps` shows postgres running
+- [ ] `docker compose ps` shows "healthy" status
+
+---
+
+### Phase 7: SST Configuration & Deployment
 
 **If not already running:**
 
@@ -413,36 +623,27 @@ pnpm prisma studio
 
 **Verify Phase 6:**
 - [ ] Docker container running
-- [ ] Prisma Studio can connect
-- [ ] DATABASE_URL in .env matches docker-compose credentials
+- [ ] Prisma Studio can connect (via `sst shell`)
 
 ---
 
 ### Phase 7: SST Configuration & Deployment
 
-**⚠️ HUMAN REQUIRED: AWS credentials must be configured (see Prerequisites)**
+**Prerequisites already completed in Phase 0:**
+- ✅ AWS credentials configured
+- ✅ SST installed
+- ✅ DatabaseUrl secret set for your stage
 
-1. Install SST:
+**1. Create `sst.config.ts`** (see SST Configuration section)
+
+**2. Deploy to your dev stage:**
 ```bash
-pnpm add -D sst
-```
-
-2. Create `sst.config.ts` (see SST Configuration section)
-
-3. Set DATABASE_URL as SST secret:
-```bash
-sst secret set DatabaseUrl "$DATABASE_URL"
-```
-(Uses DATABASE_URL from .env)
-
-4. Deploy to dev stage:
-```bash
-pnpm sst deploy --stage dev
+sst deploy --stage $SST_STAGE
 ```
 
 **This will take 5-10 minutes on first deploy.**
 
-5. Save the output:
+**3. Save the output:**
 - CloudFront URL (web.url)
 - Cron function name
 
@@ -452,16 +653,64 @@ pnpm sst deploy --stage dev
 - [ ] Output shows Cron function name
 
 **Programmatic verification (agent can do):**
+
+**1. Verify Next.js deployment:**
 ```bash
-# Check if deployed site returns 200
-DEPLOY_URL=$(sst output --stage dev web.url)
-curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL
-# Should output: 200
+# Get the deployed URL
+DEPLOY_URL=$(sst output --stage $SST_STAGE web.url)
+
+# Retry up to 5 times (handles cold starts)
+for i in {1..5}; do
+  echo "Attempt $i: Checking $DEPLOY_URL"
+  CODE=$(curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL)
+
+  if [ "$CODE" = "200" ]; then
+    echo "✓ Deployment verified (HTTP 200)"
+    break
+  else
+    echo "Got HTTP $CODE, retrying..."
+    [ $i -eq 5 ] && echo "✗ Deployment failed after 5 attempts" && exit 1
+    sleep 2
+  fi
+done
+```
+
+**2. Verify cron Lambda works (don't wait 1 hour):**
+```bash
+# Get the function name from SST outputs
+FUNCTION_NAME=$(sst output --stage $SST_STAGE cron)
+
+# Invoke the Lambda function manually
+aws lambda invoke \
+  --function-name $FUNCTION_NAME \
+  --invocation-type RequestResponse \
+  --payload '{}' \
+  /tmp/cron-output.json
+
+# Check the response
+cat /tmp/cron-output.json
+# Should show: {"statusCode":200,"body":"{\"message\":\"Cron executed successfully\",...}"}
+
+# Verify it logged user count
+grep -q "User count" /tmp/cron-output.json && echo "✓ Cron executed successfully" || echo "✗ Cron output unexpected"
 ```
 
 **Manual verification (human or MCP server):**
 - Visit CloudFront URL in browser - should see "Hello Turnout"
-- Check CloudWatch logs for cron execution (wait 1 hour)
+- Check CloudWatch logs for manual Lambda invocation (optional)
+
+**Commit checkpoint:**
+```bash
+git add sst.config.ts docker-compose.yml
+git commit -m "feat: add SST infrastructure configuration
+
+- Configure SST for Next.js deployment to Lambda@Edge
+- Configure cron job for hello-world Lambda
+- Add Docker Compose for local Postgres
+- Successfully deployed to stage: $SST_STAGE
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
 
 ---
 
@@ -471,10 +720,14 @@ curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL
 
 1. Create `.github/workflows/ci.yml` (see GitHub Actions CI section)
 
-2. Commit all files:
+2. Commit CI configuration:
 ```bash
-git add .
-git commit -m "Initial bootstrap
+git add .github/
+git commit -m "ci: add GitHub Actions workflow
+
+- Run tests on PR and push to main
+- Type check with TypeScript
+- Use GitHub Actions postgres service for tests
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -924,6 +1177,10 @@ export default defineConfig({
 })
 ```
 
+**Note:** Playwright starts Next.js directly (`next dev`), not through SST. However:
+- **Locally:** When running `sst shell --stage $USER -- pnpm test:e2e`, the DATABASE_URL is injected into the environment before Playwright starts, so Next.js inherits it
+- **CI:** DATABASE_URL is passed as an environment variable, so Next.js inherits it from the CI environment
+
 ### E2E Tests (Organized by TDD)
 
 **Why organized by TDD?**
@@ -1067,6 +1324,12 @@ jobs:
           DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
 ```
 
+**Note on CI approach:**
+- CI runs `test:unit` and `test:e2e` directly (not the wrapper `test` script)
+- This avoids needing SST/AWS in CI
+- DATABASE_URL is passed as environment variable, not from SST secrets
+- Tests verify code correctness, not infrastructure configuration
+
 ---
 
 ## Root Configuration Files
@@ -1090,17 +1353,16 @@ packages:
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter @turnout/web dev",
+    "dev": "sst dev --stage ${SST_STAGE:-$USER}",
     "build": "pnpm --filter @turnout/web build",
-    "test": "pnpm test:unit && pnpm test:e2e",
+    "test": "sst shell --stage ${SST_STAGE:-$USER} -- sh -c 'pnpm test:unit && pnpm test:e2e'",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
-    "db:push": "prisma db push",
+    "db:migrate": "sst shell --stage ${SST_STAGE:-$USER} -- prisma migrate dev",
+    "db:studio": "sst shell --stage ${SST_STAGE:-$USER} -- prisma studio",
+    "db:push": "sst shell --stage ${SST_STAGE:-$USER} -- prisma db push",
     "db:generate": "prisma generate",
-    "deploy": "sst deploy",
-    "sst:dev": "sst dev",
+    "deploy": "sst deploy --stage production",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
@@ -1140,16 +1402,23 @@ packages:
 }
 ```
 
-### Environment Variables
+### Configuration via SST Secrets
 
-**File:** `.env.example`
+**No `.env` file needed.** All configuration is managed through SST secrets.
 
+**Setup per developer:**
 ```bash
-# Local development
-DATABASE_URL="postgresql://turnout:turnout_dev_password@localhost:5432/turnout_dev"
+# Use your username as stage name
+export SST_STAGE=$USER
 
-# For SST deployment, set via:
-# sst secret set DatabaseUrl <your-neon-connection-string>
+# Set secret pointing to local Docker (for development/testing)
+sst secret set DatabaseUrl "postgresql://turnout:turnout_dev_password@localhost:5432/turnout_dev" --stage $SST_STAGE
+```
+
+**For production deployment:**
+```bash
+# Set secret pointing to Neon (when ready to deploy)
+sst secret set DatabaseUrl "postgresql://user:password@ep-xxx.neon.tech/turnoutdb?sslmode=require" --stage production
 ```
 
 ---
@@ -1173,29 +1442,33 @@ pnpm install
 # 2. Start local Postgres
 docker compose up -d
 
-# 3. Run Prisma migrations
+# 3. Set up your SST stage and secret
+export SST_STAGE=$USER
+sst secret set DatabaseUrl "postgresql://turnout:turnout_dev_password@localhost:5432/turnout_dev" --stage $SST_STAGE
+
+# 4. Run Prisma migrations
 pnpm db:migrate
 
-# 4. Start Next.js dev server
+# 5. Start SST dev server
 pnpm dev
 # Visit http://localhost:3000
 
-# 5. Run tests
+# 6. Run tests
 pnpm test
 ```
 
-### Deploy to AWS Dev Stage
+### Deploy to Production
 
 ```bash
-# 1. Set DATABASE_URL secret (Neon connection string)
-sst secret set DatabaseUrl "postgresql://user:pass@host/db"
+# 1. Set production DATABASE_URL secret (Neon connection string)
+sst secret set DatabaseUrl "postgresql://user:pass@neon.tech/db" --stage production
 
 # 2. Deploy
 pnpm deploy
 
 # Output:
 #   TurnoutWeb: https://xyz.cloudfront.net
-#   HelloCron: turnout-dev-HelloCron
+#   HelloCron: turnout-production-HelloCron
 ```
 
 ### Verify Deployment
@@ -1251,8 +1524,9 @@ pnpm deploy
 1. Is Docker running? `docker ps` should list containers
 2. Is Postgres container running? `docker compose ps`
 3. Start Postgres: `docker compose up -d`
-4. Check DATABASE_URL in .env matches docker-compose.yml credentials
-5. Try connecting manually: `psql $DATABASE_URL` (if psql installed)
+4. Verify SST secret: `sst secret list --stage $SST_STAGE` should show DatabaseUrl
+5. Test connection: `sst shell --stage $SST_STAGE -- sh -c 'echo $DATABASE_URL'` (should show connection string)
+6. Try connecting manually with secret: `sst shell --stage $SST_STAGE -- sh -c 'psql $DATABASE_URL'` (if psql installed)
 
 ---
 

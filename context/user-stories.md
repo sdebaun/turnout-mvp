@@ -8,9 +8,9 @@ This document contains "slice-of-life" narratives of the turnout.network users.
 
 ### Alice
 
-Alice has never done any sort of activism before in her life. A friend texts Alice, "want to come to this anti-ice protest?" and sends Alice a link. Alice follows that to the event page on the turnout.network.
+Alice has never done any sort of activism before in her life. A friend texts Alice, "want to come to this anti-ice protest?" and sends Alice a link. Alice follows that to the turnout page on the turnout.network.
 
-That event page shows her the where and when of the event (10 AM, Main Street), the what of the workspace and organizers for that workspace, and the what of the event. There's a big RSVP now! button.
+That turnout page shows her the where and when of the turnout (10 AM, Main Street), the what of the group and organizers for that group, and the what of the turnout. There's a big RSVP now! button.
 
 She clicks on the button and theres a dialog. It asks for her phone number so we can text her a confirmation code. It asks for her name -- but the field is prefilled with a randomly generated name (eg BlueWombat) and lets her reroll the name or enter her own name. She enters "Alice Wombat" because she actually likes wombats and her name is alice after all. Then she clicks OK.
 
@@ -36,7 +36,7 @@ She waves around a sign and walks around with a bunch of people who also are pro
 
 The next day...
 
-At some reasonable hour (say 10AM), she gets another notification "You Did Your Part at the Melt ICE protest! What did you think?" and when she clicks on it, she gets to leave a little mini-feedback text about the event. After she does that, she is taken to her first-time profile setup screen, which lets her put in her profile, find other events in the area, and set her profile as public so that other organizers in her area can reach out to her
+At some reasonable hour (say 10AM), she gets another notification "You Did Your Part at the Melt ICE protest! What did you think?" and when she clicks on it, she gets to leave a little mini-feedback text about the turnout. After she does that, she is taken to her first-time profile setup screen, which lets her put in her profile, find other turnouts in the area, and set her profile as public so that other organizers in her area can reach out to her
 
 ### Bob
 
@@ -52,11 +52,11 @@ The platform starts with the helpful hint of "dont think too hard about this, yo
 - "What are you calling your group?", and the helpful ai suggestion is "Save Willow Creek", he accepts that
 - "Who are you"? Same username setup as alice has (OrangeArmadillo is suggested, he just uses his real name)
 
-After all that he gets a screen about "Whats Your First Event?" It has one big CTA card at the top: "Most people start with a planning meeting" and then a bunch of smaller cards below it for other types of events. There's a bunch of those, and he doesn't know what they are, but his eye sticks on "most people start with a planning meeting". So he taps on that.
+After all that he gets a screen about "What's Your First Turnout?" It has one big CTA card at the top: "Most people start with a planning meeting" and then a bunch of smaller cards below it for other types of turnouts. There's a bunch of those, and he doesn't know what they are, but his eye sticks on "most people start with a planning meeting". So he taps on that.
 
 The next screen he sees has a few more fields, some prefilled:
 
-- "Event Name", is prefilled with "First Planning Meeting", he leaves it
+- "Turnout Name", is prefilled with "First Planning Meeting", he leaves it
 - "Where", lets him pick a local coffee shop that he and his friends go to
 - "When", lets him use a calendar/timepicker to pick next Friday night at 6pm
 

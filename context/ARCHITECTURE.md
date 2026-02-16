@@ -28,20 +28,54 @@
 
 ### Hosting: SST (Ion) on AWS
 
-**What:** Infrastructure as Code via SST. Next.js deployed to Lambda@Edge + CloudFront. Full AWS access (EventBridge, SQS, S3, etc.).
+**What:** Infrastructure as Code via SST v3 (Ion). Next.js deployed to Lambda@Edge + CloudFront. Full AWS access (EventBridge, SQS, S3, etc.).
 
-**Why:**
+**Why SST + AWS (not Vercel):**
 
-- **Unlimited cron schedules:** Reminder system needs multiple EventBridge rules. Vercel Cron free tier = 1 job.
-- **Infrastructure as Code:** Everything defined in code, not UI clicks. Easier to migrate than platform lock-in.
-- **Reduced vendor lock-in:** Next.js app code is portable. Infrastructure code (SST → CDK/Terraform) is easier to migrate than Vercel. Moving AWS → GCP still requires infra rewrites and SDK changes, but app code survives.
-- **Developer familiarity:** We already know SST. Vercel's "simplicity" advantage doesn't apply.
+This is a deliberate, informed choice. Common objections addressed:
+
+**"But Vercel is simpler!"**
+- True for developers learning the stack. Not true for us—we're already comfortable with SST.
+- Vercel's simplicity is UI-driven configuration. We prefer Infrastructure as Code (everything in `sst.config.ts`).
+- For agent teams, SST's code-based config is easier to work with than Vercel's dashboard + environment variables.
+
+**"But you'll outgrow Vercel anyway!"**
+- Correct. We expect to need:
+  - Multiple EventBridge cron schedules (Vercel Cron free tier = 1 job, Pro = limited)
+  - SQS for async job processing (reminder sending, check-in notifications)
+  - S3 for future file uploads (user avatars, group logos)
+  - Direct database connections from Lambda (Neon's serverless Postgres works better with Lambda than Vercel's edge runtime)
+- Starting with AWS now means no migration later.
+
+**"But per-branch previews!"**
+- SST supports full-stack per-branch deployments: Lambda functions, EventBridge rules, databases (Neon branches), environment variables—everything.
+- Vercel only deploys the Next.js app. Previews don't include cron jobs or AWS resources.
+- For testing reminder flows, you NEED the full stack in preview environments.
+
+**"But Lambda@Edge cold starts!"**
+- Real concern for sub-second latency requirements. We're provisioning concurrency from day one.
+- **Provisioned Concurrency:** 1 Lambda instance always hot (~$11/month). Eliminates cold starts for typical traffic.
+- Alice clicks a link on a street corner—instant page load matters. $11/month is cheaper than losing her attention.
+- At MVP scale (10 turnouts, 50 participants), 1 provisioned instance covers normal load. Lambda auto-scales beyond that.
+
+**"But debugging is harder!"**
+- Debugging Lambda is harder than debugging Vercel. True.
+- We're comfortable with CloudWatch Logs, Lambda insights, and SST's `sst dev` local mode.
+- Tradeoff accepted for infrastructure control.
+
+**Bottom line:** SST + AWS is the right choice for this project. If you're an agent reading this and thinking "but Vercel would be simpler," understand that the decision has been made based on team familiarity, expected growth, and architectural needs. Don't relitigate it.
 
 ### Authentication: Phone-based OTP
 
-**What:** SMS OTP codes (10-min expiry, single-use, 6 digits). WebOTP API for one-tap autofill. Persistent sessions (HttpOnly cookies, no expiration until logout).
+**What:** SMS OTP codes (10-min expiry, single-use, 6 digits). WebOTP API for one-tap autofill. Database-backed persistent sessions (HttpOnly cookies, no expiration until logout).
 
 **Why:** Sporadic usage patterns demand persistent sessions. Phone number is the weak point anyway, so "accessibility over hardened security" aligns with the Open Door Principle. OTP chosen over magic links for better SMS deliverability (no URLs = lower carrier spam scoring).
+
+**Session Management:**
+- **Storage:** Database-backed. Cookie contains session ID, database stores phone number + created_at + expires_at (null for persistent).
+- **Cross-device:** Each device requires separate OTP flow. Same phone number can have multiple active sessions (phone + laptop + tablet).
+- **Invalidation:** Logout deletes session from database. Cookie is HttpOnly, Secure, SameSite=Lax.
+- **Phone number change:** Out of scope for MVP. If needed later, would invalidate all sessions for old number.
 
 ### Messaging: Twilio SMS + Web Push
 
@@ -71,14 +105,81 @@
 
 ---
 
+## Observability Strategy
+
+**Philosophy:** Observability is a feature requirement, not ops infrastructure. Every PR ships with its own monitoring.
+
+### What Agents Ship With Every Feature
+
+**1. Product Analytics (Mixpanel or PostHog)**
+- Track key events: `mixpanel.track('Turnout Created', { groupId, userId })`
+- Document what's tracked in PRD/TDD
+- Provide SQL query or dashboard config for metrics
+
+**2. Error Tracking (Sentry)**
+- Add error context: `Sentry.setContext('turnout', { id: turnoutId })`
+- Try/catch blocks for critical paths with descriptive errors
+- Automatic exception capture for unhandled errors
+
+**3. Critical Path Alarms (CloudWatch + SNS)**
+- For cron jobs: Define alarm in `sst.config.ts` that emails on failure
+- For external APIs: Add retry logic + alarm if retries exhausted
+- Document: "If X fails, you'll get an email about Y"
+
+**4. Metrics Queries (SQL Views)**
+- Write Prisma migrations that create views: `CREATE VIEW daily_rsvps AS...`
+- Or provide ad-hoc queries for dashboard tools
+
+### Tools & Services
+
+**Sentry** (Free tier: 5k events/month)
+- Exception tracking with stack traces
+- Real-time alerts when code breaks
+- One-line Next.js integration
+
+**Mixpanel or PostHog** (Free tier: 20M events/month)
+- Product analytics and dashboards
+- Real-time activity monitoring
+- Alternative: Just query Postgres directly
+
+**CloudWatch Alarms** (~$0.10/alarm/month)
+- Defined in SST (Infrastructure as Code)
+- SNS email notifications when jobs fail
+- Agents define alarms alongside features
+
+### Human Setup Required (One-Time, ~15 min)
+
+1. Sign up for Sentry → paste DSN into `.env`
+2. Sign up for Mixpanel/PostHog → paste API key into `.env`
+3. Click "Confirm Subscription" in SNS email when first alarm deploys
+4. (Optional) Deploy dashboard tool if you want graphs beyond Mixpanel
+
+**Daily routine:** Check one dashboard showing turnouts/RSVPs/check-ins/errors. Takes 2 minutes.
+
+### What We're NOT Doing (MVP)
+
+- ❌ Structured logging (CloudWatch Logs is sufficient)
+- ❌ Distributed tracing (single monolith, not needed)
+- ❌ Uptime monitoring (you'll know if it's down)
+- ❌ Performance monitoring (optimize after users exist)
+
+---
+
 ## Cost Estimate (MVP)
 
 Expected usage: 10 turnouts, 50 participants, low traffic
 
-- **AWS (Lambda, CloudFront, EventBridge):** ~$0-5 (free tier covers compute/networking)
+- **AWS Lambda (provisioned concurrency):** ~$11/month (1 instance always hot)
+- **AWS (CloudFront, EventBridge, execution):** ~$0-5 (free tier covers most usage)
 - **Neon Postgres:** Free tier (0.5GB storage, sufficient)
-- **Twilio SMS:** ~$2-20 (main cost driver)
+- **Twilio phone number:** ~$1.15/month (required for SMS)
+- **Twilio 10DLC registration:** $15 one-time + $0.50/month campaign fee
+- **Twilio SMS:** ~$5-15/month (50 participants × ~3 SMS each: auth + reminders)
 
-**Total: ~$2-25/month**
+**Total recurring: ~$18-33/month**
+**Total first month (with 10DLC setup): ~$33-48**
 
-At 1000 participants RSVPing (3 SMS each: auth + 2 reminders) = ~$24 in SMS alone.
+At 1000 participants RSVPing (1000 auth + 300 re-auth + 3000 reminders = 4300 SMS):
+- SMS costs: ~$34
+- Infrastructure: ~$17
+- **Total at scale: ~$51/month**
