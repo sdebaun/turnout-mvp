@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "sst dev --stage ${SST_STAGE:-$USER}",
     "build": "pnpm --filter @turnout/web build",
     "test": "sst shell --stage ${SST_STAGE:-$USER} -- sh -c 'pnpm test:unit && pnpm test:e2e'",
