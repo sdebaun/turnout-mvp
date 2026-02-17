@@ -1,0 +1,22 @@
+// Minimal schema to prove Prisma works end-to-end.
+// Real domain models (Group, Turnout, Engagement, etc.) come in feature TDDs.
+
+generator client {
+  provider      = "prisma-client-js"
+  // Need both targets: native for local dev, rhel for AWS Lambda
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([phoneNumber])
+}

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: turnout
+          POSTGRES_PASSWORD: turnout_test_password
+          POSTGRES_DB: turnout_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Debug - Check installed type versions
+        run: |
+          echo "=== Checking @types/react versions ==="
+          cat apps/web/node_modules/@types/react/package.json | grep '"version"' || echo "NOT FOUND"
+          echo "=== Checking @types/react-dom versions ==="
+          cat apps/web/node_modules/@types/react-dom/package.json | grep '"version"' || echo "NOT FOUND"
+
+      - name: Run Prisma migrations
+        run: pnpm prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
+
+      - name: Generate Prisma client
+        run: pnpm prisma generate
+
+      - name: Generate Next.js type definitions
+        run: |
+          cd apps/web
+          timeout 5 pnpm next dev || true
+          test -f next-env.d.ts && echo "✓ next-env.d.ts generated" || echo "✗ Failed to generate next-env.d.ts"
+          cd ../..
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Run tests
+        run: pnpm test:unit
+        env:
+          DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
+
+      - name: Install Playwright browsers
+        run: pnpm playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test

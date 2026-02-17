@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: turnout-postgres
+    environment:
+      POSTGRES_USER: turnout
+      # Local dev only — weak password acceptable (never use in production)
+      POSTGRES_PASSWORD: turnout_dev_password
+      POSTGRES_DB: turnout_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U turnout"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
