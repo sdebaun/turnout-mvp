@@ -14,7 +14,7 @@
     "db:push": "sst shell --stage ${SST_STAGE:-$USER} -- prisma db push",
     "db:generate": "prisma generate",
     "deploy": "sst deploy --stage ${SST_STAGE:-$USER}",
-    "prod:deploy": "sst deploy --stage prod",
+    "prod:deploy": "sst deploy --stage staging",
     "typecheck": "tsc -p apps/web/tsconfig.json --noEmit && tsc -p apps/functions/tsconfig.json --noEmit"
   },
   "devDependencies": {

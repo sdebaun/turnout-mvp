@@ -3,12 +3,26 @@
 export default $config({
   app: (input) => ({
     name: "turnout",
-    removal: input?.stage === "production" ? "retain" : "remove",
+    // NOTE: Using "staging" instead of "prod"/"production" due to SST bug
+    // Stage names "prod", "production", "live" trigger Pulumi runtime error:
+    // "TypeError: module_1.register is not a function"
+    // This appears to be an SST v3.18.5 / Pulumi ts-node ESM initialization bug
+    removal: input?.stage === "staging" ? "retain" : "remove",
     home: "aws",
   }),
   async run() {
     // Database URL from SST Secret (set via `sst secret set DatabaseUrl <value>`)
     const databaseUrl = new sst.Secret("DatabaseUrl")
+
+    // Custom domain configuration (production only)
+    // Using "staging" as production stage name (see comment above)
+    const domain = $app.stage === "staging"
+      ? {
+          name: "turnout.network",
+          redirects: ["www.turnout.network"],
+          dns: { zone: "Z05439171T4ND1GLJLT6S" },
+        }
+      : undefined
 
     // Next.js app
     const web = new sst.aws.Nextjs("TurnoutWeb", {
@@ -17,6 +31,7 @@ export default $config({
       environment: {
         DATABASE_URL: databaseUrl.value,
       },
+      domain,
     })
 
     // Hello world cron job - runs every hour
