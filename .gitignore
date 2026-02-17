@@ -29,6 +29,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # debug artifacts (don't commit debug sessions)
+.debug-log.md
+.pr-review-*.md
 CURRENT_DEBUG.md
 .playwright-mcp/*.log
 
