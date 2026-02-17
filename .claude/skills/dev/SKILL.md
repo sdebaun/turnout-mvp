@@ -68,6 +68,12 @@ Context: Read all docs in context/
 Log: [timestamp] - Spawning team...
 ```
 
+### Step 0.3: Make sure you're on the right branch
+
+Make sure you're on a feature branch, not main. If not, create a new branch. Make sure you're branching from the latest main.
+
+The branch should be named after the tdd so that agents and monkeys can properly connect the branch (and eventual PR) to the tdd.
+
 ### Step 0.2 Fire up the crew
 
 Use your own judgement to decide what agents you should spawn and how you want to break up the work. Choose the best set of agents that will get you to a complete PR, deployed in the user's personal stage, with passing tests, that fulfills the TDD & PRD requirements.
