@@ -1,8 +1,8 @@
 # TDD0000: Project Bootstrap
 
 **PRD:** N/A (Infrastructure - precedes all PRDs)
-**Status:** Draft
-**Last Updated:** 2026-02-14
+**Status:** Merged
+**Last Updated:** 2026-02-16
 
 ## Context
 
@@ -29,6 +29,7 @@
 **Scope:**
 
 **In scope:**
+
 - Project structure (monorepo with pnpm workspaces)
 - Next.js app with hello-world page and Server Action
 - Lambda function with hello-world cron handler
@@ -38,6 +39,7 @@
 - GitHub Actions CI that runs tests on PR
 
 **Out of scope:**
+
 - Any real features (auth, turnouts, etc. - those come later)
 - Production deployment (dev stage only for now)
 - Complex database schema (just enough to prove Prisma works)
@@ -101,6 +103,7 @@ The following setup steps require external services and cannot be completed auto
 4. Save it securely - you'll set it as an SST secret for production stage
 
 **Expected output:** A connection string like:
+
 ```
 postgresql://user:password@ep-cool-name-12345.us-east-2.aws.neon.tech/turnoutdb?sslmode=require
 ```
@@ -108,6 +111,7 @@ postgresql://user:password@ep-cool-name-12345.us-east-2.aws.neon.tech/turnoutdb?
 **Note:** Local development and testing use Docker Postgres (see Phase 0), not Neon. Neon is only for deployed stages (production, and optionally per-developer dev stages).
 
 **Alternative with Neon MCP server (if available):**
+
 - Agent could create production database via MCP
 - Agent could retrieve connection string via MCP
 - Agent could create per-developer dev databases for `sst dev` usage
@@ -139,11 +143,13 @@ postgresql://user:password@ep-cool-name-12345.us-east-2.aws.neon.tech/turnoutdb?
 **Architecture decision:** All configuration comes from SST secrets, not `.env` files.
 
 **Per-developer stages:**
+
 - Each developer gets their own SST stage: `--stage $USER`
 - Prevents collisions when multiple developers work on the project
 - Stage examples: `--stage sdebaun`, `--stage alice`, `--stage production`
 
 **Database strategy:**
+
 - **Local development/testing:** Docker Postgres (fast, isolated)
   - SST secret points to `postgresql://localhost:5432/turnout_dev`
   - Agent sets this in Phase 0
@@ -230,9 +236,11 @@ turnout-mvp/
 ### Phase Dependencies
 
 **Sequential phases (must run in order):**
+
 - Phase 0: Prerequisites → Phase 1: Project Init → **[Parallel Block]** → Phase 5: Testing → Phase 7: Deployment → Phase 8: CI
 
 **Parallel block (Phases 2-4 can run simultaneously):**
+
 - Phase 2: Database layer (lib/db)
 - Phase 3: Next.js app (apps/web)
 - Phase 4: Lambda functions (apps/functions)
@@ -242,6 +250,7 @@ These three phases are **independent** - they create separate directories and do
 ### Team Allocation
 
 **Recommended for 3-agent team:**
+
 - **Agent 1 (Database specialist):** Phase 2 - Set up Prisma, migrations, db tests
 - **Agent 2 (Frontend specialist):** Phase 3 - Set up Next.js app, Server Actions, E2E tests
 - **Agent 3 (Backend specialist):** Phase 4 - Set up Lambda functions, cron handler
@@ -253,6 +262,7 @@ These three phases are **independent** - they create separate directories and do
 ### Communication Protocol for Parallel Work
 
 When running in parallel:
+
 1. Each agent claims their phase: "Starting Phase X"
 2. Each agent reports completion: "Phase X complete, verification passed"
 3. Team lead (or coordinating agent) waits for all three completions
@@ -267,6 +277,7 @@ When running in parallel:
 **Agent must verify or halt before proceeding:**
 
 **1. Check required tools:**
+
 ```bash
 # Verify Node.js 20+
 node --version  # Should be >=20
@@ -287,6 +298,7 @@ docker ps 2>/dev/null || {
 **If any tool is missing or wrong version: HALT and report to human.**
 
 **2. Check AWS credentials:**
+
 ```bash
 aws sts get-caller-identity
 # Should return account info without errors
@@ -295,17 +307,20 @@ aws sts get-caller-identity
 **If AWS credentials not configured: HALT and ask human to run `aws configure`.**
 
 **3. Start Docker Postgres:**
+
 ```bash
 docker compose up -d
 ```
 
 Wait for healthy status:
+
 ```bash
 # Wait up to 30 seconds for postgres to be healthy
 timeout 30 bash -c 'until docker compose ps | grep -q "healthy"; do sleep 1; done'
 ```
 
 **4. Set up SST stage and secrets:**
+
 ```bash
 # Use username as stage name to prevent collisions
 export SST_STAGE=$USER
@@ -319,12 +334,14 @@ sst secret set DatabaseUrl "postgresql://turnout:turnout_dev_password@localhost:
 ```
 
 **5. Verify secret was set:**
+
 ```bash
 sst secret list --stage $SST_STAGE
 # Should show: DatabaseUrl
 ```
 
 **Verify Phase 0:**
+
 - [ ] Node.js 20+, pnpm 8+, Git, Docker all present
 - [ ] AWS credentials configured (`aws sts get-caller-identity` works)
 - [ ] Docker Postgres running and healthy
@@ -340,20 +357,24 @@ sst secret list --stage $SST_STAGE
 **Create root files:**
 
 1. Create `package.json`:
+
 ```bash
 pnpm init
 ```
+
 Edit to match the Root Package.json section below.
 
 2. Create `pnpm-workspace.yaml`:
+
 ```yaml
 packages:
-  - 'apps/*'
+  - "apps/*"
 ```
 
 3. Create `tsconfig.json` (base config - see Root tsconfig.json section below)
 
 4. Create `.gitignore`:
+
 ```
 node_modules
 .next
@@ -365,11 +386,13 @@ dist
 **Note:** No `.env` file needed - all configuration comes from SST secrets (set in Phase 0).
 
 **Verify Phase 1:**
+
 - [ ] `pnpm --version` works
 - [ ] `pnpm-workspace.yaml` exists
 - [ ] `.gitignore` exists
 
 **Commit checkpoint:**
+
 ```bash
 git add .
 git commit -m "chore: project initialization (workspace, tsconfig, gitignore)
@@ -386,6 +409,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 1. Create directory: `mkdir -p lib/db`
 
 2. Install Prisma at root:
+
 ```bash
 pnpm add -D prisma @prisma/client
 ```
@@ -393,14 +417,17 @@ pnpm add -D prisma @prisma/client
 3. Create `lib/db/schema.prisma` (see Database Schema section for content)
 
 4. Generate Prisma client:
+
 ```bash
 pnpm prisma generate
 ```
 
 5. Create initial migration (uses DATABASE_URL from SST secret):
+
 ```bash
 sst shell --stage $SST_STAGE -- pnpm prisma migrate dev --name init
 ```
+
 (This will prompt for migration name - use "init")
 
 **Note:** `sst shell` injects the DatabaseUrl secret as DATABASE_URL environment variable.
@@ -412,12 +439,14 @@ sst shell --stage $SST_STAGE -- pnpm prisma migrate dev --name init
 8. Create `lib/db/db.test.ts` (see Database Tests section)
 
 **Verify Phase 2:**
+
 - [ ] `node_modules/.prisma/client` directory exists
 - [ ] `lib/db/migrations/` directory exists with migration files
 - [ ] Docker Postgres running: `docker compose ps`
 - [ ] Can connect: `sst shell --stage $SST_STAGE -- pnpm prisma studio` opens (then close it)
 
 **Commit checkpoint:**
+
 ```bash
 git add lib/ package.json pnpm-lock.yaml
 git commit -m "feat: database layer with Prisma
@@ -441,6 +470,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 2. Create `apps/web/package.json` (see Next.js Configuration section)
 
 3. Install Next.js dependencies (run from apps/web):
+
 ```bash
 cd apps/web
 pnpm install
@@ -456,11 +486,13 @@ cd ../..
 7. Create `apps/web/app/actions.ts` (Server Action)
 
 8. Start dev server:
+
 ```bash
 pnpm --filter @turnout/web dev
 ```
 
 **Verify Phase 3:**
+
 - [ ] Server starts without errors
 - [ ] Visit http://localhost:3000
 - [ ] See "Hello Turnout" heading
@@ -469,6 +501,7 @@ pnpm --filter @turnout/web dev
 - [ ] Stop server (Ctrl+C)
 
 **Commit checkpoint:**
+
 ```bash
 git add apps/web
 git commit -m "feat: Next.js app with hello world page
@@ -496,10 +529,12 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 4. Create `apps/functions/src/hello-cron.ts`
 
 **Verify Phase 4:**
+
 - [ ] TypeScript compiles: `pnpm tsc --noEmit` (from root)
 - [ ] No type errors in apps/functions
 
 **Commit checkpoint:**
+
 ```bash
 git add apps/functions
 git commit -m "feat: Lambda functions with hello cron handler
@@ -518,6 +553,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 **Set up Vitest and Playwright:**
 
 1. Install test dependencies at root:
+
 ```bash
 pnpm add -D vitest @playwright/test
 ```
@@ -529,11 +565,13 @@ pnpm add -D vitest @playwright/test
 4. Create `playwright.config.ts`
 
 5. Install Playwright browsers:
+
 ```bash
 pnpm playwright install chromium
 ```
 
 6. Create test directories:
+
 ```bash
 mkdir -p tests/e2e/tdd0000-bootstrap
 mkdir -p tests/e2e/journeys
@@ -544,6 +582,7 @@ mkdir -p tests/e2e/journeys
 8. Create E2E test files (see E2E Tests section)
 
 9. Run tests (using SST shell to inject DATABASE_URL):
+
 ```bash
 # Unit tests (lib/db/db.test.ts)
 sst shell --stage $SST_STAGE -- pnpm test:unit
@@ -555,6 +594,7 @@ sst shell --stage $SST_STAGE -- pnpm test:e2e
 **Note:** `sst shell` injects the DatabaseUrl secret as DATABASE_URL before running tests.
 
 **If tests fail:**
+
 1. **Read the output carefully** - Test failures contain specific error messages and stack traces
 2. **Attempt to fix** - Try to resolve the issue (max 2 attempts):
    - Check file paths and imports
@@ -571,11 +611,13 @@ sst shell --stage $SST_STAGE -- pnpm test:e2e
 4. **Never skip tests or proceed with failures** - Tests are acceptance criteria
 
 **Verify Phase 5:**
+
 - [ ] Unit tests pass (db.test.ts)
 - [ ] E2E tests pass (homepage, server-action)
 - [ ] No test failures
 
 **Commit checkpoint:**
+
 ```bash
 git add tests/ vitest.config.ts vitest.setup.ts playwright.config.ts package.json pnpm-lock.yaml
 git commit -m "test: add testing infrastructure and bootstrap smoke tests
@@ -596,6 +638,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 **Docker Postgres was started in Phase 0.** No additional steps needed.
 
 **Verify Phase 6 (if not already done):**
+
 - [ ] `docker compose ps` shows postgres running
 - [ ] `docker compose ps` shows "healthy" status
 
@@ -608,11 +651,13 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 1. Create `docker-compose.yml` (see Docker Compose section)
 
 2. Start Postgres:
+
 ```bash
 docker compose up -d
 ```
 
 3. Verify connection:
+
 ```bash
 docker compose ps
 # Should show turnout-postgres running
@@ -622,6 +667,7 @@ pnpm prisma studio
 ```
 
 **Verify Phase 6:**
+
 - [ ] Docker container running
 - [ ] Prisma Studio can connect (via `sst shell`)
 
@@ -630,6 +676,7 @@ pnpm prisma studio
 ### Phase 7: SST Configuration & Deployment
 
 **Prerequisites already completed in Phase 0:**
+
 - ✅ AWS credentials configured
 - ✅ SST installed
 - ✅ DatabaseUrl secret set for your stage
@@ -637,6 +684,7 @@ pnpm prisma studio
 **1. Create `sst.config.ts`** (see SST Configuration section)
 
 **2. Deploy to your dev stage:**
+
 ```bash
 sst deploy --stage $SST_STAGE
 ```
@@ -644,10 +692,12 @@ sst deploy --stage $SST_STAGE
 **This will take 5-10 minutes on first deploy.**
 
 **3. Save the output:**
+
 - CloudFront URL (web.url)
 - Cron function name
 
 **Verify Phase 7:**
+
 - [ ] Deployment exits with code 0
 - [ ] Output shows CloudFront URL
 - [ ] Output shows Cron function name
@@ -655,6 +705,7 @@ sst deploy --stage $SST_STAGE
 **Programmatic verification (agent can do):**
 
 **1. Verify Next.js deployment:**
+
 ```bash
 # Get the deployed URL
 DEPLOY_URL=$(sst output --stage $SST_STAGE web.url)
@@ -676,6 +727,7 @@ done
 ```
 
 **2. Verify cron Lambda works (don't wait 1 hour):**
+
 ```bash
 # Get the function name from SST outputs
 FUNCTION_NAME=$(sst output --stage $SST_STAGE cron)
@@ -696,10 +748,12 @@ grep -q "User count" /tmp/cron-output.json && echo "✓ Cron executed successful
 ```
 
 **Manual verification (human or MCP server):**
+
 - Visit CloudFront URL in browser - should see "Hello Turnout"
 - Check CloudWatch logs for manual Lambda invocation (optional)
 
 **Commit checkpoint:**
+
 ```bash
 git add sst.config.ts docker-compose.yml
 git commit -m "feat: add SST infrastructure configuration
@@ -721,6 +775,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 1. Create `.github/workflows/ci.yml` (see GitHub Actions CI section)
 
 2. Commit CI configuration:
+
 ```bash
 git add .github/
 git commit -m "ci: add GitHub Actions workflow
@@ -733,6 +788,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
 
 3. Push to GitHub:
+
 ```bash
 git push origin main
 ```
@@ -740,12 +796,14 @@ git push origin main
 4. Check GitHub Actions tab - CI should run automatically
 
 **Verify Phase 8:**
+
 - [ ] All files committed
 - [ ] Pushed to remote
 - [ ] CI runs (check GitHub Actions tab)
 - [ ] CI passes (all jobs green)
 
 **Alternative verification (GitHub MCP server if available):**
+
 - Agent could check CI status via MCP
 - Agent could read CI logs via MCP
 
@@ -782,6 +840,7 @@ model User {
 ```
 
 **Why this schema?**
+
 - Proves Prisma migrations work
 - Proves TypeScript types are generated
 - Proves both apps can import from `lib/db`
@@ -793,28 +852,32 @@ model User {
 **File:** `lib/db/client.ts`
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
+  prisma: PrismaClient | undefined;
+};
 
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 ```
 
 **File:** `lib/db/index.ts`
 
 ```typescript
-export { prisma } from './client'
+export { prisma } from "./client";
 ```
 
 **Why this structure?**
+
 - Singleton prevents "too many connections" in development
 - Shared by both Next.js and Lambda functions
 - TypeScript imports work via path aliases
@@ -854,18 +917,18 @@ export default async function HomePage() {
 **File:** `apps/web/app/actions.ts`
 
 ```typescript
-'use server'
+"use server";
 
-import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { prisma } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 export async function incrementCounter() {
   // Just prove we can call Prisma from a Server Action
-  const userCount = await prisma.user.count()
-  console.log(`Server Action called. User count: ${userCount}`)
+  const userCount = await prisma.user.count();
+  console.log(`Server Action called. User count: ${userCount}`);
 
-  revalidatePath('/')
-  return { success: true, count: userCount }
+  revalidatePath("/");
+  return { success: true, count: userCount };
 }
 ```
 
@@ -879,9 +942,9 @@ const nextConfig = {
   experimental: {
     externalDir: true, // Allow imports from outside app directory (../../lib)
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
 ```
 
 **File:** `apps/web/tsconfig.json`
@@ -938,23 +1001,23 @@ module.exports = nextConfig
 **File:** `apps/functions/src/hello-cron.ts`
 
 ```typescript
-import { prisma } from '@/lib/db'
+import { prisma } from "@/lib/db";
 
 export async function handler() {
-  console.log('Hello from cron! Timestamp:', new Date().toISOString())
+  console.log("Hello from cron! Timestamp:", new Date().toISOString());
 
   // Prove we can query Prisma from Lambda
-  const userCount = await prisma.user.count()
-  console.log('User count:', userCount)
+  const userCount = await prisma.user.count();
+  console.log("User count:", userCount);
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: 'Cron executed successfully',
+      message: "Cron executed successfully",
       userCount,
-      timestamp: new Date().toISOString()
-    })
-  }
+      timestamp: new Date().toISOString(),
+    }),
+  };
 }
 ```
 
@@ -1009,7 +1072,7 @@ export default $config({
   }),
   async run() {
     // Database URL from SST Secret (set via `sst secret set DATABASE_URL <value>`)
-    const databaseUrl = new sst.Secret("DatabaseUrl")
+    const databaseUrl = new sst.Secret("DatabaseUrl");
 
     // Next.js app
     const web = new sst.aws.Nextjs("TurnoutWeb", {
@@ -1018,7 +1081,7 @@ export default $config({
       environment: {
         DATABASE_URL: databaseUrl.value,
       },
-    })
+    });
 
     // Hello world cron job - runs every hour
     const helloCron = new sst.aws.Cron("HelloCron", {
@@ -1030,17 +1093,18 @@ export default $config({
         },
       },
       schedule: "rate(1 hour)",
-    })
+    });
 
     return {
       web: web.url,
       cron: helloCron.name,
-    }
+    };
   },
-})
+});
 ```
 
 **Key decisions:**
+
 - `removal: "retain"` for production (don't accidentally delete data)
 - `removal: "remove"` for dev (clean up after testing)
 - Database URL via SST Secret (not checked into git)
@@ -1079,37 +1143,37 @@ export default $config({
 **File:** `vitest.config.ts`
 
 ```typescript
-import { defineConfig } from 'vitest/config'
-import path from 'path'
+import { defineConfig } from "vitest/config";
+import path from "path";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
-    setupFiles: ['./vitest.setup.ts'],
+    environment: "node",
+    setupFiles: ["./vitest.setup.ts"],
   },
   resolve: {
     alias: {
-      '@/lib': path.resolve(__dirname, './lib'),
+      "@/lib": path.resolve(__dirname, "./lib"),
     },
   },
-})
+});
 ```
 
 **File:** `vitest.setup.ts`
 
 ```typescript
-import { beforeAll, afterAll } from 'vitest'
+import { beforeAll, afterAll } from "vitest";
 
 beforeAll(async () => {
   // Setup: ensure test database is ready
-  console.log('Test setup: checking database connection')
-})
+  console.log("Test setup: checking database connection");
+});
 
 afterAll(async () => {
   // Cleanup: disconnect from database
-  console.log('Test cleanup: disconnecting from database')
-})
+  console.log("Test cleanup: disconnecting from database");
+});
 ```
 
 ### Database Tests (Co-located with lib/db)
@@ -1117,30 +1181,30 @@ afterAll(async () => {
 **File:** `lib/db/db.test.ts`
 
 ```typescript
-import { describe, it, expect } from 'vitest'
-import { prisma } from './index'
+import { describe, it, expect } from "vitest";
+import { prisma } from "./index";
 
-describe('Database Connection', () => {
-  it('can connect to Postgres and run queries', async () => {
+describe("Database Connection", () => {
+  it("can connect to Postgres and run queries", async () => {
     // This is a smoke test - just prove Prisma works
-    const count = await prisma.user.count()
-    expect(count).toBeGreaterThanOrEqual(0)
-  })
+    const count = await prisma.user.count();
+    expect(count).toBeGreaterThanOrEqual(0);
+  });
 
-  it('can create and query a user', async () => {
-    const phoneNumber = `+1555${Date.now()}`
+  it("can create and query a user", async () => {
+    const phoneNumber = `+1555${Date.now()}`;
 
     const user = await prisma.user.create({
       data: { phoneNumber },
-    })
+    });
 
-    expect(user.id).toBeTruthy()
-    expect(user.phoneNumber).toBe(phoneNumber)
+    expect(user.id).toBeTruthy();
+    expect(user.phoneNumber).toBe(phoneNumber);
 
     // Cleanup
-    await prisma.user.delete({ where: { id: user.id } })
-  })
-})
+    await prisma.user.delete({ where: { id: user.id } });
+  });
+});
 ```
 
 **Why co-located?** This test is specifically testing `lib/db` - the Prisma client and database connection. It belongs with the code it tests, not in a separate `tests/integration/` folder.
@@ -1150,40 +1214,42 @@ describe('Database Connection', () => {
 **File:** `playwright.config.ts`
 
 ```typescript
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: "html",
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   webServer: {
-    command: 'pnpm --filter @turnout/web dev',
-    url: 'http://localhost:3000',
+    command: "pnpm --filter @turnout/web dev",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
-})
+});
 ```
 
 **Note:** Playwright starts Next.js directly (`next dev`), not through SST. However:
+
 - **Locally:** When running `sst shell --stage $USER -- pnpm test:e2e`, the DATABASE_URL is injected into the environment before Playwright starts, so Next.js inherits it
 - **CI:** DATABASE_URL is passed as an environment variable, so Next.js inherits it from the CI environment
 
 ### E2E Tests (Organized by TDD)
 
 **Why organized by TDD?**
+
 - Each TDD gets a folder in `tests/e2e/tddXXXX-name/`
 - Makes it clear which tests validate which feature
 - Easy to see test coverage: "Did we test tdd0001?" → Check if folder exists
@@ -1193,33 +1259,33 @@ export default defineConfig({
 **File:** `tests/e2e/tdd0000-bootstrap/homepage.spec.ts`
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test('homepage loads and displays hello message', async ({ page }) => {
-  await page.goto('/')
+test("homepage loads and displays hello message", async ({ page }) => {
+  await page.goto("/");
 
-  await expect(page.locator('h1')).toHaveText('Hello Turnout')
-  await expect(page.locator('text=Bootstrap successful!')).toBeVisible()
-})
+  await expect(page.locator("h1")).toHaveText("Hello Turnout");
+  await expect(page.locator("text=Bootstrap successful!")).toBeVisible();
+});
 ```
 
 **File:** `tests/e2e/tdd0000-bootstrap/server-action.spec.ts`
 
 ```typescript
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test('server action button is rendered and clickable', async ({ page }) => {
-  await page.goto('/')
+test("server action button is rendered and clickable", async ({ page }) => {
+  await page.goto("/");
 
-  const button = page.locator('button[type="submit"]')
-  await expect(button).toBeVisible()
-  await expect(button).toHaveText('Test Server Action')
+  const button = page.locator('button[type="submit"]');
+  await expect(button).toBeVisible();
+  await expect(button).toHaveText("Test Server Action");
 
   // Click it to prove Server Actions work
-  await button.click()
+  await button.click();
   // Server Action logs to console, but doesn't change UI for bootstrap
   // Real features will have observable UI changes to test
-})
+});
 ```
 
 **File:** `tests/e2e/journeys/.gitkeep`
@@ -1233,7 +1299,7 @@ _(Empty for now - this folder will hold cross-feature user journey tests like "b
 **File:** `docker-compose.yml`
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -1296,8 +1362,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: "20"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -1325,6 +1391,7 @@ jobs:
 ```
 
 **Note on CI approach:**
+
 - CI runs `test:unit` and `test:e2e` directly (not the wrapper `test` script)
 - This avoids needing SST/AWS in CI
 - DATABASE_URL is passed as environment variable, not from SST secrets
@@ -1340,7 +1407,7 @@ jobs:
 
 ```yaml
 packages:
-  - 'apps/*'
+  - "apps/*"
 ```
 
 ### Root Package.json
@@ -1407,6 +1474,7 @@ packages:
 **No `.env` file needed.** All configuration is managed through SST secrets.
 
 **Setup per developer:**
+
 ```bash
 # Use your username as stage name
 export SST_STAGE=$USER
@@ -1416,6 +1484,7 @@ sst secret set DatabaseUrl "postgresql://turnout:turnout_dev_password@localhost:
 ```
 
 **For production deployment:**
+
 ```bash
 # Set secret pointing to Neon (when ready to deploy)
 sst secret set DatabaseUrl "postgresql://user:password@ep-xxx.neon.tech/turnoutdb?sslmode=require" --stage production
@@ -1492,6 +1561,7 @@ pnpm deploy
 **Problem:** TypeScript errors saying Prisma client doesn't exist.
 
 **Solutions:**
+
 1. Run `pnpm prisma generate`
 2. Check that `node_modules/.prisma/client` directory exists
 3. Restart TypeScript server (if using VS Code: Cmd+Shift+P → "TypeScript: Restart TS Server")
@@ -1504,6 +1574,7 @@ pnpm deploy
 **Problem:** Import errors for shared lib code.
 
 **Solutions:**
+
 1. Check `tsconfig.json` has correct paths configuration:
    ```json
    "paths": {
@@ -1521,6 +1592,7 @@ pnpm deploy
 **Problem:** Can't connect to Postgres.
 
 **Solutions:**
+
 1. Is Docker running? `docker ps` should list containers
 2. Is Postgres container running? `docker compose ps`
 3. Start Postgres: `docker compose up -d`
@@ -1535,6 +1607,7 @@ pnpm deploy
 **Problem:** `pnpm sst deploy` fails with AWS credential errors.
 
 **🧑 HUMAN REQUIRED:**
+
 1. Run `aws configure` and enter credentials
 2. Or set environment variables:
    ```bash
@@ -1552,6 +1625,7 @@ pnpm deploy
 **Problem:** Deployment fails partway through.
 
 **Solutions:**
+
 1. Check the error message for which resource failed
 2. Common issues:
    - CloudFront distribution limit reached (AWS account limit)
@@ -1565,6 +1639,7 @@ pnpm deploy
    ```
 
 **🧑 HUMAN REQUIRED if:**
+
 - AWS account limits hit (need to request increase)
 - IAM permissions insufficient (need admin to grant)
 
@@ -1575,6 +1650,7 @@ pnpm deploy
 **Problem:** Vitest not installed.
 
 **Solutions:**
+
 1. Install test dependencies: `pnpm add -D vitest @playwright/test`
 2. Check root package.json has vitest in devDependencies
 3. Run `pnpm install` to ensure everything is installed
@@ -1586,6 +1662,7 @@ pnpm deploy
 **Problem:** Playwright browsers not installed.
 
 **Solutions:**
+
 1. Install browsers: `pnpm playwright install chromium`
 2. Or install all browsers: `pnpm playwright install`
 3. Check that chromium browser was downloaded
@@ -1597,6 +1674,7 @@ pnpm deploy
 **Problem:** Trying to run migrations but database state is unclear.
 
 **Solutions:**
+
 1. For development, reset database: `pnpm prisma migrate reset` (WARNING: destroys data)
 2. Or use db push for prototyping: `pnpm prisma db push`
 3. Check migration status: `pnpm prisma migrate status`
@@ -1608,6 +1686,7 @@ pnpm deploy
 **Problem:** `pnpm dev` fails or hangs.
 
 **Solutions:**
+
 1. Check port 3000 isn't already in use: `lsof -i :3000`
 2. Kill existing process: `kill -9 <PID>`
 3. Clear Next.js cache: `rm -rf apps/web/.next`
@@ -1621,6 +1700,7 @@ pnpm deploy
 **Problem:** Next.js can't find React dependencies.
 
 **Solutions:**
+
 1. Install Next.js dependencies in apps/web:
    ```bash
    cd apps/web
@@ -1639,17 +1719,20 @@ pnpm deploy
 **🧑 HUMAN REQUIRED: Access GitHub to see logs**
 
 **Common issues:**
+
 1. Missing secrets (if any were added)
 2. Postgres service not ready (increase health check timeout)
 3. Node/pnpm version mismatch
 4. Tests passing locally but failing in CI (timing issues)
 
 **Solutions:**
+
 1. Check CI logs on GitHub Actions tab
 2. Run the same commands locally that CI runs
 3. Ensure .github/workflows/ci.yml matches the TDD spec
 
 **Alternative with GitHub MCP server:**
+
 - Agent could read CI logs via MCP
 - Agent could check workflow status
 
@@ -1686,6 +1769,7 @@ pnpm deploy
 **This TDD is "hello world" infrastructure.** Don't add features (auth, turnouts, etc.) - those come in future TDDs.
 
 **This establishes the test organization pattern:**
+
 - Unit tests co-located with code (`lib/db/db.test.ts`)
 - E2E tests organized by TDD (`tests/e2e/tdd0000-bootstrap/`)
 - Future journey tests go in `tests/e2e/journeys/`
@@ -1695,26 +1779,29 @@ pnpm deploy
 ## Agent Autonomy Summary
 
 **With NO MCP servers configured:**
+
 - Agent autonomy: ~70%
 - Human must: Create Neon DB, provide connection string
 - Agent can: Write all code, run local tests, deploy via SST, verify deployment via CLI/curl
 
 **With Neon MCP server configured:**
+
 - Agent autonomy: ~95%
 - Human must: One-time Neon account approval
 - Agent can: Everything including database setup, deployment, and verification
 
 **Recommended MCP server for this TDD:**
+
 1. ✅ [Neon MCP Server](https://github.com/neondatabase/mcp-server-neon) - **Required for autonomous DB setup**
 
-**Optional MCP servers (debugging only):**
-2. ⚠️ [AWS CloudWatch MCP Server](https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server) - Read logs when troubleshooting
-3. ⚠️ [GitHub MCP Server](https://github.com/github/github-mcp-server) - Read CI logs when tests fail
+**Optional MCP servers (debugging only):** 2. ⚠️ [AWS CloudWatch MCP Server](https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server) - Read logs when troubleshooting 3. ⚠️ [GitHub MCP Server](https://github.com/github/github-mcp-server) - Read CI logs when tests fail
 
 **Setup command for Neon MCP:**
+
 ```bash
 npx neonctl@latest init
 ```
+
 This auto-configures Neon MCP Server for Claude Code.
 
 **Note on AWS MCP:** Agent does NOT use AWS MCP for deployment. All infrastructure deployment is handled via SST CLI (`pnpm sst deploy`). AWS MCP is only for observability (reading CloudWatch logs) when debugging issues.
