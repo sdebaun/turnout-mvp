@@ -37,7 +37,14 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Debug - Check installed type versions
+        run: |
+          echo "=== Checking @types/react versions ==="
+          cat apps/web/node_modules/@types/react/package.json | grep '"version"' || echo "NOT FOUND"
+          echo "=== Checking @types/react-dom versions ==="
+          cat apps/web/node_modules/@types/react-dom/package.json | grep '"version"' || echo "NOT FOUND"
 
       - name: Run Prisma migrations
         run: pnpm prisma migrate deploy
