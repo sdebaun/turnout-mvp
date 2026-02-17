@@ -54,6 +54,13 @@ jobs:
       - name: Generate Prisma client
         run: pnpm prisma generate
 
+      - name: Generate Next.js type definitions
+        run: |
+          cd apps/web
+          timeout 5 pnpm next dev || true
+          test -f next-env.d.ts && echo "✓ next-env.d.ts generated" || echo "✗ Failed to generate next-env.d.ts"
+          cd ../..
+
       - name: Type check
         run: pnpm typecheck
 
