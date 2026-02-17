@@ -24,11 +24,14 @@ This skill creates a **multi-agent debugging team** that methodically identifies
 5. Asks what other context should be included
 
 **Then spawns a team that:**
+- **Checks CI failures first** (if this is a PR context) using GitHub MCP
 - Investigates the current broken state
 - Analyzes what changed between working and broken
 - Forms ranked hypotheses based on evidence
 - Tests fixes one at a time
 - Maintains the debug log for continuity
+
+**IMPORTANT:** This skill uses GitHub MCP server for CI failure detection. Tools will be loaded via ToolSearch as needed.
 
 ---
 
@@ -154,6 +157,11 @@ Starting Investigation phase...
 
 **Then proceed to Phase 1 (Investigation) with the team.**
 
+**CRITICAL: Spawn agents in parallel where possible**
+- Investigation + Timeline agents can run simultaneously (spawn both in one message)
+- Hypothesis agent must wait for Investigation + Timeline to complete
+- Fix agent must wait for Hypothesis to complete
+
 ---
 
 ## Phase 1: Investigation
@@ -161,15 +169,84 @@ Starting Investigation phase...
 **Goal:** Document current broken state with concrete evidence.
 
 **Investigation agent tasks:**
+- **Check for CI failures first** (if this is a PR context)
 - Run the failing operation, capture FULL output (stderr + stdout)
 - Check versions of relevant tools/dependencies
 - Check state of config files, lock files, cache
 - Document findings in `.debug-log.md`
 
+### CI Failure Detection (Do This First)
+
+**Before investigating locally, check if this is a broken PR:**
+
+First, load GitHub MCP tools:
+```
+Use ToolSearch: "select:mcp__github__pull_request_read"
+```
+
+Then check for PR and CI status:
+```
+# Get current branch name
+git branch --show-current
+
+# Search for PR with current branch as head
+Tool: mcp__github__search_pull_requests
+Parameters:
+  query: "repo:[owner/repo] head:[branch-name] is:pr"
+
+# If PR found, read full details including check status
+Tool: mcp__github__pull_request_read
+Parameters:
+  owner: [owner]
+  repo: [repo]
+  pull_number: [number from search]
+  minimal_output: false
+
+# Check the statusCheckRollup or checks array in the response
+# For failing checks, you may need to fetch run logs via GitHub API
+# or fall back to local reproduction
+```
+
+**Parse CI logs for:**
+- Build failures (TypeScript errors, import errors)
+- Test failures (which tests failed, with full output)
+- Lint/type-check failures
+- Deployment failures (SST, Docker, etc.)
+
+**Document in `.debug-log.md`:**
+```markdown
+### [timestamp] - CI Failure Analysis
+**Agent:** investigation-agent
+**PR:** #[number] - [title]
+**Failed checks:** [list of check names]
+
+**Failure #1: [check name]**
+```
+[relevant error output from logs]
+```
+
+**Failure #2: [check name]**
+```
+[relevant error output from logs]
+```
+
+**Local reproduction needed:** [yes/no]
+**Next:** [Attempt local reproduction / Skip to Timeline if CI logs are sufficient]
+---
+```
+
+**If CI logs give enough info:**
+Skip local reproduction and proceed to Timeline phase with CI error as the "current broken state."
+
+**If CI logs are unclear or insufficient:**
+Continue with local investigation as normal.
+
 **Anti-patterns:**
+- ❌ Skipping CI failure checks (always check PR status first)
 - ❌ Summarizing errors ("it says module not found")
 - ❌ Skipping version checks
 - ❌ Jumping to conclusions without evidence
+- ❌ Reproducing locally when CI logs already show the root cause
 
 **Coordinator checklist:**
 - [ ] Full error output captured
@@ -180,6 +257,9 @@ Starting Investigation phase...
 
 **Common investigation commands:**
 ```bash
+# Check for CI failures (do this first) - use GitHub MCP
+# See CI Failure Detection section above for MCP tool usage
+
 # Capture failing operation
 [command] 2>&1 | tee error-output.txt
 
@@ -377,8 +457,10 @@ stat node_modules/.cache
 
 **Coordinator (You):**
 - Run Phase 0 (interactive setup)
-- Spawn the 4-agent team
-- Ensure phases run in order
+- Spawn the 4-agent team **in parallel where possible**
+- Phase 1: Spawn investigation + timeline agents together (parallel)
+- Phase 2: Wait for Phase 1, then spawn hypothesis agent
+- Phase 3: Wait for Phase 2, then spawn fix agent
 - Maintain `.debug-log.md`
 - Decide when to stop
 
@@ -467,6 +549,7 @@ Full details in .debug-log.md
 
 **DO use when:**
 - ✅ Something worked, now broken (regression)
+- ✅ PR has failing CI checks (tests, build, deploy)
 - ✅ Need systematic approach (random fixes aren't working)
 - ✅ Multiple agents would speed things up
 - ✅ Might need to hand off to another team

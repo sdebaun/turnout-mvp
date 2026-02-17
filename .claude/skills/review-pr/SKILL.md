@@ -16,10 +16,14 @@ version: 1.0.0
 
 This skill creates a **multi-agent review team** where each agent specializes in a different aspect of code quality.
 
-**Uses GitHub MCP for review workflow:**
-- `create_pull_request_review` - creates a pending review
-- `add_review_comment` - adds inline comments on specific lines (each reviewer uses this)
-- `submit_pending_pull_request_review` - submits with APPROVE/REQUEST_CHANGES/COMMENT
+**Uses GitHub MCP server for review workflow:**
+- `mcp__github__pull_request_read` - fetches PR details and file list
+- `mcp__github__pull_request_review_write` (method: "create") - creates a pending review
+- `mcp__github__add_comment_to_pending_review` - adds inline comments on specific lines (each reviewer uses this)
+- `mcp__github__pull_request_review_write` (method: "submit_pending") - submits with APPROVE/REQUEST_CHANGES/COMMENT
+- `mcp__github__get_file_contents` - reads file contents at specific refs (base vs head)
+
+**IMPORTANT:** This skill requires the GitHub MCP server to be configured. Tools will be loaded via ToolSearch as needed.
 
 **Before spawning agents, the skill:**
 1. Fetches PR details using `gh pr view` (for simplicity)
@@ -42,7 +46,15 @@ This skill creates a **multi-agent review team** where each agent specializes in
 
 **When the user invokes this skill, start here.**
 
-### Step 1: Get the PR number
+### Step 1: Load GitHub MCP tools and get PR number
+
+**Load necessary GitHub MCP tools:**
+```
+Use ToolSearch to load GitHub MCP tools:
+- "select:mcp__github__pull_request_read"
+```
+
+**Get the PR number:**
 
 **If user provided a number/URL:**
 - Extract PR number from input
@@ -62,21 +74,30 @@ Provide:
 
 ### Step 2: Fetch PR details
 
-**Use gh CLI to get PR information:**
-```bash
-# Get PR details
-gh pr view [number] --json number,title,author,body,state,files,commits,additions,deletions
+**Use GitHub MCP server to get PR information:**
 
-# Get the diff
-gh pr diff [number]
+First, load the GitHub MCP tools:
+```
+Use ToolSearch to load: "select:mcp__github__pull_request_read"
 ```
 
-**Extract:**
+Then fetch PR details:
+```
+Tool: mcp__github__pull_request_read
+Parameters:
+  owner: [repo owner - extract from git remote or ask user]
+  repo: [repo name - extract from git remote or ask user]
+  pull_number: [number]
+  minimal_output: false
+```
+
+**Extract from response:**
 - PR number, title, author
 - Description/body
-- Files changed (count and paths)
+- Files changed (count and paths from `files` array)
 - Additions/deletions
 - Current state (open, closed, merged)
+- Base branch and head branch
 
 ### Step 3: Show summary and confirm scope
 
@@ -106,7 +127,7 @@ What should I review?
 
 ### Step 4: Seed the review log
 
-**Create `pr-review-[number].md` with initial context:**
+**Create `.pr-review-[number].md` with initial context:**
 
 ```markdown
 # PR Review: #[number] - [title]
@@ -175,6 +196,9 @@ Only spawn the relevant reviewer(s).
 
 **Then proceed to Phase 1 (Parallel Review) with the team.**
 
+**CRITICAL: Spawn all reviewers in parallel**
+Use a single message with multiple Task tool invocations to spawn all 4 reviewers simultaneously. Do NOT spawn them one at a time.
+
 ---
 
 ## Phase 1: Parallel Review
@@ -182,10 +206,11 @@ Only spawn the relevant reviewer(s).
 **Goal:** Each specialized reviewer examines the PR from their perspective.
 
 **All reviewers have access to:**
-- PR diff: `gh pr diff [number]`
-- Changed files: Can read full files with Read tool
+- PR details: `mcp__github__pull_request_read` (includes file list, diff stats)
+- File contents: `mcp__github__get_file_contents` for both base and head refs
+- Changed files: Can read full files with Read tool from local working directory
 - Project docs: ARCHITECTURE.md, ROADMAP.md, CLAUDE.md, etc.
-- Git history: `git log`, `git show`
+- Git history: Use GitHub MCP `list_commits` or local `git log`
 
 ### Architecture Reviewer Tasks
 
@@ -210,7 +235,8 @@ Only spawn the relevant reviewer(s).
 For each issue found, add an inline review comment using GitHub MCP:
 ```
 # Use the GitHub MCP tool to add review comments
-Tool: add_review_comment
+# First load it if not already loaded: ToolSearch "select:mcp__github__add_comment_to_pending_review"
+Tool: mcp__github__add_comment_to_pending_review
 Parameters:
   owner: [repo owner from PR]
   repo: [repo name from PR]
@@ -249,8 +275,9 @@ Parameters:
 
 **Commands to run:**
 ```bash
-# Find test files in the diff
-gh pr diff [number] | grep -E '\.(test|spec)\.(ts|tsx|js|jsx)'
+# Get list of changed files from PR (already have this from pull_request_read)
+# Check if any match test patterns: *.test.ts, *.spec.ts, etc.
+# Use the `files` array from pull_request_read response
 
 # If tests exist, try to run them
 pnpm test
@@ -263,7 +290,7 @@ pnpm test:coverage
 
 For each issue found, add an inline review comment using GitHub MCP:
 ```
-Tool: add_review_comment
+Tool: mcp__github__add_comment_to_pending_review
 Parameters:
   owner: [repo owner]
   repo: [repo name]
@@ -305,24 +332,25 @@ Parameters:
 
 **Search patterns:**
 ```bash
+# Get changed files from PR response, then use Grep tool on those files:
 # Look for potential secrets
-gh pr diff [number] | grep -iE '(password|secret|api_key|token|auth)'
+Grep pattern="(password|secret|api_key|token|auth)" -i path="[file from PR]"
 
 # Look for SQL injection risks
-gh pr diff [number] | grep -iE '(query|execute|sql)'
+Grep pattern="(query|execute|sql)" -i path="[file from PR]"
 
 # Look for XSS risks
-gh pr diff [number] | grep -iE '(innerHTML|dangerouslySetInnerHTML)'
+Grep pattern="(innerHTML|dangerouslySetInnerHTML)" -i path="[file from PR]"
 
-# Check new dependencies
-git diff main -- package.json | grep '^\+.*"'
+# Check new dependencies - read package.json changes from PR
+# Use mcp__github__get_file_contents for both base and head refs to compare
 ```
 
 **Post findings:**
 
 For each issue found, add an inline review comment using GitHub MCP:
 ```
-Tool: add_review_comment
+Tool: mcp__github__add_comment_to_pending_review
 Parameters:
   owner: [repo owner]
   repo: [repo name]
@@ -371,7 +399,7 @@ Parameters:
 
 For each issue found, add an inline review comment using GitHub MCP:
 ```
-Tool: add_review_comment
+Tool: mcp__github__add_comment_to_pending_review
 Parameters:
   owner: [repo owner]
   repo: [repo name]
@@ -404,7 +432,7 @@ Parameters:
 
 **Coordinator workflow:**
 ```
-1. Read all reviewer updates from pr-review-[number].md
+1. Read all reviewer updates from .pr-review-[number].md
 2. Identify blocking issues vs. suggestions
 3. Group findings by severity:
    - 🚫 Blockers (must fix before merge)
@@ -454,7 +482,7 @@ Parameters:
 
 **Ask user:**
 ```
-Review complete! Findings saved to pr-review-[number].md
+Review complete! Findings saved to .pr-review-[number].md
 
 Would you like me to:
 1. Post inline comments + review to GitHub
@@ -466,27 +494,32 @@ Would you like me to:
 
 **Step 1: Create pending review (coordinator does this first):**
 ```
-Tool: create_pull_request_review
+# Load the tool first if needed
+ToolSearch "select:mcp__github__pull_request_review_write"
+
+Tool: mcp__github__pull_request_review_write
 Parameters:
   owner: [repo owner]
   repo: [repo name]
   pull_number: [PR number]
-  # No event parameter = creates pending review
+  method: "create"
+  # Creates a pending review
 ```
 
 **Step 2: Each reviewer adds their inline comments:**
 
-All reviewers use `add_review_comment` to add their findings to the pending review (see reviewer sections above for examples).
+All reviewers use `mcp__github__add_comment_to_pending_review` to add their findings to the pending review (see reviewer sections above for examples).
 
 **Step 3: Coordinator submits the final review:**
 
 ```
-Tool: submit_pending_pull_request_review
+Tool: mcp__github__pull_request_review_write
 Parameters:
   owner: [repo owner]
   repo: [repo name]
   pull_number: [PR number]
-  body: [synthesis from pr-review-[number]-synthesis.md]
+  method: "submit_pending"
+  body: [synthesis from .pr-review-[number].md]
   event: [APPROVE / REQUEST_CHANGES / COMMENT]
 
 # Use REQUEST_CHANGES if blockers exist
@@ -512,8 +545,9 @@ Parameters:
 
 **Coordinator (You):**
 - Run Phase 0 (interactive setup)
-- Spawn the review team (4 agents for full review)
-- Ensure reviewers work in parallel
+- Spawn the review team (4 agents for full review) **in parallel (all 4 in one message)**
+- All reviewers work simultaneously - do not spawn sequentially
+- Wait for all reviewers to complete before synthesis
 - Synthesize findings
 - Post to GitHub if requested
 
@@ -570,7 +604,7 @@ What should I review?
 
 **Skill creates review log, then:**
 ```
-Review log created at pr-review-123.md
+Review log created at .pr-review-123.md
 
 Creating review team:
 - architecture-reviewer
@@ -597,7 +631,7 @@ Review complete!
 - 2 concerns: Missing E2E tests for OTP flow, no rate limiting
 - 3 suggestions: Extract OTP logic to lib/, add JSDoc for public functions
 
-Full review saved to pr-review-123.md
+Full review saved to .pr-review-123.md
 
 Would you like me to post this to GitHub?
 ```
@@ -627,7 +661,7 @@ Would you like me to post this to GitHub?
 - ✅ All reviewers complete their assigned checks
 - ✅ Findings are specific and actionable
 - ✅ Synthesis clearly categorizes blockers vs. suggestions
-- ✅ Review is documented in pr-review-[number].md
+- ✅ Review is documented in .pr-review-[number].md
 
 **Provides value even if it finds nothing:**
 - ✅ Confirmation that PR aligns with architecture
