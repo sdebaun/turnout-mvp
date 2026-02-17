@@ -1,0 +1,31 @@
+name: 'Prepare'
+description: 'Set up pnpm, Node 22, install deps, generate Prisma client, and generate next-env.d.ts'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22.22.0'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Generate Prisma client
+      shell: bash
+      run: pnpm prisma generate
+
+    # next-env.d.ts is not committed — Next.js generates it on first dev/build run.
+    # Without it, @types/next and related types are missing and typecheck fails.
+    - name: Generate Next.js type definitions
+      shell: bash
+      run: |
+        cd apps/web
+        timeout 5 pnpm next dev || true
+        test -f next-env.d.ts && echo "✓ next-env.d.ts generated" || echo "✗ Failed to generate next-env.d.ts"
