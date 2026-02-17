@@ -3,24 +3,20 @@
 export default $config({
   app: (input) => ({
     name: "turnout",
-    // NOTE: Using "staging" instead of "prod"/"production" due to SST bug
-    // Stage names "prod", "production", "live" trigger Pulumi runtime error:
-    // "TypeError: module_1.register is not a function"
-    // This appears to be an SST v3.18.5 / Pulumi ts-node ESM initialization bug
-    removal: input?.stage === "staging" ? "retain" : "remove",
+    // retain resources on prod so a bad deploy doesn't nuke live data
+    removal: input?.stage === "prod" ? "retain" : "remove",
     home: "aws",
   }),
   async run() {
     // Database URL from SST Secret (set via `sst secret set DatabaseUrl <value>`)
     const databaseUrl = new sst.Secret("DatabaseUrl")
 
-    // Custom domain configuration (production only)
-    // Using "staging" as production stage name (see comment above)
-    const domain = $app.stage === "staging"
+    // Custom domain only wired up for prod — dev stages use the auto-generated CloudFront URL
+    const domain = $app.stage === "prod"
       ? {
           name: "turnout.network",
           redirects: ["www.turnout.network"],
-          dns: { zone: "Z05439171T4ND1GLJLT6S" },
+          dns: sst.aws.dns({ zone: "Z05439171T4ND1GLJLT6S" }),
         }
       : undefined
 
@@ -32,11 +28,13 @@ export default $config({
         DATABASE_URL: databaseUrl.value,
       },
       domain,
+      server: { runtime: "nodejs22.x" },
     })
 
     // Hello world cron job - runs every hour
     const helloCron = new sst.aws.Cron("HelloCron", {
       job: {
+        runtime: "nodejs22.x",
         handler: "./apps/functions/src/hello-cron.handler",
         link: [databaseUrl],
         environment: {
