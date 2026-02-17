@@ -3,12 +3,22 @@
 export default $config({
   app: (input) => ({
     name: "turnout",
-    removal: input?.stage === "production" ? "retain" : "remove",
+    // retain resources on prod so a bad deploy doesn't nuke live data
+    removal: input?.stage === "prod" ? "retain" : "remove",
     home: "aws",
   }),
   async run() {
     // Database URL from SST Secret (set via `sst secret set DatabaseUrl <value>`)
     const databaseUrl = new sst.Secret("DatabaseUrl")
+
+    // Custom domain only wired up for prod — dev stages use the auto-generated CloudFront URL
+    const domain = $app.stage === "prod"
+      ? {
+          name: "turnout.network",
+          redirects: ["www.turnout.network"],
+          dns: sst.aws.dns({ zone: "Z05439171T4ND1GLJLT6S" }),
+        }
+      : undefined
 
     // Next.js app
     const web = new sst.aws.Nextjs("TurnoutWeb", {
@@ -17,11 +27,14 @@ export default $config({
       environment: {
         DATABASE_URL: databaseUrl.value,
       },
+      domain,
+      server: { runtime: "nodejs22.x" },
     })
 
     // Hello world cron job - runs every hour
     const helloCron = new sst.aws.Cron("HelloCron", {
       job: {
+        runtime: "nodejs22.x",
         handler: "./apps/functions/src/hello-cron.handler",
         link: [databaseUrl],
         environment: {

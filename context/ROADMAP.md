@@ -297,6 +297,7 @@ _Ideas considered but explicitly deferred:_
 - **Internationalization** — Start with English/US, expand if validated
 - **Accessibility audit** — Important, but not blocking for initial validation with pilot users
 - **Cathy's user story completion** — Experienced organizer flows can wait until we validate Bob
+- **Ephemeral PR deployments + E2E CI** — On PR open, spin up a per-branch SST stage, run Playwright E2E against it, tear it down. High value but needs: Neon branch DB per PR, SST per-branch deploy, Playwright in CI, secrets management. Revisit after E2E suite is mature.
 
 ---
 
