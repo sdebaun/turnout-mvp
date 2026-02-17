@@ -4,19 +4,19 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "sst dev --stage ${SST_STAGE:-$USER}",
+    "dev": "sst dev --stage ${SST_STAGE:-$(whoami)}",
     "build": "pnpm --filter @turnout/web build",
-    "test": "sst shell --stage ${SST_STAGE:-$USER} -- sh -c 'pnpm test:unit && pnpm test:e2e'",
+    "test": "sst shell --stage ${SST_STAGE:-$(whoami)} -- sh -c 'pnpm test:unit && pnpm test:e2e'",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "db:migrate": "sst shell --stage ${SST_STAGE:-$USER} -- prisma migrate dev",
-    "db:studio": "sst shell --stage ${SST_STAGE:-$USER} -- prisma studio",
-    "db:push": "sst shell --stage ${SST_STAGE:-$USER} -- prisma db push",
+    "db:migrate": "sst shell --stage ${SST_STAGE:-$(whoami)} -- prisma migrate dev",
+    "db:studio": "sst shell --stage ${SST_STAGE:-$(whoami)} -- prisma studio",
+    "db:push": "sst shell --stage ${SST_STAGE:-$(whoami)} -- prisma db push",
     "db:generate": "prisma generate",
-    "deploy": "sst deploy --stage ${SST_STAGE:-$USER}",
+    "dev:deploy": "sst deploy --stage ${SST_STAGE:-$(whoami)}",
     "prod:deploy": "sst deploy --stage prod",
     "typecheck": "tsc -p apps/web/tsconfig.json --noEmit && tsc -p apps/functions/tsconfig.json --noEmit",
-    "usercheck": "echo ${SST_STAGE:-$USER}"
+    "usercheck": "echo ${SST_STAGE:-$(whoami)}"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",
