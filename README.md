@@ -112,6 +112,45 @@ SST secrets are encrypted and injected at runtime. The `.env` file is gitignored
 
 ---
 
+## Production Deployment
+
+The production stage deploys to https://turnout.network.
+
+**Prerequisites:**
+
+- Production DatabaseUrl secret set (see TDD0000 Neon setup)
+- Route53 nameservers configured at Gandi (see TDD0000a)
+
+**Deploy:**
+
+```bash
+pnpm prod:deploy
+```
+
+**Verify:**
+
+- Visit https://turnout.network
+- Should see the app with valid SSL
+
+**Rollback:**
+If deployment breaks production, rollback via:
+
+```bash
+git revert HEAD
+pnpm prod:deploy
+```
+
+**Cache invalidation:**
+CloudFront caches aggressively. If you see stale content after deployment:
+
+```bash
+aws cloudfront create-invalidation \
+  --distribution-id $(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?@=='turnout.network']].Id" --output text) \
+  --paths "/*"
+```
+
+---
+
 ## Project Status
 
 **Bootstrap infrastructure complete** ([TDD0000](./context/tdd/tdd0000-bootstrap.md))
