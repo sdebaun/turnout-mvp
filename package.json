@@ -16,7 +16,7 @@
     "db:generate": "prisma generate",
     "prod:deploy": "sst deploy --stage prod",
     "typecheck": "tsc -p apps/web/tsconfig.json --noEmit && tsc -p apps/functions/tsconfig.json --noEmit",
-    "usercheck": "echo ${SST_STAGE:-$(whoami)}"
+    "debug:usercheck": "echo ${SST_STAGE:-$(whoami)}"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",
