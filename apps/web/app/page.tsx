@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/db'
 import { TestForm } from './test-form'
 
+// page queries live DB — must render at request time, not build time
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   // Fetch current user count on page load
   const userCount = await prisma.user.count()
