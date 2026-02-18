@@ -2,7 +2,7 @@
 
 **PRD:** prd0001-phone-identity.md
 **Status:** Draft
-**Last Updated:** 2026-02-17 (Revised: Switched to Twilio Verify API for better deliverability and simpler implementation)
+**Last Updated:** 2026-02-18 (Revised: WebOTP custom template confirmed created and secrets set — folded into MVP scope)
 
 ## Context
 
@@ -17,7 +17,6 @@ _What I found:_
   - Credential-agnostic design (support future email via `credentials` table)
   - Database-backed sessions for future session management
   - Persistent sessions (no expiration)
-- **Architecture decision:** Use Twilio Verify API instead of raw SMS for OTP delivery. Verify provides better deliverability (even without 10DLC), built-in security features, and simpler implementation.
 
 ---
 
@@ -27,10 +26,24 @@ _What I found:_
 
 **Solution:** Phone-based OTP codes via Twilio Verify API. Phone number = identity. Enter 6-digit code (or tap autofill on mobile), get persistent session, optionally customize display name.
 
+**What this TDD builds:** Auth primitives — library functions (`users.ts`, `otp.ts`, `sessions.ts`) and reusable components (`AuthModal`, `PhoneInputForm`, `DisplayNameForm`, `OTPInputForm`). The existing placeholder home page (`/`) gets a sign-in/sign-up button and logout button as the minimal composition of those primitives — sufficient for direct access and testing.
+
+**How downstream TDDs use this:** TDD0002 (group/turnout creation) and TDD0003 (RSVP modal) will compose these same primitives into context-specific flows. They should not replicate auth logic — only assemble the components differently.
+
+**The auth flow** (same regardless of context — RSVP modal, turnout creation, direct login):
+
+1. User enters phone number
+2. System checks if phone is known → `isNewUser`
+3. **New user:** display name field appears (prefilled random, rerollable) → user confirms → OTP sent
+   **Returning user:** OTP sent immediately
+4. User enters 6-digit code on OTP screen
+5. Session created → authenticated
+
 **Scope:**
+
 - ✅ Phone number authentication (E.164 format)
 - ✅ SMS OTP codes via Twilio Verify (10-min expiry, single-use, 4-10 digits configurable)
-- ✅ WebOTP API (one-tap autofill on mobile via custom template)
+- ✅ WebOTP API (one-tap autofill on mobile via custom Verify template — in MVP)
 - ✅ Persistent sessions (database-backed)
 - ✅ Random display name generation (optional override)
 - ✅ Rate limiting (application-level + Twilio Verify's built-in limits)
@@ -40,19 +53,67 @@ _What I found:_
 
 ---
 
-## Components
+## Frontend Components
 
-**What this touches:**
+The components below are reusable auth primitives. Downstream TDDs compose them into context-specific flows — they are not bound to the patterns used by the `/login` placeholder.
 
-- [x] Database (Prisma schema - 3 new models: User, Credential, Session)
-- [x] Server Actions (send OTP via Verify API, verify OTP via Verify API, logout, update display name)
-- [x] API route (OTP verification for WebOTP API)
-- [x] Frontend (phone + OTP input, WebOTP autofill, display name customization)
-- [x] External service (Twilio Verify API for OTP generation, delivery, validation)
-- [x] Auth/permissions (this IS the auth system)
+### Pages/Routes
 
-**What this does NOT touch:**
-- ❌ Background jobs (Twilio Verify handles OTP expiry and cleanup)
+No new pages. The existing placeholder home page (`app/page.tsx`, route `/`) is updated to add auth UI:
+
+- **Unauthenticated:** shows a "Sign In / Sign Up" button that opens `AuthModal`
+- **Authenticated:** shows the user's display name and a logout button
+
+`app/page.tsx` is a Server Component — call `getUser()` to determine which state to render. After successful auth, `AuthModal` calls `router.refresh()` and the page re-renders with the session.
+
+### Components (Reusable Primitives)
+
+- **`AuthModal`** - Modal managing the full auth flow as progressive steps. Owned state: `phone`, `isNewUser`, `displayName`, `step` (`phone | displayName | otp`). `displayName` is set when the user submits `DisplayNameForm` and must be carried into the `otp` step so it can be passed to `signInAction`. Accepts optional `title` and `body` props for contextual messaging above the form — downstream TDDs pass in their own copy (e.g. "Where should we send your reminders?"); the placeholder home page uses generic defaults. Composed from the primitives below.
+
+- **`PhoneInputForm`** - Phone number input and submit. Calls `checkPhoneAction(phone)` → receives `{ isNewUser }`. For returning users, also calls `sendOTPAction(phone)` immediately. Advances modal to `displayName` (new) or `otp` (returning) step.
+
+- **`DisplayNameForm`** - Display name input prefilled with a randomly generated name (adjective + animal, `unique-names-generator`). Reroll button. On submit, calls `sendOTPAction(phone)` then advances modal to `otp` step.
+
+- **`OTPInputForm`** - 6-digit code input. Implements `navigator.credentials.get({ otp: { transport: ['sms'] } })` for WebOTP autofill on mobile (iOS 14+, Android Chrome 84+) — falls back to manual entry. Includes "Resend code" button (calls `sendOTPAction`, respects rate limiting). On submit, calls `signInAction(phone, code, displayName?)`. On success, closes modal and calls `router.refresh()`.
+
+- **`getUser()`** - Server utility: reads session cookie → validates token against DB → returns `User | null`. Call from any Server Component that needs the current user. Client Components needing auth state receive `user` as a prop from their Server Component parent.
+
+### User Interactions (Placeholder Home Page)
+
+_TDD0002 and TDD0003 compose the same primitives into their own flows — they are not constrained to match these._
+
+**Flow 1: New user**
+
+1. User clicks "Sign In / Sign Up" → `AuthModal` opens at `phone` step
+2. Enters phone → `checkPhoneAction` returns `{ isNewUser: true }` → modal advances to `displayName` step
+3. User sets display name (prefilled random, rerollable) → submits → `sendOTPAction` called → modal advances to `otp` step
+4. User enters code (or taps WebOTP autofill) → `signInAction(phone, code, displayName)` → **User + Credential + session created**
+5. Modal closes → `router.refresh()` → page shows display name + logout button
+
+**Flow 2: Returning user**
+
+1. User clicks "Sign In / Sign Up" → `AuthModal` opens at `phone` step
+2. Enters phone → `checkPhoneAction` returns `{ isNewUser: false }` → `sendOTPAction` called immediately → modal advances to `otp` step
+3. User enters code → `signInAction(phone, code)` → session created
+4. Modal closes → `router.refresh()` → page shows display name + logout button
+
+**Flow 3: Invalid OTP code**
+
+1. User is on `otp` step, enters wrong code → `signInAction` returns error
+2. Modal stays on `otp` step, shows error: "Invalid verification code"
+3. User can re-enter code or click "Resend code" (triggers `sendOTPAction`, respects rate limit)
+
+**Flow 4: Rate limited**
+
+1. User triggers OTP send (returning user phone submit, new user display name submit, or resend button)
+2. `sendOTPAction` returns rate limit error
+3. Modal shows error at current step: "Please wait 60 seconds before requesting another code"
+
+**Flow 5: Logout**
+
+1. Authenticated user clicks logout button on home page
+2. `logoutAction()` → session deleted from DB → cookie cleared → returns `{ success: true }`
+3. Caller calls `router.refresh()` → page re-renders unauthenticated: shows "Sign In / Sign Up" button
 
 ---
 
@@ -80,6 +141,7 @@ model User {
 }
 
 // Credentials table (future-proof for email)
+// Invariant: User and Credential are always created together in signInAction — never independently.
 model Credential {
   id           String         @id @default(cuid())
   userId       String
@@ -87,18 +149,22 @@ model Credential {
 
   credentialType CredentialType // PHONE or EMAIL (future)
   credential     String         // Phone number (E.164) or email
-  verifiedAt     DateTime?      // Null until OTP verified
-
-  // Rate limiting fields (application-level, supplements Twilio Verify's limits)
-  lastOTPSentAt   DateTime?
-  otpCountToday   Int        @default(0)
-  otpCountResetAt DateTime?  // Last time counter was reset (for daily limit tracking)
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
   @@unique([credentialType, credential])
   @@index([userId])
+}
+
+// Rate limiting keyed by phone string — independent of User/Credential so it works for
+// new users before any account exists. Intentionally not FK'd to Credential: the record
+// must survive credential deletion to prevent delete-and-reregister abuse.
+model PhoneRateLimit {
+  phone           String    @id  // E.164 phone number
+  lastOTPSentAt   DateTime?
+  otpCountToday   Int       @default(0)
+  otpCountResetAt DateTime?
 }
 
 // Database-backed sessions
@@ -122,295 +188,167 @@ model Session {
 
 ### Migration Notes
 
-- New tables, no existing data
-- Safe to deploy (no breaking changes)
-- **OTPCode model removed:** Twilio Verify manages OTP codes (generation, storage, expiry, validation)
-- **Rate limiting kept:** Application-level rate limiting supplements Twilio Verify's built-in limits to control SMS costs
+- **⚠️ DESTRUCTIVE MIGRATION:** The bootstrap `User` model (`lib/db/schema.prisma`) has a `phoneNumber String @unique` field that does NOT match this schema. The migration will drop that table and replace it with the three models above.
+- **This is intentional and safe.** The bootstrap User model was a placeholder to prove Prisma worked end-to-end. There are no real users, no foreign keys in other tables, no data worth preserving. Drop it without hesitation.
+- Run `pnpm prisma migrate dev --name phone-identity` — the generated migration will drop the old `User` table and create `User`, `Credential`, `Session`, and `PhoneRateLimit`.
+- **OTPCode model deliberately absent:** Twilio Verify manages OTP codes (generation, storage, expiry, validation). No cleanup cron needed.
+- **Rate limiting in `PhoneRateLimit`, not `Credential`:** Keyed by phone string so it applies to new users before any account exists. Not FK'd to `Credential` — survives account deletion intentionally.
 
 ---
 
 ## Server Actions
 
-### `sendOTPAction(phone: string)`
+Thin orchestrators in `apps/web/app/auth/actions.ts`. Each validates input, calls library functions, handles errors. No business logic lives here.
 
-**File:** `app/auth/actions.ts`
-
-**Purpose:** Send OTP code via Twilio Verify API (form submission from phone input)
-
-**Input:**
-```typescript
-{
-  phone: string // E.164 format (e.g., "+14155552671")
-}
-```
-
-**Output (success):**
-```typescript
-{
-  success: true
-  message: "Check your phone for a verification code"
-}
-```
-
-**Output (error):**
-```typescript
-{
-  error: string // e.g., "Invalid phone number", "Too many requests"
-}
-```
-
-**Logic:**
-1. Normalize phone number (strip whitespace, validate E.164)
-2. Look up `Credential` by `credentialType: PHONE, credential: phone`
-3. **Application-level rate limiting check (cost control):**
-   - If `lastOTPSentAt` < 60 seconds ago → 429 "Wait before requesting another code"
-   - If `otpCountToday` >= 5 AND `otpCountResetAt` is today → 429 "Too many requests today"
-   - If `otpCountResetAt` is before today (midnight UTC): reset `otpCountToday = 0`, set `otpCountResetAt = today`
-4. If credential not found:
-   - Generate random display name using `unique-names-generator` (adjective + animal)
-   - Create `User` with displayName
-   - Create `Credential` (verifiedAt = null, credentialType = PHONE)
-5. **Call Twilio Verify API to send OTP:**
-   ```typescript
-   await twilioClient.verify.v2
-     .services(VERIFY_SERVICE_SID)
-     .verifications
-     .create({
-       to: phone,
-       channel: 'sms',
-       customFriendlyName: 'turnout.network'
-     })
-   ```
-   - Twilio generates 6-digit code, sends SMS with custom template (WebOTP format)
-   - Twilio handles: code generation, expiry (10 min), single-use enforcement
-6. Update `Credential`: set `lastOTPSentAt = now`, increment `otpCountToday`
-7. Return success
-
-**Validation:**
-- Phone must match E.164 format: `^\+[1-9]\d{1,14}$` (use `libphonenumber-js` for normalization)
-
-**Errors:**
-- `400`: Invalid phone format
-- `429`: Application rate limit exceeded (60s cooldown or 5/day limit)
-- `500`: Twilio Verify API error (log full error, return generic message to user)
-
-**Notes:**
-- Twilio Verify's built-in rate limiting (configurable per Service) supplements application-level limits
-- SMS message format controlled by custom template (see Prerequisites section)
-- Code storage, expiry, and single-use enforcement handled by Twilio (not in database)
+**Note on return vs. redirect():** Actions return results rather than calling `redirect()` directly. This keeps them composable — the placeholder home page handles navigation after auth, but TDD0003's RSVP modal will call the same actions and handle post-auth flow itself (close modal, trigger RSVP) without navigating away.
 
 ---
 
-### `verifyOTPAction(phone: string, code: string)`
+### `checkPhoneAction(phone)`
 
-**File:** `app/auth/actions.ts`
+**Input:** `{ phone: string }`
+**Output:** `{ isNewUser: boolean }` or `{ error: string }`
 
-**Purpose:** Verify OTP code via Twilio Verify API, create session (form submission from OTP input)
+1. Validate + normalize phone (E.164 via `libphonenumber-js`) → error if invalid
+2. Check if `Credential` exists for this phone → `isNewUser = !exists`
+3. Return `{ isNewUser }`
 
-**Input:**
-```typescript
-{
-  phone: string
-  code: string // 6 digits
-}
-```
+---
 
-**Output (success):**
-```typescript
-{
-  success: true
-  redirect: "/welcome" | "/" // new user vs returning
-}
-```
+### `sendOTPAction(phone)`
 
-**Output (error):**
-```typescript
-{
-  error: string // "Invalid code", "Code expired", etc.
-}
-```
+**Input:** `{ phone: string }`
+**Output:** `{ success: true }` or `{ error: string }`
 
-**Logic:**
-1. Normalize phone, validate code format (4-10 digits, Twilio Verify supports configurable length)
-2. **Call Twilio Verify API to check code:**
-   ```typescript
-   const check = await twilioClient.verify.v2
-     .services(VERIFY_SERVICE_SID)
-     .verificationChecks
-     .create({
-       to: phone,
-       code: code
-     })
-   ```
-3. **Handle Twilio response:**
-   - `check.status === 'approved'` → Code valid, proceed
-   - `check.status === 'pending'` → Code invalid or expired
-   - API throws error → Handle specific error codes (see Errors section)
-4. Look up `Credential` by phone
-5. If not found → 500 "System error" (shouldn't happen - Verify succeeded but no credential exists)
-6. Determine if new user: `isNewUser = (credential.verifiedAt === null)`
-7. If new user: set `credential.verifiedAt = now()`
-8. Generate session token (crypto.randomBytes(32).toString('hex'))
-9. Create `Session` (userId, token, userAgent, ipAddress)
-10. Set session cookie (httpOnly, secure, sameSite: lax, no expiration) using Next.js `cookies()` API
-11. Return success with redirect (new user → `/welcome`, returning → `/`)
+1. Validate + normalize phone → error if invalid
+2. `checkRateLimit(phone)` → return error if limited
+3. `sendOTPCode(phone)` → return error if Twilio throws
+4. `incrementRateLimit(phone)`
+5. Return `{ success: true }`
 
-**Errors:**
-- `400`: Invalid code format
-- `401`: Invalid code (Twilio returns status 'pending')
-- `410`: Code expired (Twilio API error code 60202)
-- `429`: Too many verification attempts (Twilio API error code 60203)
-- `500`: Twilio API error or credential lookup failure
+---
 
-**Notes:**
-- Code validation (expiry, single-use, correctness) handled by Twilio
-- No database OTPCode lookup needed
-- Twilio Verify automatically prevents code reuse and enforces expiry
+### `signInAction(phone, code, displayName?)`
+
+**Input:** `{ phone: string, code: string, displayName?: string }`
+**Output:** `{ success: true, isNewUser: boolean }` or `{ error: string }`
+
+1. Validate + normalize phone; validate code format (4-10 digits)
+2. `checkOTPCode(phone, code)` → return error if invalid/expired/Twilio failure
+3. Check if `Credential` exists for phone → `isNewUser = !exists`
+4. If new user: `createUserWithCredential(phone, displayName)` → `{ userId }` (single atomic transaction)
+5. If returning: `getCredentialByPhone(phone)` → `userId`
+6. `createSession(userId, userAgent, ipAddress)` → token
+7. `setSessionCookie(token)`
+8. Return `{ success: true, isNewUser }`
 
 ---
 
 ### `logoutAction()`
 
-**File:** `app/auth/actions.ts`
+**Output:** `{ success: true }`
 
-**Purpose:** End session, clear cookie
+1. Read token from session cookie
+2. `deleteSession(token)` (if token exists)
+3. `clearSessionCookie()`
+4. Return `{ success: true }`
 
-**Logic:**
-1. Read session token from cookie
-2. If token exists: delete `Session` record
-3. Clear session cookie
-4. Redirect to `/login`
-
-**Note:** Always succeeds, even if session invalid.
+**Note:** Always succeeds, even if session is invalid or cookie is missing. The caller handles any redirect — on the placeholder home page, the logout button calls `logoutAction()` then `router.refresh()`.
 
 ---
 
-### `updateDisplayNameAction(displayName: string)`
+## Auth Library
 
-**File:** `app/user/actions.ts`
+Business logic, each function independently testable. No Server Action concerns (no cookies, no redirects, no error formatting) except where noted.
 
-**Purpose:** Update user's display name (authenticated)
-
-**Input:**
-```typescript
-{
-  displayName: string
-}
-```
-
-**Output:**
-```typescript
-{
-  success: true
-  user: { id, displayName }
-}
-```
-
-**Validation:**
-- 1-50 chars, alphanumeric + spaces/hyphens/underscores
-
-**Logic:**
-1. Authenticate (get userId from session)
-2. Validate display name
-3. Update `User.displayName`
-4. Return updated user
+All functions that can meaningfully fail return `ResultAsync<T, E>` from neverthrow. Simple queries that return null on miss stay as `Promise<T | null>` — null is a valid expected state, not an error.
 
 ---
 
-## API Routes
+### `apps/web/lib/auth/users.ts`
 
-### GET /api/auth/verify-otp
+**`checkPhoneExists(phone)`** → `ResultAsync<{ isNewUser: boolean }, string>`
 
-**File:** `app/api/auth/verify-otp/route.ts`
+- Look up `Credential` by `{ credentialType: PHONE, credential: phone }`
+- Return `ok({ isNewUser: false })` if found, `ok({ isNewUser: true })` if not
+- Return `err(...)` on DB failure
 
-**Purpose:** OTP verification endpoint for WebOTP API (browser autofill requirement)
+**`createUserWithCredential(phone, displayName?)`** → `ResultAsync<{ userId: string }, string>`
 
-**Why this is an API route:** WebOTP API requires a specific endpoint format that browsers can call. Cannot be a Server Action.
+- Run in a transaction: create `User` (with `displayName` if provided, else random name via `unique-names-generator`) + `Credential`
+- Return `ok({ userId })` on success, `err(...)` on DB failure
 
-**Request:**
-```typescript
-{
-  phone: string
-  code: string
-}
-```
+**`getCredentialByPhone(phone)`** → `Promise<Credential | null>`
 
-**Response:**
-```typescript
-{
-  success: boolean
-  redirect?: string
-  error?: string
-}
-```
-
-**Logic:** Calls `verifyOTPAction` internally, returns JSON response.
-
-**Note:** This is the ONLY API route. All other auth operations use Server Actions.
+- DB lookup by `{ credentialType: PHONE, credential: phone }` — null if not found
 
 ---
 
-## Frontend Components
+### `apps/web/lib/auth/otp.ts`
 
-### Pages/Routes
+**Error types:**
+```typescript
+type RateLimitError = { code: 'RATE_LIMITED_MINUTE' } | { code: 'RATE_LIMITED_DAY' }
+type OTPError = { code: 'INVALID_CODE' } | { code: 'CODE_EXPIRED' } | { code: 'TWILIO_ERROR'; message: string }
+```
 
-| Route | Component | Purpose | Auth Required |
-|-------|-----------|---------|---------------|
-| `/login` | `LoginPage` | Phone + OTP input form | No |
-| `/welcome` | `WelcomePage` | Display name customization (new users) | Yes |
+**`checkRateLimit(phone)`** → `ResultAsync<void, RateLimitError>`
 
-### Components
+- Look up `PhoneRateLimit` by phone (no record = never sent → `ok()`)
+- If `lastOTPSentAt` < 60s ago: `err({ code: 'RATE_LIMITED_MINUTE' })`
+- If `otpCountToday >= 5` and `otpCountResetAt` is today: `err({ code: 'RATE_LIMITED_DAY' })`
+- Otherwise: `ok()`
 
-- **`PhoneInputForm`** - Phone number input (E.164 format help), submit button. Calls `sendOTPAction`, shows OTP input on success.
+**`incrementRateLimit(phone)`** → `ResultAsync<void, string>`
 
-- **`OTPInputForm`** - 6-digit code input with WebOTP autofill support. Calls `verifyOTPAction`, redirects on success. Includes "Resend code" button (calls `sendOTPAction`, respects rate limiting).
+- Upsert `PhoneRateLimit` by phone: set `lastOTPSentAt = now()`, increment `otpCountToday`, reset counter if `otpCountResetAt` is before today
 
-- **`DisplayNameCustomizer`** - Shows current display name (random), input to change it, "Save"/"Skip" buttons. Calls `updateDisplayNameAction`.
+**`sendOTPCode(phone)`** → `ResultAsync<void, { code: 'TWILIO_ERROR'; message: string }>`
 
-- **`AuthProvider`** (context) - Wraps app, provides `user` state and `logout` function. Reads session server-side, passes to client.
+- Call Twilio `verifications.create({ to: phone, channel: 'sms', templateSid })`
+- Return `ok()` on success, `err({ code: 'TWILIO_ERROR', message })` on failure
 
-### User Interactions
+**`checkOTPCode(phone, code)`** → `ResultAsync<void, OTPError>`
 
-**Flow 1: New user authentication**
+- Call Twilio SDK: `client.verify.v2.services(serviceSid).verificationChecks.create({ to: phone, code })`
+- Return `ok()` if `status === 'approved'`
+- Return `err({ code: 'CODE_EXPIRED' })` if `status === 'expired'` (verification window has passed)
+- Return `err({ code: 'INVALID_CODE' })` for any other status — wrong code, max attempts, canceled, deleted, whatever
+- Return `err({ code: 'TWILIO_ERROR', message })` if the SDK throws unexpectedly
 
-1. User lands on `/login`
-2. User enters phone number
-3. User submits form → calls `sendOTPAction`
-4. UI shows OTP input field
-5. User receives SMS with code
-6. **Mobile:** Keyboard suggests code (WebOTP autofill), user taps
-7. **Desktop:** User types 6-digit code
-8. User submits → calls `verifyOTPAction`
-9. Backend creates session, sets cookie
-10. Redirect to `/welcome`
-11. User customizes display name or skips
-12. Navigate to `/` (home)
+---
 
-**Flow 2: Returning user**
+### `apps/web/lib/auth/sessions.ts`
 
-Same as above, but redirect to `/` instead of `/welcome`.
+**`createSession(userId, userAgent?, ipAddress?)`** → `ResultAsync<string, string>`
 
-**Flow 3: Rate limited**
+- Generate cryptographically random token (32 bytes, hex-encoded = 64 chars)
+- Create `Session` record in DB
+- Return `ok(token)` on success, `err(...)` on DB failure
 
-1. User requests OTP
-2. User immediately requests again
-3. Server returns 429
-4. UI shows: "Please wait 60 seconds before requesting another code"
+**`deleteSession(token)`** → `ResultAsync<void, string>`
+
+- Delete `Session` record by token, return `err(...)` on DB failure
+
+**`setSessionCookie(token)`** → `void`
+
+- Set HttpOnly, Secure, SameSite=Lax, no-expiry cookie via Next.js `cookies()` API (synchronous)
+
+**`clearSessionCookie()`** → `void`
+
+- Delete the session cookie (synchronous)
+
+**`getUser()`** → `Promise<User | null>`
+
+- Read session token from cookie, look up `Session` joined to `User`, return `User` or null
 
 ---
 
 ## Auth & Permissions
 
-**Access rules:**
-
-- Anyone can request OTP (rate limited per phone)
-- Only phone owner can verify (secret code)
-- Authenticated users can update own display name
-- Sessions are tied to userId
-
 **Session security:**
 
-- Session tokens are cryptographically random (32 chars)
+- Session tokens are cryptographically random (32 bytes, hex-encoded = 64 chars)
 - HttpOnly cookies (not accessible to JavaScript)
 - Secure flag (HTTPS only) in production
 - sameSite: 'lax' (CSRF protection)
@@ -424,30 +362,30 @@ After TDD0001 is implemented, the system should:
 
 - ✅ Allow new users to authenticate via phone + OTP code
 - ✅ Allow returning users to authenticate and maintain persistent sessions
-- ✅ Send OTP codes via Twilio Verify API with WebOTP format
+- ✅ Send OTP codes via Twilio Verify API using custom WebOTP template
 - ✅ Enforce application-level rate limits (1/min, 5/day per phone)
-- ✅ Support WebOTP autofill on mobile browsers (via custom template)
+- ✅ WebOTP autofill works on mobile (iOS 14+, Android Chrome 84+) via custom template
 - ✅ Generate random display names for new users (optional customization)
 - ✅ Create database-backed sessions (persistent until logout)
-- ✅ All integration tests pass (with Twilio Verify test mode)
-- ✅ All E2E tests pass (with deterministic test codes)
+- ✅ All Tier 1 unit tests pass (mocked Twilio)
+- ✅ All Tier 3 CI E2E tests pass (`TEST_OTP_BYPASS=true`)
 - ✅ Deploy to dev stage and verify auth flow works end-to-end
 
 ---
 
 ## Edge Cases & Error Handling
 
-| Scenario | Expected Behavior | Error Message |
-|----------|------------------|---------------|
-| Invalid phone format | Return 400 | "Invalid phone number. Use format: +1234567890" |
-| Application rate limit (60s) | Return 429 | "Please wait 60 seconds before requesting another code" |
-| Application rate limit (daily) | Return 429 | "Too many codes requested today. Try again tomorrow." |
-| Twilio Verify rate limit | Return 429 | "Too many verification attempts. Please try again later." |
-| Code expired (Twilio) | Return 410 | "This code has expired. Request a new one." |
-| Code invalid (Twilio) | Return 401 | "Invalid verification code" |
-| Twilio API error | Log error, return 500 | "Verification system unavailable. Please try again." |
-| Display name too long | Return 400 | "Display name must be 50 characters or less" |
-| Display name invalid chars | Return 400 | "Display name contains invalid characters" |
+| Scenario                       | Expected Behavior       | Error Message                                             |
+| ------------------------------ | ----------------------- | --------------------------------------------------------- |
+| Invalid phone format           | Return error            | "Invalid phone number. Use format: +1234567890"           |
+| Application rate limit (60s)   | Return error            | "Please wait 60 seconds before requesting another code"   |
+| Application rate limit (daily) | Return error            | "Too many codes requested today. Try again tomorrow."     |
+| Twilio Verify rate limit       | Return error            | "Too many verification attempts. Please try again later." |
+| Code expired (Twilio)          | Return error            | "This code has expired. Request a new one."               |
+| Code invalid (Twilio)          | Return error            | "Invalid verification code"                               |
+| Twilio API error               | Log error, return error | "Verification system unavailable. Please try again."      |
+| Display name too long          | Return error            | "Display name must be 50 characters or less"              |
+| Display name invalid chars     | Return error            | "Display name contains invalid characters"                |
 
 **Validation rules:**
 
@@ -466,228 +404,230 @@ After TDD0001 is implemented, the system should:
 The following setup has been completed:
 
 **Twilio Verify Service:**
+
 - Service created: "turnout-network"
 - Service SID: `VA0c58bce0d3676488f1d5921156ff5d1e`
-- Configuration: Default templates (WebOTP custom template submitted to Twilio Support, pending approval)
+- Configuration: Custom WebOTP template active — see WebOTP Template section for details
 
 **SST Secrets Configured:**
 
 Secrets are set for both development and production stages:
 
 **Dev stage (`sdebaun`):**
-- ✅ `TwilioAccountSid` - Test credentials (no SMS sent, deterministic codes)
-- ✅ `TwilioAuthToken` - Test auth token
+
+- ✅ `TwilioAccountSid` - Live credentials (real SMS sent to test number during dev)
+- ✅ `TwilioAuthToken` - Auth token
 - ✅ `TwilioVerifyServiceSid` - `VA0c58bce0d3676488f1d5921156ff5d1e`
+- ✅ `TwilioVerifyTemplateSid` - Custom WebOTP template SID (`HJ...`)
+- ✅ `TwilioTestSmsRecipientPhoneNumber` - Dedicated Twilio number for receiving test OTPs (E2E + canary)
 - ✅ `DatabaseUrl` - Neon database connection
 
 **Production stage (`prod`):**
-- ✅ `TwilioAccountSid` - Production credentials (real SMS delivery)
+
+- ✅ `TwilioAccountSid` - Production credentials
 - ✅ `TwilioAuthToken` - Production auth token
 - ✅ `TwilioVerifyServiceSid` - `VA0c58bce0d3676488f1d5921156ff5d1e` (same Service)
+- ✅ `TwilioVerifyTemplateSid` - Custom WebOTP template SID (`HJ...`) (same template)
+- ✅ `TwilioTestSmsRecipientPhoneNumber` - Same dedicated test number (used by prod canary cron)
 - ✅ `DatabaseUrl` - Neon production database
 
 **Agent Verification:**
+
 ```bash
-# Agents can verify secrets exist:
+# Verify all secrets exist in both stages before starting:
 sst secret list --stage sdebaun
 sst secret list --stage prod
+# Expected: TwilioAccountSid, TwilioAuthToken, TwilioVerifyServiceSid, TwilioVerifyTemplateSid, TwilioTestSmsRecipientPhoneNumber, DatabaseUrl
 ```
 
 All required secrets are present. **No blocking dependencies for implementation.**
 
 **Test vs Production Behavior:**
-- Dev stage (`sdebaun`): Uses Twilio test credentials → deterministic codes (`000000`), no SMS sent, zero cost
-- Production stage (`prod`): Uses production credentials → real SMS sent, real costs (~$0.05 per verification)
 
-**MVP ships with default template:** WebOTP custom template is a fast follow (see Post-MVP section below)
+- Dev stage (`sdebaun`): Uses live Twilio credentials. Real OTPs are sent to `TwilioTestSmsRecipientPhoneNumber` for E2E tests. See Testing Strategy (Tier 2).
+- CI: Uses `TEST_OTP_BYPASS=true` — no Twilio credentials needed. See Testing Strategy (Tier 3).
+- Production stage (`prod`): Same live credentials, real SMS sent to real users.
 
 ---
 
 ## Testing Strategy
 
-**Use Twilio Verify test mode with real API calls.** Test credentials make real API calls to Twilio but don't send actual SMS or incur charges.
+Four tiers. Each catches a different class of failure. The tiers are independent — you can run any of them without the others.
 
-### Test Mode Configuration
+---
 
-**Verify Service in test mode:**
-- Console → Verify → Services → Select Service → Settings → Enable "Test Mode"
-- When enabled: Codes become deterministic (default `000000` or configurable)
-- No SMS sent, zero cost, full API validation
+### Tier 1: Unit Tests (Vitest) — Mocked Twilio
 
-**Magic test codes (when test mode enabled):**
-- `000000` → Always succeeds
-- Any other code → Fails with "invalid code" error
-- Useful for testing error paths
+Mock the Twilio client entirely. No credentials needed, no network calls. Tests all business logic in isolation.
 
-### Integration Tests (Vitest + Docker Postgres)
+**Database setup:** Tests run against the dev Neon database (`DATABASE_URL` from `.env.local`). No separate test DB — truncate the relevant tables in a `beforeEach` or `beforeAll` block instead. Tables to truncate: `Session`, `Credential`, `User`, `PhoneRateLimit`. Order matters — truncate child tables before parent tables (Sessions → Credentials → Users; PhoneRateLimit is independent). Using `TRUNCATE ... CASCADE` or deleting in FK order both work.
 
-**Test with real Twilio Verify API:**
-```typescript
-// Use test credentials + Verify Service in test mode
-// Codes are deterministic (000000), no SMS sent
+Mock the `twilio` module in Vitest (e.g., in `vitest.setup.ts` or per test file). The mock should simulate: (a) successful OTP sending for `verifications.create`, (b) `status: 'approved'` for correct codes, (c) `status: 'expired'` for expired verifications, (d) any non-approved/non-expired status for wrong codes, and (e) thrown exceptions for unexpected API failures.
 
-describe('sendOTPAction', () => {
-  it('calls Verify API with correct parameters', async () => {
-    const result = await sendOTPAction('+15005550006')
-    expect(result.success).toBe(true)
-    // Twilio Verify called but no SMS sent (test mode)
-  })
+**Required tests — library functions (test business logic directly):**
 
-  it('enforces application-level rate limiting', async () => {
-    await sendOTPAction('+15005550006')
-    const result = await sendOTPAction('+15005550006') // Immediate retry
-    expect(result.error).toContain('Wait 60 seconds')
-  })
-})
+`users.ts`:
 
-describe('verifyOTPAction', () => {
-  it('validates correct code via Verify API', async () => {
-    await sendOTPAction('+15005550006')
-    const result = await verifyOTPAction('+15005550006', '000000') // Test mode code
-    expect(result.success).toBe(true)
-  })
+- `checkPhoneExists` returns `ok({ isNewUser: true })` for an unknown phone number
+- `checkPhoneExists` returns `ok({ isNewUser: false })` for a phone with an existing `Credential`
+- `checkPhoneExists` returns `err(...)` on DB failure
+- `createUserWithCredential` creates both `User` and `Credential` in a single transaction, returns `ok({ userId })`
+- `createUserWithCredential` uses provided `displayName` when given
+- `createUserWithCredential` generates a random display name when `displayName` is omitted
+- `createUserWithCredential` returns `err(...)` on DB failure (transaction rolled back — no partial records)
+- `getCredentialByPhone` returns the `Credential` record for a known phone
+- `getCredentialByPhone` returns `null` for an unknown phone
 
-  it('rejects invalid code', async () => {
-    await sendOTPAction('+15005550006')
-    const result = await verifyOTPAction('+15005550006', '123456')
-    expect(result.error).toContain('Invalid')
-  })
-})
+`otp.ts`:
+
+- `checkRateLimit` returns `err({ code: 'RATE_LIMITED_MINUTE' })` if `lastOTPSentAt` is within 60s
+- `checkRateLimit` returns `err({ code: 'RATE_LIMITED_DAY' })` if `otpCountToday >= 5` and `otpCountResetAt` is today
+- `checkRateLimit` returns `ok()` and resets daily counter if `otpCountResetAt` is before today
+- `checkRateLimit` returns `ok()` when no `PhoneRateLimit` record exists (phone has never sent OTP)
+- `sendOTPCode` returns `ok()` on successful Twilio `verifications.create` call
+- `sendOTPCode` returns `err({ code: 'TWILIO_ERROR', message })` when Twilio API throws
+- `checkOTPCode` returns `ok()` when SDK returns `status: 'approved'`
+- `checkOTPCode` returns `err({ code: 'INVALID_CODE' })` when SDK returns any non-approved/non-expired status (wrong code)
+- `checkOTPCode` returns `err({ code: 'CODE_EXPIRED' })` when SDK returns `status: 'expired'`
+- `checkOTPCode` returns `err({ code: 'TWILIO_ERROR', message })` when SDK throws unexpectedly
+
+`sessions.ts`:
+
+- `createSession` creates a `Session` record in DB and returns `ok(token)` where token is 64 hex chars
+- `deleteSession` removes the `Session` record by token, returns `ok()`
+- `getUser` returns `null` for an unrecognized token
+- `getUser` returns the associated `User` for a valid session token
+
+**Required tests — action orchestration:**
+
+- `checkPhoneAction` returns `{ isNewUser: true }` for an unknown phone
+- `checkPhoneAction` returns `{ isNewUser: false }` for a known phone
+- `checkPhoneAction` returns `{ error }` for an invalid phone format (not E.164)
+- `sendOTPAction` returns `{ success: true }` when OTP is sent successfully
+- `sendOTPAction` returns `{ error }` (not exception) when application rate limit is exceeded
+- `sendOTPAction` returns `{ error }` (not exception) on Twilio API failure
+- `signInAction` for a new user: creates User + Credential + Session, sets session cookie, returns `{ success: true, isNewUser: true }`
+- `signInAction` for a returning user: creates Session only, sets session cookie, returns `{ success: true, isNewUser: false }`
+- `signInAction` uses the provided `displayName` when creating a new user
+- `signInAction` returns `{ error }` for an invalid or rejected OTP code
+- `logoutAction` deletes the `Session` record from DB, clears the session cookie, and returns `{ success: true }`
+
+---
+
+### Tier 2: E2E Tests (Playwright, dev) — Real SMS via Test Number
+
+Uses the dedicated test Twilio number (`TwilioTestSmsRecipientPhoneNumber`) to exercise the full delivery path. Sends a real OTP, receives it via the Twilio Messages API, parses the code, completes the auth flow in the browser.
+
+**What this catches:** Full user journey including actual SMS delivery, template format, and redirect logic. Does NOT test carrier filtering (Twilio→Twilio delivery).
+
+**Environment:** Requires all Twilio secrets plus `TwilioTestSmsRecipientPhoneNumber` available to the Next.js dev server. Set in `.env.local` (not committed):
+
+```bash
+# .env.local (dev only, never committed)
+DATABASE_URL=...
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_VERIFY_SERVICE_SID=VA0c58bce0d3676488f1d5921156ff5d1e
+TWILIO_VERIFY_TEMPLATE_SID=HJ...
+TWILIO_TEST_SMS_RECIPIENT_PHONE_NUMBER=+1...
 ```
 
-**Required tests:**
-- `sendOTPAction` calls Verify API successfully
-- `sendOTPAction` enforces application rate limiting (60s cooldown, 5/day limit)
-- `sendOTPAction` handles Verify API errors gracefully
-- `verifyOTPAction` validates correct code (test mode: 000000)
-- `verifyOTPAction` rejects invalid codes
-- `verifyOTPAction` creates session and sets verifiedAt
-- `logoutAction` deletes session
-- `updateDisplayNameAction` requires auth
+**`waitForSms` helper** — `apps/web/lib/test-helpers/wait-for-sms.ts`:
 
-### E2E Tests (Playwright)
+A polling helper that uses the Twilio Messages API to wait for an SMS to arrive on the test number. Poll every ~2 seconds up to a 30-second timeout. Accept a `before` timestamp and only return messages received after that time. Parse the 6-digit code from the message body (the template format is `123456 is your turnout.network verification code. @turnout.network #123456`). Throw if timeout exceeded.
 
-**Test with Verify test mode:**
-```typescript
-// Playwright tests use same test credentials
-// Use deterministic code 000000 in test mode
+**E2E test descriptions:**
 
-test('new user authentication flow', async ({ page }) => {
-  await page.goto('/login')
-  await page.fill('input[name="phone"]', '+15005550006')
-  await page.click('button[type="submit"]')
-
-  // OTP input appears
-  await page.fill('input[name="code"]', '000000') // Test mode code
-  await page.click('button[type="submit"]')
-
-  // Redirects to welcome page
-  await expect(page).toHaveURL('/welcome')
-})
-```
-
-**Required tests:**
-- New user flow: enter phone → enter test code (000000) → customize name → see home
-- Returning user flow: enter phone → enter test code → see home (skip welcome)
-- Rate limit flow: request code → immediately request again → see error
-- Invalid code flow: enter wrong code → see error
+- **New user flow:** Navigate to `/`, click "Sign In / Sign Up", enter `TwilioTestSmsRecipientPhoneNumber`. Set display name, submit. Call `waitForSms()` to get real code. Enter code. Expect modal to close and page to show display name + logout button.
+- **Returning user flow:** Same as above after the first session is cleared. Expect modal to close and page to show display name + logout button.
+- **Invalid code:** Navigate to `/`, open modal, enter test phone, submit. Enter wrong code. Expect error message visible in modal.
+- **Rate limit:** Submit phone twice in rapid succession. Expect error shown on second attempt.
 
 **WebOTP autofill:**
-- Cannot test WebOTP keyboard autofill in automated tests (requires real mobile device)
-- Verify message format matches spec via Twilio Console template preview
-- Manual testing on real device recommended post-deploy
 
-### What's NOT Tested (Acceptable for MVP)
+- Cannot be tested in Playwright (requires a real mobile device receiving a real SMS)
+- Validate manually on iOS/Android after deploy
 
-- ❌ Real SMS delivery (test mode doesn't send SMS)
+---
+
+### Tier 3: E2E Tests (Playwright, CI) — `TEST_OTP_BYPASS`
+
+In CI there is no real Twilio number and no SMS. The `TEST_OTP_BYPASS` env var short-circuits Twilio in the library functions (`sendOTPCode` / `checkOTPCode`), allowing the full UI flow to be tested without real SMS.
+
+**App code change required in `sendOTPCode` and `checkOTPCode` (lib/auth/otp.ts):**
+
+The bypass lives in the library functions, not the actions — this keeps the actions clean and ensures all DB logic still runs through the normal path. When `process.env.TEST_OTP_BYPASS === 'true'`: `sendOTPCode` skips the `verifications.create()` call and returns silently; `checkOTPCode` accepts `000000` as a valid code and skips the `verificationChecks.create()` call. All other logic (User/Credential creation via `createUserWithCredential`, session creation, cookies, redirects) runs exactly as normal.
+
+**⚠️ `TEST_OTP_BYPASS` must NEVER be set in production.** All DB logic (User/Credential creation, Session creation) still runs — only the Twilio API calls are skipped.
+
+**CI environment:** Set `TEST_OTP_BYPASS=true` and a CI test database URL in GitHub Actions secrets. No Twilio credentials needed in CI.
+
+**Required tests:** Same as Tier 2, but `TEST_OTP_BYPASS=true` and always use `000000` as the code.
+
+---
+
+### Tier 4: SMS Delivery Canary (Lambda Cron)
+
+A scheduled Lambda that runs every hour, sends a real OTP to the test number, receives it, and verifies it end-to-end. This is the production early-warning system for silent SMS delivery failures.
+
+**What this catches:** Twilio API outages, carrier filtering, template breakage, delivery latency spikes. Alerts before users notice.
+
+**File:** `apps/functions/src/sms-delivery-canary.ts`
+
+**Logic:**
+
+1. Record `before = new Date()`
+2. Call Twilio Verify to send OTP to `TWILIO_TEST_SMS_RECIPIENT_PHONE_NUMBER`
+3. Poll `client.messages.list({ to: testNumber })` for SMS arriving after `before`
+4. Parse 6-digit code from message body
+5. Call Twilio Verify check with parsed code — assert `status === 'approved'`
+6. On any failure or timeout: throw (Lambda failure triggers CloudWatch alarm)
+
+**SST config additions:** Add a new `sst.aws.Cron` resource named `SmsDeliveryCanary` in `sst.config.ts`. The handler is at `apps/functions/src/sms-delivery-canary.ts`. Link all five Twilio SST secrets (AccountSid, AuthToken, VerifyServiceSid, VerifyTemplateSid, TestSmsRecipientPhoneNumber). Set timeout to 60 seconds (SMS delivery can be slow). Schedule: `rate(6 hours)` — 4 runs/day stays well under the 5/day application rate limit for the test phone number. Add a CloudWatch alarm alongside it that alerts via SNS email if the Lambda errors — if the canary fails, you know before your users do.
+
+---
+
+### What's Not Tested (Acceptable for MVP)
+
+- ❌ Carrier-specific filtering (Twilio→Twilio delivery doesn't test AT&T, Verizon, T-Mobile routing)
 - ❌ WebOTP keyboard autofill (requires real mobile device)
-- ❌ Carrier spam filtering (no real SMS sent)
-- ❌ 10DLC compliance (production concern)
-
-**Post-deploy validation:**
-- Monitor Twilio Verify dashboard for delivery rates (should be >95% in production)
-- Monitor auth completion rates (percentage of users who complete OTP flow)
-- User feedback on WebOTP autofill behavior
+- ❌ International SMS delivery (US-only for MVP)
 
 ---
 
 ## Decisions Made
 
-All open questions resolved:
-
-- ✅ **Display name library:** Use `unique-names-generator` npm package (well-maintained, configurable, simple API)
-- ✅ **Phone normalization library:** Use `libphonenumber-js` (handles international formats correctly, validates properly, 200KB is acceptable for MVP)
-- ✅ **Twilio error handling:** Fail gracefully and log errors (don't expose Twilio details to users, monitor via Sentry)
-- ✅ **Session token rotation:** Static tokens (simpler, matches PRD requirement for persistent sessions, can add rotation post-MVP if needed)
-- ✅ **Display name uniqueness:** Allow duplicates (simpler, not required by PRD, users can customize if they want unique names)
-- ✅ **Rate limit reset logic:** Daily counter resets at midnight UTC (compare `new Date().toDateString()` for "same day" check)
-- ✅ **OTP delivery method:** Twilio Verify API instead of raw SMS (better deliverability, simpler code, built-in security features)
-- ✅ **WebOTP format:** Custom Verify template with domain-bound format (`@turnout.network #{{code}}`)
-- ✅ **Code storage:** Twilio manages codes (no OTPCode table, no cleanup cron needed)
+- ✅ **Twilio error handling:** Fail gracefully and log (don't expose Twilio error details to users, monitor via Sentry)
+- ✅ **Session token rotation:** Static tokens for MVP (persistent sessions per PRD; add rotation post-MVP if needed)
+- ✅ **Display name uniqueness:** Allow duplicates (not required by PRD; users can customize if they want unique names)
+- ✅ **Rate limit reset logic:** Daily counter resets at midnight UTC (compare dates to determine "same day")
 
 ---
 
 ## NPM Dependencies
 
-**Required packages:**
 ```bash
-pnpm add twilio libphonenumber-js unique-names-generator
+pnpm add twilio libphonenumber-js unique-names-generator neverthrow
 pnpm add -D @types/node
 ```
 
-**Packages:**
-- `twilio` - Twilio SDK for Verify API
-- `libphonenumber-js` - Phone number validation and normalization
-- `unique-names-generator` - Random display name generation (adjective + animal)
+`neverthrow` provides `Result<T, E>` and `ResultAsync<T, E>` for type-safe error handling without exceptions. Use `ok()`, `err()`, `okAsync()`, `errAsync()` constructors. Chain with `.andThen()`, `.map()`, `.mapErr()`. For complex flows, `safeTry` with generator functions provides do-notation style chaining. See [neverthrow docs](https://github.com/supermacro/neverthrow).
 
 ---
 
-## Post-MVP Fast Follow: WebOTP Custom Template
+## WebOTP Template
 
-**Current state (MVP):** Uses Twilio Verify default template
-- Message format: `"Your turnout-network verification code is: 123456"`
-- Users manually type 6-digit code (no keyboard autofill on mobile)
-- Auth flow works identically, just without autofill UX enhancement
+**Status: ✅ Complete.** Custom Twilio Verify template created and approved. `TwilioVerifyTemplateSid` secret set in both `sdebaun` and `prod` stages.
 
-**Fast follow (1-2 days post-MVP):** Request and configure custom WebOTP template
+**Template format:** `{{code}} is your {{friendly_name}} verification code. @turnout.network #{{code}}`
 
-**Steps:**
-1. **Submit Twilio Support ticket** requesting custom verification template
-   - Account SID: [from Console]
-   - Verify Service SID: `VA0c58bce0d3676488f1d5921156ff5d1e`
-   - Desired message body:
-     ```
-     {{code}} is your {{friendly_name}} verification code.
-     @turnout.network #{{code}}
-     ```
-   - Template name: "Turnout WebOTP"
-   - Locale: en-US
+The `@turnout.network #{{code}}` suffix is what triggers browser autofill on iOS 14+ and Android Chrome 84+. The template SID is passed as `templateSid` in every `verifications.create()` call — no Console default needed.
 
-2. **Wait for approval** (~1-2 business days)
-   - Twilio reviews and approves template
-   - Provides Template SID (starts with `HJ...`)
-
-3. **Configure template** (two options):
-   - **Option A:** Set as default in Verify Service settings (Console → Service → Message Templates)
-   - **Option B:** Pass `templateSid` parameter in `verifications.create()` API call
-
-4. **Verify WebOTP works:**
-   - Send test verification to real mobile device (iOS 14+ or Android Chrome 84+)
-   - Confirm keyboard suggests code automatically
-   - Confirm tapping suggestion fills input
-
-**Code changes required:** ZERO
-- If using Option A (default template): No code changes
-- If using Option B (templateSid param): One-line change to add parameter
-
-**Impact:** Mobile users get one-tap autofill instead of manual typing. Desktop users unaffected (WebOTP not supported).
+**Post-deploy validation:** Send real verification to a physical mobile device; confirm keyboard autofills the code and tapping it fills the OTP input.
 
 ---
 
 ## Related Context
 
-- **PRD:** prd0001-phone-identity.md
-- **Roadmap Phase:** MVP Week 1 (foundational)
-- **Related TDDs:** None (all features depend on this)
-- **Dependencies:** Twilio Verify API, Neon Postgres, SST + AWS
-- **Architecture Decision:** Switched from raw Twilio SMS to Twilio Verify API for better deliverability, simpler implementation, and built-in security features
+- **Roadmap Phase:** MVP Week 1 (foundational — all other features depend on this)
+- **Related TDDs:** None upstream; all downstream TDDs depend on this

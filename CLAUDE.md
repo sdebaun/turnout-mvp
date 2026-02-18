@@ -8,3 +8,4 @@
 - see [@context/user-stories.md](./context/user-stories.md) for some very early drafts of the kinds of experiences we want people to have when using the turnout network.
 - see [@context/ROADMAP.md](./context/ROADMAP.md) for the product roadmap (MVP scope, timelines, success metrics).
 - see [@context/ARCHITECTURE.md](./context/ARCHITECTURE.md) for technical stack decisions and implementation approach.
+- see [@context/ICEBOX.md](./context/ICEBOX.md) for MVP infrastructure work that's committed but not yet spec'd — things that need a TDD before an agent picks them up.

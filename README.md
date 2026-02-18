@@ -65,6 +65,7 @@ Turnout.network provides the missing logistics: commitment mechanisms, follow-th
 
 **Technical:**
 - [Architecture](./context/ARCHITECTURE.md) — Stack decisions, trade-offs, constraints
+- [Icebox](./context/ICEBOX.md) — Committed MVP infra work not yet spec'd (observability, 10DLC, PR environments)
 - [CLAUDE.md](./CLAUDE.md) — Instructions for AI assistants working on this project
 
 ---

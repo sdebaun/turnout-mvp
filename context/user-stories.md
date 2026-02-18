@@ -14,9 +14,9 @@ That turnout page shows her the where and when of the turnout (10 AM, Main Stree
 
 She clicks on the button and theres a dialog. It asks for her phone number so we can text her a confirmation code. It asks for her name -- but the field is prefilled with a randomly generated name (eg BlueWombat) and lets her reroll the name or enter her own name. She enters "Alice Wombat" because she actually likes wombats and her name is alice after all. Then she clicks OK.
 
-After she clicks OK, she gets taken to a "check your messages" screen that tells her to check her damn messages and follow the link there.
+After she clicks OK, she gets taken to a "check your messages" screen with a code entry field.
 
-At the same time, she gets a single SMS message: click here to confirm! She clicks, and it takes her to turnout.network where she is prompted to add turnout.network to her home screen and allow notifications. She does so.
+At the same time, she gets a single SMS message with a 6-digit verification code. On mobile, her keyboard automatically suggests the code from the message — she taps it and it fills in. On desktop she'd type it manually. She hits confirm, and she's authenticated. She is then prompted to add turnout.network to her home screen and allow notifications. She does so.
 
 Then, she gets an app notification "You're signed up for this anti-ice protest! Add it to your calendar?" and she gets a single click that will add it to her google calendar or whatever the apple walled garden equivalent is. The calendar event will include the address of the protest.
 

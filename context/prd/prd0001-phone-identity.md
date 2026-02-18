@@ -191,7 +191,7 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 - **Twilio SMS API:** Required for OTP code delivery. **Risk if delayed:** Auth doesn't work without SMS. **Mitigation:** Set up Twilio account in week 0 (before dev starts), verify SMS delivery and 10DLC spam filtering in dev/stage environments.
 - **WebOTP API (browser standard):** Enables one-tap OTP autofill on mobile (Chrome Android v84+, Safari iOS v14+). **Risk if unavailable:** Mobile UX degrades to manual code entry, but flow still works. **Mitigation:** Implement with progressive enhancement (autofill if supported, manual entry as fallback).
-- **Domain + HTTPS certificate:** Required for WebOTP API and secure sessions. **Risk if delayed:** WebOTP won't work without HTTPS. **Mitigation:** Vercel provides automatic HTTPS, so no blocker.
+- **Domain + HTTPS certificate:** Required for WebOTP API and secure sessions. **Risk if delayed:** WebOTP won't work without HTTPS. **Mitigation:** SST deploys via CloudFront which provides HTTPS automatically, so no blocker.
 
 **Critical Path:** **Twilio SMS API** — If Twilio delivery fails or account gets suspended, the entire MVP breaks. This is the single point of failure. WebOTP is nice-to-have (degrades to manual entry).
 

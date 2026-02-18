@@ -105,7 +105,7 @@ This assumes solo human developer working full-time, with realistic buffer for: 
 
 | Initiative                             | Estimated (Human Solo, Realistic) | Actual (Agent Teams) | Velocity Multiplier | Notes |
 | -------------------------------------- | --------------------------------- | -------------------- | ------------------- | ----- |
-| **Bootstrap infrastructure**           | 1-2w                              | _pending_            | —                   |       |
+| **Bootstrap infrastructure**           | 1-2w                              | 1.5 days             | ~7x                 | Started Mon Feb 16 morning, done Tue Feb 17 evening |
 | **Organizer phone-based auth**         | 1.5-2w                            | _pending_            | —                   |       |
 | **Group & turnout creation**            | 1.5-2w                            | _pending_            | —                   |       |
 | **Public turnout pages + RSVP**         | 1.5-2w                            | _pending_            | —                   |       |
@@ -227,7 +227,7 @@ Build the network, then build the network effects.
 | Geolocation/check-in feels creepy               | Medium | Make check-in manual/opt-in, clear privacy messaging                        | You   |
 | Solo dev burnout                                | Medium | Ruthless scope discipline, celebrate small wins, timebox MVP to 10-12 weeks | You   |
 | SMS delivery failures (carrier blocking)        | Medium | Use reputable SMS provider (Twilio), proper opt-in language                 | You   |
-| Serverless cold starts hurt UX                  | Low    | Choose platform with good cold start times (Cloudflare Workers, Vercel)     | You   |
+| Serverless cold starts hurt UX                  | Low    | Provisioned concurrency: 1 always-hot Lambda instance (~$11/month). See ARCHITECTURE.md. | You   |
 
 ---
 
