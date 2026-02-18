@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'context/**'
+      - '.claude/**'
+      - '*.md'
 
 jobs:
   deploy:

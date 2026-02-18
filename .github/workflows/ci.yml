@@ -2,6 +2,10 @@ name: CI
 
 on:
   pull_request:
+    paths-ignore:
+      - 'context/**'
+      - '.claude/**'
+      - '*.md'
 
 jobs:
   test:
