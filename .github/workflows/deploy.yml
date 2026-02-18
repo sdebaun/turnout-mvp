@@ -19,6 +19,9 @@ jobs:
 
       - uses: ./.github/actions/prepare
 
+      - name: Typecheck
+        run: pnpm typecheck
+
       - name: Build
         run: pnpm build
 
