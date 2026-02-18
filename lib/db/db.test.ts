@@ -10,15 +10,12 @@ describe('Database Connection', () => {
   })
 
   it('can create and query a user', async () => {
-    // Use timestamp to avoid unique constraint collisions across test runs
-    const phoneNumber = `+1555${Date.now()}`
-
     const user = await prisma.user.create({
-      data: { phoneNumber },
+      data: { displayName: 'DbTestUser' },
     })
 
     expect(user.id).toBeTruthy()
-    expect(user.phoneNumber).toBe(phoneNumber)
+    expect(user.displayName).toBe('DbTestUser')
 
     // Clean up after ourselves - don't leave test data lying around
     await prisma.user.delete({ where: { id: user.id } })

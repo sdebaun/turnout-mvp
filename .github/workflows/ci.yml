@@ -51,3 +51,4 @@ jobs:
         run: pnpm test:e2e
         env:
           DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
+          TEST_OTP_BYPASS: 'true'

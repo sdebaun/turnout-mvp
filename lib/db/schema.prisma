@@ -1,6 +1,3 @@
-// Minimal schema to prove Prisma works end-to-end.
-// Real domain models (Group, Turnout, Engagement, etc.) come in feature TDDs.
-
 generator client {
   provider      = "prisma-client-js"
   // Need both targets: native for local dev, rhel for AWS Lambda
@@ -12,11 +9,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
+enum CredentialType {
+  PHONE
+  // Future: EMAIL
+}
+
+// Core user identity
 model User {
   id          String   @id @default(cuid())
-  phoneNumber String   @unique
+  displayName String   // Random by default (e.g., "OrangeArmadillo")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([phoneNumber])
+  // Relations
+  credentials Credential[]
+  sessions    Session[]
+}
+
+// Credentials table — credential-agnostic design so we can add email later
+// without a migration. Invariant: User and Credential are always created
+// together in signInAction — never independently.
+model Credential {
+  id             String         @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  credentialType CredentialType // PHONE or EMAIL (future)
+  credential     String         // Phone number (E.164) or email
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([credentialType, credential])
+  @@index([userId])
+}
+
+// Rate limiting keyed by phone string — independent of User/Credential so it
+// works for new users before any account exists. Intentionally not FK'd to
+// Credential: the record must survive credential deletion to prevent
+// delete-and-reregister abuse.
+model PhoneRateLimit {
+  phone           String    @id  // E.164 phone number
+  lastOTPSentAt   DateTime?
+  otpCountToday   Int       @default(0)
+  otpCountResetAt DateTime?
+}
+
+// Database-backed sessions for future session management (view/revoke)
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token        String    @unique // Session token (stored in cookie)
+  createdAt    DateTime  @default(now())
+  lastActiveAt DateTime  @default(now())
+
+  // Future session management fields — cheap to store now, expensive to add later
+  userAgent    String?
+  ipAddress    String?
+
+  @@index([token])
+  @@index([userId])
 }
