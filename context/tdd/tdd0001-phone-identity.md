@@ -1,8 +1,8 @@
 # TDD: Phone-Based Identity System
 
 **PRD:** prd0001-phone-identity.md
-**Status:** Draft
-**Last Updated:** 2026-02-18 (Revised: WebOTP custom template confirmed created and secrets set — folded into MVP scope)
+**Status:** Ready for Implementation
+**Last Updated:** 2026-02-18 (Revised: WebOTP custom template confirmed created and secrets set — folded into MVP scope; file paths corrected to match monorepo path aliases; migration command corrected; bootstrap cleanup added)
 
 ## Context
 
@@ -190,7 +190,7 @@ model Session {
 
 - **⚠️ DESTRUCTIVE MIGRATION:** The bootstrap `User` model (`lib/db/schema.prisma`) has a `phoneNumber String @unique` field that does NOT match this schema. The migration will drop that table and replace it with the three models above.
 - **This is intentional and safe.** The bootstrap User model was a placeholder to prove Prisma worked end-to-end. There are no real users, no foreign keys in other tables, no data worth preserving. Drop it without hesitation.
-- Run `pnpm prisma migrate dev --name phone-identity` — the generated migration will drop the old `User` table and create `User`, `Credential`, `Session`, and `PhoneRateLimit`.
+- Run `pnpm db:migrate` and enter `phone-identity` when prompted for the migration name — the generated migration will drop the old `User` table and create `User`, `Credential`, `Session`, and `PhoneRateLimit`.
 - **OTPCode model deliberately absent:** Twilio Verify manages OTP codes (generation, storage, expiry, validation). No cleanup cron needed.
 - **Rate limiting in `PhoneRateLimit`, not `Credential`:** Keyed by phone string so it applies to new users before any account exists. Not FK'd to `Credential` — survives account deletion intentionally.
 
@@ -261,11 +261,13 @@ Thin orchestrators in `apps/web/app/auth/actions.ts`. Each validates input, call
 
 Business logic, each function independently testable. No Server Action concerns (no cookies, no redirects, no error formatting) except where noted.
 
+**File location convention:** These files live in the root `lib/auth/` directory (alongside `lib/db/`), NOT in `apps/web/lib/`. Both `vitest.config.ts` and `apps/web/tsconfig.json` map `@/lib/*` → root `lib/`, so all imports use `@/lib/auth/users`, `@/lib/auth/otp`, `@/lib/auth/sessions`.
+
 All functions that can meaningfully fail return `ResultAsync<T, E>` from neverthrow. Simple queries that return null on miss stay as `Promise<T | null>` — null is a valid expected state, not an error.
 
 ---
 
-### `apps/web/lib/auth/users.ts`
+### `lib/auth/users.ts`
 
 **`checkPhoneExists(phone)`** → `ResultAsync<{ isNewUser: boolean }, string>`
 
@@ -284,7 +286,7 @@ All functions that can meaningfully fail return `ResultAsync<T, E>` from neverth
 
 ---
 
-### `apps/web/lib/auth/otp.ts`
+### `lib/auth/otp.ts`
 
 **Error types:**
 ```typescript
@@ -318,7 +320,7 @@ type OTPError = { code: 'INVALID_CODE' } | { code: 'CODE_EXPIRED' } | { code: 'T
 
 ---
 
-### `apps/web/lib/auth/sessions.ts`
+### `lib/auth/sessions.ts`
 
 **`createSession(userId, userAgent?, ipAddress?)`** → `ResultAsync<string, string>`
 
@@ -516,6 +518,8 @@ Mock the `twilio` module in Vitest (e.g., in `vitest.setup.ts` or per test file)
 
 ### Tier 2: E2E Tests (Playwright, dev) — Real SMS via Test Number
 
+**File location:** E2E tests live in `tests/e2e/` at the repo root (per `playwright.config.ts`). Create `tests/e2e/auth.spec.ts` for this feature.
+
 Uses the dedicated test Twilio number (`TwilioTestSmsRecipientPhoneNumber`) to exercise the full delivery path. Sends a real OTP, receives it via the Twilio Messages API, parses the code, completes the auth flow in the browser.
 
 **What this catches:** Full user journey including actual SMS delivery, template format, and redirect logic. Does NOT test carrier filtering (Twilio→Twilio delivery).
@@ -532,7 +536,7 @@ TWILIO_VERIFY_TEMPLATE_SID=HJ...
 TWILIO_TEST_SMS_RECIPIENT_PHONE_NUMBER=+1...
 ```
 
-**`waitForSms` helper** — `apps/web/lib/test-helpers/wait-for-sms.ts`:
+**`waitForSms` helper** — `lib/test-helpers/wait-for-sms.ts`:
 
 A polling helper that uses the Twilio Messages API to wait for an SMS to arrive on the test number. Poll every ~2 seconds up to a 30-second timeout. Accept a `before` timestamp and only return messages received after that time. Parse the 6-digit code from the message body (the template format is `123456 is your turnout.network verification code. @turnout.network #123456`). Throw if timeout exceeded.
 
@@ -551,6 +555,8 @@ A polling helper that uses the Twilio Messages API to wait for an SMS to arrive 
 ---
 
 ### Tier 3: E2E Tests (Playwright, CI) — `TEST_OTP_BYPASS`
+
+**File location:** Same `tests/e2e/auth.spec.ts` — use `test.skip` conditionally or a separate describe block gated on `process.env.TEST_OTP_BYPASS` to separate Tier 2 (real SMS) from Tier 3 (bypass) tests.
 
 In CI there is no real Twilio number and no SMS. The `TEST_OTP_BYPASS` env var short-circuits Twilio in the library functions (`sendOTPCode` / `checkOTPCode`), allowing the full UI flow to be tested without real SMS.
 
