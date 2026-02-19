@@ -30,9 +30,17 @@ jobs:
         run: pnpm build
 
       - name: Run database migrations
-        run: pnpm prisma migrate deploy
+        run: |
+          DATABASE_URL=$(aws ssm get-parameter \
+            --name "/sst/turnout/prod/Secret/DatabaseUrl/value" \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          DATABASE_URL="$DATABASE_URL" pnpm prisma migrate deploy
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
 
       - name: Deploy to production
         run: pnpm prod:deploy
