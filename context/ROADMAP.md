@@ -106,7 +106,7 @@ This assumes solo human developer working full-time, with realistic buffer for: 
 | Initiative                             | Estimated (Human Solo, Realistic) | Actual (Agent Teams) | Velocity Multiplier | Notes |
 | -------------------------------------- | --------------------------------- | -------------------- | ------------------- | ----- |
 | **Bootstrap infrastructure**           | 1-2w                              | 1.5 days             | ~7x                 | Started Mon Feb 16 morning, done Tue Feb 17 evening |
-| **Organizer phone-based auth**         | 1.5-2w                            | _pending_            | —                   |       |
+| **Organizer phone-based auth**         | 1.5-2w                            | 1.5 days             | ~7x                 | Started Feb 18, merged+deployed Feb 19. Includes 3 hotfix PRs for missing prod migration step — deploy pipeline bug, not feature work. |
 | **Group & turnout creation**            | 1.5-2w                            | _pending_            | —                   |       |
 | **Public turnout pages + RSVP**         | 1.5-2w                            | _pending_            | —                   |       |
 | **SMS verification + reminder system** | 1.5-2w                            | _pending_            | —                   |       |
