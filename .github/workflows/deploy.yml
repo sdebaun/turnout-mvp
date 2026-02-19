@@ -30,9 +30,12 @@ jobs:
         run: pnpm build
 
       - name: Run database migrations
-        # sst shell resolves all SST secrets (including DATABASE_URL) and injects
-        # them into the child process — no need to know the SSM path ourselves
-        run: pnpm sst shell --stage prod -- pnpm prisma migrate deploy
+        # sst shell injects SST_RESOURCE_DatabaseUrl (a JSON blob) but not DATABASE_URL
+        # directly — Prisma needs DATABASE_URL set before any JS runs, so we parse
+        # the blob the same way lib/db/client.ts does, then hand it to prisma
+        run: |
+          pnpm sst shell --stage prod -- bash -c \
+            'export DATABASE_URL=$(node -e "process.stdout.write(JSON.parse(process.env.SST_RESOURCE_DatabaseUrl).value)") && pnpm prisma migrate deploy'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
