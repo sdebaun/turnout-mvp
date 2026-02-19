@@ -15,6 +15,7 @@ import {
   clearSessionCookie,
 } from '@/lib/auth'
 import { cookies } from 'next/headers'
+import { logger } from '@/lib/logger'
 
 // --- Validation helpers ---
 
@@ -76,6 +77,7 @@ export async function sendOTPAction(
   // Send the OTP
   const sendResult = await sendOTPCode(normalized.phone)
   if (sendResult.isErr()) {
+    logger.error({ phone: normalized.phone, err: sendResult.error }, 'sendOTPCode failed')
     return { error: 'Verification system unavailable. Please try again.' }
   }
 
@@ -83,7 +85,7 @@ export async function sendOTPAction(
   const incrementResult = await incrementRateLimit(normalized.phone)
   if (incrementResult.isErr()) {
     // Rate limit tracking failed but OTP was sent — not a user-facing error
-    console.error('Failed to increment rate limit:', incrementResult.error)
+    logger.warn({ phone: normalized.phone, err: incrementResult.error }, 'incrementRateLimit failed after successful OTP send')
   }
 
   return { success: true }
@@ -122,6 +124,7 @@ export async function signInAction(
     if (err.code === 'INVALID_CODE') {
       return { error: 'Invalid verification code' }
     }
+    logger.error({ phone: normalized.phone, err: otpResult.error }, 'checkOTPCode failed')
     return { error: 'Verification system unavailable. Please try again.' }
   }
 
