@@ -11,7 +11,7 @@ import { CredentialType } from '@prisma/client'
  * ONLY available when TEST_OTP_BYPASS=true. Returns 404 in production.
  */
 export async function POST(request: Request) {
-  if (process.env.TEST_OTP_BYPASS !== 'true') {
+  if (process.env.TEST_OTP_BYPASS !== 'true' || process.env.NODE_ENV === 'production') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 

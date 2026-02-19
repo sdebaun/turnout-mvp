@@ -1,5 +1,6 @@
 import twilio from 'twilio'
 import { waitForSms } from '@/lib/test-helpers/wait-for-sms'
+import { logger } from '@/lib/logger'
 
 /**
  * SMS Delivery Canary — runs on a cron schedule (every 6 hours).
@@ -51,7 +52,7 @@ export async function handler() {
     throw new Error(`Canary verification failed: status=${check.status}`)
   }
 
-  console.log('Canary check passed:', new Date().toISOString())
+  logger.info({ timestamp: new Date().toISOString() }, 'Canary check passed')
 
   return {
     statusCode: 200,

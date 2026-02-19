@@ -1,5 +1,6 @@
 import { ResultAsync } from 'neverthrow'
 import { prisma } from '@/lib/db'
+import type { User } from '@prisma/client'
 import crypto from 'crypto'
 import { cookies } from 'next/headers'
 
@@ -61,20 +62,38 @@ export function clearSessionCookie(): void {
 }
 
 /**
- * Read the session cookie → look up user in DB.
+ * Read the raw session token from the cookie without loading the user.
+ * Exported so callers (e.g. logoutAction) can get the token to call
+ * deleteSession() without needing to know the cookie name themselves.
+ */
+export function getSessionToken(): string | undefined {
+  const cookieStore = cookies()
+  return cookieStore.get(COOKIE_NAME)?.value
+}
+
+/**
+ * Read the session cookie → look up user in DB, touching lastActiveAt.
  * Returns null if no cookie, invalid token, or no matching session.
  * This is the function Server Components call to get the current user.
+ *
+ * Uses update() instead of findUnique() so lastActiveAt stays meaningful —
+ * one round-trip, and Prisma throws (caught below) if the token doesn't exist.
  */
-export async function getUser() {
+export async function getUser(): Promise<User | null> {
   const cookieStore = cookies()
   const token = cookieStore.get(COOKIE_NAME)?.value
 
   if (!token) return null
 
-  const session = await prisma.session.findUnique({
-    where: { token },
-    include: { user: true },
-  })
-
-  return session?.user ?? null
+  try {
+    const session = await prisma.session.update({
+      where: { token },
+      data: { lastActiveAt: new Date() },
+      include: { user: true },
+    })
+    return session.user
+  } catch {
+    // Session doesn't exist or DB error — treat as unauthenticated
+    return null
+  }
 }

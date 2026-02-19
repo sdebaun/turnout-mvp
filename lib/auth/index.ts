@@ -19,5 +19,6 @@ export {
   deleteSession,
   setSessionCookie,
   clearSessionCookie,
+  getSessionToken,
   getUser,
 } from './sessions'

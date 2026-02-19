@@ -87,6 +87,67 @@ describe('checkRateLimit', () => {
   })
 })
 
+describe('incrementRateLimit', () => {
+  it('creates a new record on first call for a phone', async () => {
+    await incrementRateLimit('+15555550210')
+
+    const record = await prisma.phoneRateLimit.findUnique({ where: { phone: '+15555550210' } })
+    expect(record).not.toBeNull()
+    expect(record!.otpCountToday).toBe(1)
+    expect(record!.lastOTPSentAt).not.toBeNull()
+    expect(record!.otpCountResetAt).not.toBeNull()
+  })
+
+  it('increments the counter on subsequent calls within the same day', async () => {
+    const today = new Date()
+    await prisma.phoneRateLimit.create({
+      data: {
+        phone: '+15555550211',
+        lastOTPSentAt: new Date(Date.now() - 120_000),
+        otpCountToday: 2,
+        otpCountResetAt: today,
+      },
+    })
+
+    await incrementRateLimit('+15555550211')
+
+    const record = await prisma.phoneRateLimit.findUnique({ where: { phone: '+15555550211' } })
+    expect(record!.otpCountToday).toBe(3)
+  })
+
+  it('resets the counter when otpCountResetAt is from a previous day', async () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    await prisma.phoneRateLimit.create({
+      data: {
+        phone: '+15555550212',
+        lastOTPSentAt: yesterday,
+        otpCountToday: 5,
+        otpCountResetAt: yesterday,
+      },
+    })
+
+    await incrementRateLimit('+15555550212')
+
+    const record = await prisma.phoneRateLimit.findUnique({ where: { phone: '+15555550212' } })
+    // Daily reset: counter back to 1, resetAt bumped to today
+    expect(record!.otpCountToday).toBe(1)
+    const todayDate = new Date().toISOString().slice(0, 10)
+    expect(record!.otpCountResetAt!.toISOString().slice(0, 10)).toBe(todayDate)
+  })
+
+  it('updates lastOTPSentAt to approximately now', async () => {
+    const before = new Date()
+    await incrementRateLimit('+15555550213')
+    const after = new Date()
+
+    const record = await prisma.phoneRateLimit.findUnique({ where: { phone: '+15555550213' } })
+    expect(record!.lastOTPSentAt!.getTime()).toBeGreaterThanOrEqual(before.getTime())
+    expect(record!.lastOTPSentAt!.getTime()).toBeLessThanOrEqual(after.getTime())
+  })
+})
+
 describe('sendOTPCode', () => {
   it('returns ok() on successful Twilio verifications.create', async () => {
     mockVerificationsCreate.mockResolvedValue({ status: 'pending' })

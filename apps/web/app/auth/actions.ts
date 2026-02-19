@@ -13,8 +13,8 @@ import {
   deleteSession,
   setSessionCookie,
   clearSessionCookie,
+  getSessionToken,
 } from '@/lib/auth'
-import { cookies } from 'next/headers'
 import { logger } from '@/lib/logger'
 
 // --- Validation helpers ---
@@ -158,8 +158,7 @@ export async function signInAction(
  * Always succeeds — even if there's no active session.
  */
 export async function logoutAction(): Promise<{ success: true }> {
-  const cookieStore = cookies()
-  const token = cookieStore.get('session_token')?.value
+  const token = getSessionToken()
 
   if (token) {
     await deleteSession(token)

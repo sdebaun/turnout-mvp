@@ -104,8 +104,9 @@ export function incrementRateLimit(
 export function sendOTPCode(
   phone: string
 ): ResultAsync<void, { code: 'TWILIO_ERROR'; message: string }> {
-  // CI/test bypass — no Twilio credentials needed
-  if (process.env.TEST_OTP_BYPASS === 'true') {
+  // CI/test bypass — secondary NODE_ENV guard ensures this never fires in Lambda even if
+  // someone accidentally sets TEST_OTP_BYPASS in a prod environment variable
+  if (process.env.TEST_OTP_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
     return okAsync(undefined)
   }
 
@@ -132,8 +133,9 @@ export function checkOTPCode(
   phone: string,
   code: string
 ): ResultAsync<void, OTPError> {
-  // CI/test bypass — accept the magic code, reject everything else
-  if (process.env.TEST_OTP_BYPASS === 'true') {
+  // CI/test bypass — secondary NODE_ENV guard ensures this never fires in Lambda even if
+  // someone accidentally sets TEST_OTP_BYPASS in a prod environment variable
+  if (process.env.TEST_OTP_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
     return code === '000000'
       ? okAsync(undefined)
       : errAsync({ code: 'INVALID_CODE' as const })
