@@ -52,3 +52,4 @@ jobs:
         env:
           DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
           TEST_OTP_BYPASS: 'true'
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
