@@ -136,6 +136,9 @@ _Organizer data (from prd0001):_
 
 Unauthenticated user lands on creation page → Fills form collecting group mission, turnout details, organizer identity → Submits form → Receives SMS with OTP code → Enters code (or taps autofill on mobile) → Group and turnout atomically created in database → Organizer authenticated → Redirected to dashboard showing shareable link and RSVP count
 
+> ⚠️ **CRITICAL IMPLEMENTATION CONSTRAINT — DO NOT INVERT THIS:**
+> Authentication happens **after** form submission, not before. The user fills out the entire form as a guest. Only when they submit do they receive an OTP and verify their phone. Records are written to the database only after OTP verification. Any design that requires login or session before the form is filled out **breaks the Bob flow entirely** — he'd close the tab before entering his phone number. This is the core UX innovation: collect intent first, identity last.
+
 **Key decisions:**
 
 - **Single-page form, not multi-step wizard:** Reduces cognitive load (user sees entire commitment upfront), faster completion
@@ -209,6 +212,17 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 - **Twilio SMS API (via prd0001):** Required for OTP code delivery. If SMS delivery fails, organizers can't create turnouts.
 - **Google Maps JavaScript API + Places API:** REQUIRED for MVP. Provides autocomplete widget for location input—Bob starts typing "Foster Library" and gets dropdown suggestions with full addresses. When Bob selects a place, we get `place_id`, `lat/long`, `formatted_address` immediately (no server-side geocoding needed). **Why required:** Alice's user story (user-stories.md line 34) shows "Give me Directions" button in reminders—can't provide maps links without location coordinates. Also needed for calendar invites (prd0003) and potentially check-in geofencing (prd0005). Cost: Places Autocomplete is ~$2.83 per 1,000 requests (well within budget for 10 turnouts in MVP). **Risk if delayed:** Participants can't get directions, breaks Alice's flow.
+
+> ⚠️ **HUMAN SETUP REQUIRED — START THIS BEFORE DEVELOPMENT BEGINS:**
+>
+> A human must complete all of the following before the dev team can test location search locally or in staging:
+> 1. Create a Google Cloud project at console.cloud.google.com
+> 2. Enable **Maps JavaScript API** and **Places API**
+> 3. Set up a billing account (required — Places API has no free tier beyond the $200/month credit)
+> 4. Create an API key and restrict it to your domain(s)
+> 5. Add key as an SST secret: `sst secret set GoogleMapsApiKey [key] --stage [stage]`
+>
+> **Takes ~30-60 minutes. Cannot be automated. Dev team is blocked on location search without this key.** To verify it's working: open browser console on the creation page and confirm `google.maps.places.Autocomplete` is defined. If Places API is unavailable, the fallback is plain text input (no coordinates, no directions for participants).
 
 **Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Places API**. If OTP codes don't deliver, organizers can't create turnouts. If Places API is unavailable, Bob can't enter location (blocks turnout creation—need fallback to plain text input).
 
