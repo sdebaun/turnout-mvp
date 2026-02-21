@@ -20,6 +20,10 @@
 
 **When to use API routes:** Only when external systems call you (Twilio webhooks) or non-browser clients need access. Cron jobs trigger Lambda functions directly (no API route needed).
 
+**Two-layer backend architecture:** Server Actions (`app/*/actions.ts`) are thin orchestrators — validate input, call library functions, handle errors, set cookies. Business logic lives in library functions (`lib/*/`) — independently testable, no Next.js concerns (no cookies, no redirects). Never put business logic in a Server Action. Never put Next.js concerns in a library function.
+
+**Error handling:** Library functions use `ResultAsync<T, E>` from [neverthrow](https://github.com/supermacro/neverthrow) for all fallible operations. Errors are typed objects with a `code` field (e.g., `{ code: 'RATE_LIMITED_MINUTE' }`), never raw strings or thrown exceptions. Server Actions unwrap these results and map them to user-facing error messages.
+
 ### Database: Postgres (Neon) + Prisma
 
 **What:** Postgres 16 (Docker Compose local, Neon serverless production). Prisma ORM for type-safe queries and schema-first migrations.
@@ -93,15 +97,15 @@ This is a deliberate, informed choice. Common objections addressed:
 
 ## Testing Strategy
 
-**Philosophy:** Tests are executable acceptance criteria. Agent teams write and run tests to verify their work.
+**Philosophy:** Tests are executable acceptance criteria. Agent teams write and run tests to verify their work. Not every feature needs all four tiers — include what's appropriate.
 
-**What:**
+**Tier 1 — Unit/Integration (Vitest):** Mock external services. Use the real dev Neon database — truncate relevant tables in `beforeEach` (FK order matters). Test library functions and Server Actions directly. List specific cases: not "test the happy path" but "`createSession` returns `ok(token)` where token is 64 hex chars."
 
-- Integration tests for all Server Actions and cron handlers (Vitest + Docker Postgres)
-- E2E tests for all user-facing flows (Playwright via MCP - agents run and debug)
-- Unit tests for complex business logic only (as needed)
+**Tier 2 — E2E Dev Stage (Playwright):** Real external services. Browser-level testing of user flows. Requires test infrastructure (dedicated test accounts, helper utilities, seeded data). Agents run and debug via MCP.
 
-**Why:** Agents write comprehensive tests faster than humans, run them constantly via MCP, and debug failures autonomously. Tests are proof of completion and regression protection.
+**Tier 3 — E2E CI (Playwright with bypass):** No external service credentials in CI. Each feature that uses external services implements a bypass mechanism (e.g. `TEST_OTP_BYPASS=true`) that short-circuits the external call while leaving all DB logic intact. Document exactly what the bypass skips and that it must never be set in production.
+
+**Tier 4 — Production Canary (Lambda cron):** Only for features with external dependencies that could fail silently (SMS delivery, payment processing, etc.). A scheduled Lambda sends a real request through the full stack and alarms via CloudWatch if it fails. Defined in `sst.config.ts` alongside the feature.
 
 ---
 
