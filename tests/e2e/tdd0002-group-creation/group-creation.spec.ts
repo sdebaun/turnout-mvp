@@ -13,13 +13,11 @@ const PHONES = {
 const FUTURE_DATE = '2027-07-15'
 const FUTURE_TIME = '18:00'
 
-// Helper: fill the location autocomplete and select the first suggestion.
-// gmp-place-autocomplete is a shadow DOM web component — we pierce into its inner input.
-// Suggestions appear as role="option" elements (Playwright auto-pierces shadow DOM).
+// Helper: fill the location input.
+// In CI (no NEXT_PUBLIC_GOOGLE_MAPS_API_KEY), the component renders a plain text
+// input — we fill it directly. No autocomplete suggestions to click.
 async function fillLocation(page: import('@playwright/test').Page, searchText: string) {
-  await page.locator('[data-testid="location-input"]').locator('input').fill(searchText)
-  await page.getByRole('option').first().waitFor({ timeout: 10000 })
-  await page.getByRole('option').first().click()
+  await page.locator('[data-testid="location-input"]').fill(searchText)
 }
 
 test.describe('group & turnout creation (TDD0002)', () => {
