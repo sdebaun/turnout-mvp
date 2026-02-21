@@ -110,14 +110,6 @@ function PlacesAutocompleteInput({ value, onChange, error }: LocationInputInnerP
   )
 }
 
-interface LocationInputWrapperProps {
-  value: LocationData | null
-  onChange: (location: LocationData) => void
-  error?: string
-  hasSelected: boolean
-  onSelectionChange: (selected: boolean) => void
-}
-
 /**
  * Wraps PlacesAutocompleteInput in the APIProvider.
  * Exported via dynamic() with ssr:false since Maps JS API needs window.
