@@ -13,6 +13,15 @@ const PHONES = {
 const FUTURE_DATE = '2027-07-15'
 const FUTURE_TIME = '18:00'
 
+// Helper: fill the location autocomplete and select the first suggestion.
+// gmp-place-autocomplete is a shadow DOM web component — we pierce into its inner input.
+// Suggestions appear as role="option" elements (Playwright auto-pierces shadow DOM).
+async function fillLocation(page: import('@playwright/test').Page, searchText: string) {
+  await page.locator('[data-testid="location-input"]').locator('input').fill(searchText)
+  await page.getByRole('option').first().waitFor({ timeout: 10000 })
+  await page.getByRole('option').first().click()
+}
+
 test.describe('group & turnout creation (TDD0002)', () => {
   test.skip(!process.env.TEST_OTP_BYPASS, 'TEST_OTP_BYPASS not set')
 
@@ -52,13 +61,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
     const titleInput = page.locator('#turnoutTitle')
     await expect(titleInput).toHaveValue('First Planning Meeting')
 
-    // Type a location and select from autocomplete
-    const locationInput = page.locator('[data-testid="location-input"]')
-    await locationInput.fill('Empire State Building')
-    // Wait for autocomplete suggestions and select the first one
-    // Google Places Autocomplete creates a .pac-container with .pac-item elements
-    await page.waitForSelector('.pac-item', { timeout: 10000 })
-    await page.locator('.pac-item').first().click()
+    await fillLocation(page, 'Empire State Building')
 
     // Set future date and time
     await page.fill('#turnoutDate', FUTURE_DATE)
@@ -130,11 +133,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
     await page.fill('#mission', 'Community garden for the neighborhood')
     await page.fill('#groupName', 'Green Block Initiative')
 
-    // Location autocomplete
-    const locationInput = page.locator('[data-testid="location-input"]')
-    await locationInput.fill('Central Park')
-    await page.waitForSelector('.pac-item', { timeout: 10000 })
-    await page.locator('.pac-item').first().click()
+    await fillLocation(page, 'Central Park')
 
     await page.fill('#turnoutDate', FUTURE_DATE)
     await page.fill('#turnoutTime', FUTURE_TIME)
@@ -183,11 +182,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
     await page.fill('#mission', 'Test mission')
     await page.fill('#groupName', 'Test group')
 
-    // Location autocomplete
-    const locationInput = page.locator('[data-testid="location-input"]')
-    await locationInput.fill('Times Square')
-    await page.waitForSelector('.pac-item', { timeout: 10000 })
-    await page.locator('.pac-item').first().click()
+    await fillLocation(page, 'Times Square')
 
     // Set a date in the past
     await page.fill('#turnoutDate', '2020-01-01')

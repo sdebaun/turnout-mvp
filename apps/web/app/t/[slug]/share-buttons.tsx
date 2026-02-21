@@ -15,7 +15,13 @@ export function ShareButtons({ inviteMessage, turnoutUrl, turnoutTitle }: ShareB
   const [canShare, setCanShare] = useState(false)
 
   useEffect(() => {
-    setCanShare(typeof navigator !== 'undefined' && 'share' in navigator)
+    // Only show Share on touch devices — on desktop the native share sheet is
+    // an unfamiliar OS popup that confuses users. Copy buttons handle desktop fine.
+    setCanShare(
+      typeof navigator !== 'undefined' &&
+      'share' in navigator &&
+      navigator.maxTouchPoints > 0
+    )
   }, [])
 
   async function copyToClipboard(text: string, setCopied: (v: boolean) => void) {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
-import { APIProvider, useApiIsLoaded, useMapsLibrary } from '@vis.gl/react-google-maps'
+import { useRef, useEffect, useState } from 'react'
+import { APIProvider, useApiIsLoaded } from '@vis.gl/react-google-maps'
 import dynamic from 'next/dynamic'
 import type { LocationData } from '../actions'
 
@@ -12,64 +12,60 @@ interface LocationInputInnerProps {
 }
 
 /**
- * Inner component that uses the Maps API hooks — must be a child of APIProvider.
- * Uses the classic google.maps.places.Autocomplete widget which handles
- * session tokens automatically (cheaper than per-keystroke billing).
+ * Inner component that uses the new gmp-place-autocomplete web component.
+ * Must be a child of APIProvider so the Maps JS API is loaded first.
+ *
+ * Uses the new Places API (not the legacy Autocomplete that died March 1 2025).
+ * The gmp-select event fires with a PlacePrediction; we call toPlace().fetchFields()
+ * to get coordinates and formatted address.
  */
-function PlacesAutocompleteInput({ value, onChange, error }: LocationInputInnerProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
+  const elementRef = useRef<google.maps.places.PlaceAutocompleteElement>(null)
   const apiIsLoaded = useApiIsLoaded()
-  const placesLib = useMapsLibrary('places')
   const [apiError, setApiError] = useState(false)
-  // Track whether user has selected from dropdown vs just typed freeform
-  const [hasSelected, setHasSelected] = useState(false)
-  const [inputValue, setInputValue] = useState(value?.name ?? '')
 
-  // Wire up the Autocomplete widget once the Places library loads
+  // Wire up gmp-select listener once the element is in the DOM.
+  // The web component handles its own loading — no need to wait for placesLib.
   useEffect(() => {
-    if (!placesLib || !inputRef.current || autocompleteRef.current) return
+    const element = elementRef.current
+    if (!element) return
 
-    try {
-      const autocomplete = new placesLib.Autocomplete(inputRef.current, {
-        fields: ['name', 'formatted_address', 'geometry', 'place_id'],
-      })
+    const handleSelect = async (event: Event) => {
+      // gmp-select extends plain Event (not CustomEvent) — placePrediction is on the event itself,
+      // not in event.detail. The Google types describe PlaceAutocompletePlaceSelectEvent
+      // but the actual runtime object has this shape.
+      const { placePrediction } = event as Event & {
+        placePrediction: google.maps.places.PlacePrediction | undefined
+      }
+      if (!placePrediction) return
 
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace()
-        if (!place.geometry?.location) {
-          // User pressed enter without selecting — don't treat as valid
-          return
-        }
+      try {
+        const place = placePrediction.toPlace()
+        await place.fetchFields({ fields: ['displayName', 'formattedAddress', 'location', 'id'] })
 
-        const locationData: LocationData = {
-          name: place.name ?? '',
-          formattedAddress: place.formatted_address,
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-          placeId: place.place_id,
-        }
-
-        setHasSelected(true)
-        setInputValue(place.name ?? '')
-        onChange(locationData)
-      })
-
-      autocompleteRef.current = autocomplete
-    } catch {
-      setApiError(true)
+        onChange({
+          name: place.displayName ?? '',
+          formattedAddress: place.formattedAddress ?? undefined,
+          lat: place.location?.lat() ?? undefined,
+          lng: place.location?.lng() ?? undefined,
+          placeId: place.id ?? undefined,
+        })
+      } catch {
+        // fetchFields failed — not much we can do, form stays invalid
+      }
     }
-  }, [placesLib, onChange])
+
+    element.addEventListener('gmp-select', handleSelect)
+    return () => element.removeEventListener('gmp-select', handleSelect)
+  }, [onChange])
 
   // Detect API load failure after a reasonable timeout
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!apiIsLoaded && !placesLib) {
-        setApiError(true)
-      }
+      if (!apiIsLoaded) setApiError(true)
     }, 10000)
     return () => clearTimeout(timer)
-  }, [apiIsLoaded, placesLib])
+  }, [apiIsLoaded])
 
   if (apiError) {
     return (
@@ -81,24 +77,13 @@ function PlacesAutocompleteInput({ value, onChange, error }: LocationInputInnerP
     )
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value)
-    // If user edits after selecting, invalidate the selection
-    if (hasSelected) {
-      setHasSelected(false)
-    }
-  }
-
   return (
     <div>
-      <input
-        ref={inputRef}
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Search for a place..."
-        className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        aria-label="Location"
+      {/* gmp-place-autocomplete is a Google Maps web component — styles are shadow DOM.
+          We can't apply Tailwind classes to the inner input, but width is controllable. */}
+      <gmp-place-autocomplete
+        ref={elementRef}
+        style={{ width: '100%' }}
         data-testid="location-input"
       />
       {error && (
