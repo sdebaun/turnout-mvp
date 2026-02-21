@@ -15,6 +15,19 @@ enum CredentialType {
   // Future: EMAIL
 }
 
+enum LocationType {
+  PHYSICAL
+  VIRTUAL
+}
+
+// Turnout lifecycle. UPCOMING is the only status used in MVP — CANCELED and
+// COMPLETED exist to prevent a painful migration when TDD0005/TDD0006 need them.
+enum TurnoutStatus {
+  UPCOMING
+  CANCELED
+  COMPLETED
+}
+
 // Core user identity
 model User {
   id          String   @id @default(cuid())
@@ -23,8 +36,10 @@ model User {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  credentials Credential[]
-  sessions    Session[]
+  credentials     Credential[]
+  sessions        Session[]
+  groupOrganizers GroupOrganizer[]
+  turnoutsCreated Turnout[]
 }
 
 // Credentials table — credential-agnostic design so we can add email later
@@ -72,4 +87,126 @@ model Session {
 
   @@index([token])
   @@index([userId])
+}
+
+// Reusable location entity. Referenced by Turnout.primaryLocation and
+// (in future) Opportunity.meetingLocation.
+// Note: MVP always creates a new Location per turnout — no lookup-or-reuse
+// pattern yet. "Reusable" refers to the schema capability, not current behavior.
+model Location {
+  id               String       @id @default(cuid())
+  name             String       // Display name: "Joe's Coffee", "Zoom Room"
+  locationType     LocationType @default(PHYSICAL)
+
+  // Physical location fields — populated by Google Places Autocomplete.
+  // Nullable because VIRTUAL locations don't have coordinates.
+  // For PHYSICAL locations, all four should always be set — Places is required.
+  formattedAddress String?
+  lat              Float?       // Required for "Get Directions" links (prd0003/prd0005)
+  lng              Float?
+  placeId          String?      // Google Places ID
+
+  // Virtual location fields (future: online turnouts)
+  meetingUrl       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  turnoutsAsPrimary Turnout[]    @relation("TurnoutPrimaryLocation")
+  opportunities     Opportunity[] @relation("OpportunityMeetingLocation")
+}
+
+model Group {
+  id      String @id @default(cuid())
+  name    String // "Save Willow Creek"
+  mission String // "Stop the gravel mine from destroying Willow Creek"
+
+  // Nullable branding fields — schema ready for Next phase, no MVP UI.
+  logoUrl        String?
+  primaryColor   String?
+  secondaryColor String?
+  about          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizers GroupOrganizer[]
+  turnouts   Turnout[]
+}
+
+// Join table: which users are organizers of which groups.
+// Uses compound primary key — the identity IS (groupId, userId).
+model GroupOrganizer {
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@id([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Turnout {
+  id          String        @id @default(cuid())
+  slug        String        @unique // 8-char nanoid; used in /t/[slug]
+  title       String        // "First Planning Meeting"
+  description String?
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  primaryLocationId String
+  primaryLocation   Location @relation("TurnoutPrimaryLocation", fields: [primaryLocationId], references: [id])
+
+  // Who created this turnout. Nullable for safe migration (no existing data),
+  // but always set in practice. Needed for prd0007 (co-organizer) to track
+  // which group organizer owns which turnout.
+  createdByUserId String?
+  createdByUser   User?   @relation(fields: [createdByUserId], references: [id])
+
+  startsAt DateTime         // UTC. Converted from organizer's local time via IANA timezone.
+  endsAt   DateTime?        // Nullable. TDD0003 will default to startsAt + 2h for .ics files.
+
+  status TurnoutStatus @default(UPCOMING)
+
+  // Always null in MVP. Exists to prevent schema migration when recurrence ships.
+  recurrenceRule String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  opportunities Opportunity[]
+
+  @@index([groupId])
+  @@index([startsAt])
+}
+
+// A specific way to participate in a turnout.
+// MVP creates one per turnout: the default "Show Up" opportunity
+// with no overrides. Future: "Street Medic (meet at Main & 5th, 1:30pm)".
+model Opportunity {
+  id        String  @id @default(cuid())
+  turnoutId String
+  turnout   Turnout @relation(fields: [turnoutId], references: [id], onDelete: Cascade)
+
+  name        String  // "Show Up"
+  description String?
+
+  // Overrides — always null in MVP. Non-null when an opportunity has a
+  // different location or time than its parent turnout.
+  meetingLocationId String?
+  meetingLocation   Location? @relation("OpportunityMeetingLocation", fields: [meetingLocationId], references: [id])
+  meetingTime       DateTime?
+
+  capacity Int? // null = unlimited
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([turnoutId])
 }

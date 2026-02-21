@@ -2,7 +2,7 @@
 
 **PRD:** prd0002-group-turnout-creation.md
 **Status:** Ready for Implementation
-**Last Updated:** 2026-02-21 (revised after 5-reviewer team review + follow-up: schema fixes, timezone DST bug, stub route, E2E cleanup redesign, UX gaps addressed; auth flow switched to AuthModal-on-submit; plain-text location fallback removed; GroupWithTurnouts and getGroupForOrganizer replaced with minimal getGroupConfirmation)
+**Last Updated:** 2026-02-20 (revised after 5-reviewer team review + follow-up: schema fixes, timezone DST bug, stub route, E2E cleanup redesign, UX gaps addressed; auth flow switched to AuthModal-on-submit; plain-text location fallback removed; GroupWithTurnouts and getGroupForOrganizer replaced with minimal getGroupConfirmation; OTPInputForm prop type change clarified for AuthModal refactor)
 
 ## Context
 
@@ -358,7 +358,12 @@ This is a small refactor of TDD0001's `AuthModal` that ships with TDD0002.
 
 **The fix:** Remove `router.refresh()` from inside `AuthModal`. Add an optional `onSuccess?: (result: { isNewUser: boolean }) => void` prop. When `signInAction` succeeds, call `onSuccess?.({ isNewUser })` and close. That's it. Callers that want a refresh pass `onSuccess: () => router.refresh()`.
 
-**Callers that need updating:** Any existing usage that relied on the implicit refresh (e.g., the home page login flow from TDD0001) must now pass an explicit `onSuccess: () => router.refresh()` to maintain the same behavior. Identify these callers during implementation and update them.
+**`OTPInputForm` type change required:** `signInAction` already returns `{ success: true, isNewUser: boolean }`. The current `OTPInputForm` discards that value — `onSuccess: () => void` and the call is `onSuccess()`. This needs to change:
+- `OTPInputForm.onSuccess` type: `() => void` → `(result: { isNewUser: boolean }) => void`
+- Inside `OTPInputForm`: extract `result.isNewUser` from `signInAction`'s return, call `onSuccess({ isNewUser: result.isNewUser })`
+- `AuthModal.handleAuthSuccess` receives `{ isNewUser }` from `OTPInputForm` and passes it through to its own `onSuccess?.({ isNewUser })`
+
+**Callers that need updating:** Any existing usage that relied on the implicit refresh (e.g., the home page login flow from TDD0001) must now pass an explicit `onSuccess: () => router.refresh()` to maintain the same behavior. The `onSuccess` signature change is backwards-compatible for callers that ignore the `isNewUser` argument. Identify all callers during implementation and update them.
 
 #### Submission flow
 
