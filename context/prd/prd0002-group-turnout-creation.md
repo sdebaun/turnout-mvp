@@ -2,7 +2,7 @@
 
 **Status:** MVP (Approved for build)
 **Owner:** Solo Founder
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-20
 **Target Release:** MVP Week 2-3 (after phone identity)
 **Availability:** All users (anyone can become an organizer)
 **Rationale:** First-time organizer experience is critical to MVP validation—if people don't create turnouts, the platform has no purpose.
@@ -76,7 +76,7 @@ First-time organizers face overwhelming friction when trying to organize collect
 | ------------------------------------------ | ------- | ------ | ------------ |
 | Form completion rate (start → submit)      | N/A     | ≥90%   | MVP launch   |
 | Time from landing → "turnout is live"       | N/A     | <2 min | MVP launch   |
-| Magic link click rate (submit → click SMS) | N/A     | ≥95%   | MVP launch   |
+| OTP code entry rate (submit → code entered) | N/A     | ≥95%   | MVP launch   |
 | Real turnouts created (with ≥1 RSVP)        | 0       | ≥10    | MVP lifetime |
 
 ### Leading Indicators (pre-launch signals)
@@ -199,20 +199,26 @@ _These features are not in scope for MVP, but are likely enough in the near term
 
 ### Feature Dependencies
 
-- **Phone-based identity (prd0001):** REQUIRED. Magic link flow depends on this being implemented first. Can't build this until prd0001 is done.
+- **Phone-based identity (prd0001):** REQUIRED. **TDD0001 is complete and shipped.** The OTP flow is live — build on top of it, do not reimplement it. Relevant components: `apps/web/app/auth/actions.ts` (`sendOTPAction`, `signInAction`, `checkPhoneAction`), `apps/web/app/auth/components/` (auth modal, phone/OTP/display-name forms), `lib/auth/` (OTP, sessions, users). The creation flow should trigger `sendOTPAction` and then `signInAction(phone, code, displayName)` — `displayName` is already optional in `signInAction` so the form-collected display name threads through cleanly.
+
+### Human Prerequisites (Meatsack Required)
+
+These require manual human action before the agent team can build or deploy:
+
+- **Google Maps API key:** Go to [Google Cloud Console](https://console.cloud.google.com/), enable **Maps JavaScript API** and **Places API**, create an API key restricted to your domain(s). Add the key to SST secrets as `GOOGLE_MAPS_API_KEY` (and expose it as a Next.js env var `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in `sst.config.ts` — it's a client-side key, safe to expose). Without this key, the Places Autocomplete widget cannot load.
 
 ### Team Dependencies
 
-- **Solo founder** — No external team dependencies
+- **Solo founder** — No external team dependencies beyond the human prerequisites above
 
 ### External Dependencies
 
-- **Twilio SMS API (via prd0001):** Required for OTP code delivery. If SMS delivery fails, organizers can't create turnouts.
-- **Google Maps JavaScript API + Places API:** REQUIRED for MVP. Provides autocomplete widget for location input—Bob starts typing "Foster Library" and gets dropdown suggestions with full addresses. When Bob selects a place, we get `place_id`, `lat/long`, `formatted_address` immediately (no server-side geocoding needed). **Why required:** Alice's user story (user-stories.md line 34) shows "Give me Directions" button in reminders—can't provide maps links without location coordinates. Also needed for calendar invites (prd0003) and potentially check-in geofencing (prd0005). Cost: Places Autocomplete is ~$2.83 per 1,000 requests (well within budget for 10 turnouts in MVP). **Risk if delayed:** Participants can't get directions, breaks Alice's flow.
+- **Twilio SMS API (via prd0001):** Required for OTP code delivery. Already configured and working from TDD0001. If SMS delivery fails, organizers can't create turnouts.
+- **Google Maps JavaScript API + Places API:** REQUIRED for MVP. Provides autocomplete widget for location input—Bob starts typing "Foster Library" and gets dropdown suggestions with full addresses. When Bob selects a place, we get `place_id`, `lat/long`, `formatted_address` immediately (no server-side geocoding needed). **Why required:** Alice's user story (user-stories.md line 34) shows "Give me Directions" button in reminders—can't provide maps links without location coordinates. Also needed for calendar invites (prd0003) and potentially check-in geofencing (prd0005). Cost: Places Autocomplete is ~$2.83 per 1,000 requests (well within budget for 10 turnouts in MVP). **Risk if API fails to load at runtime:** degrade gracefully to plain text input (see Risks section) — participants won't get directions, but Bob can still create the turnout.
 
-**Critical Path:** **Twilio SMS** (inherited from prd0001) AND **Google Maps Places API**. If OTP codes don't deliver, organizers can't create turnouts. If Places API is unavailable, Bob can't enter location (blocks turnout creation—need fallback to plain text input).
+**Critical Path:** **Google Maps API key** (human prerequisite) must exist before agent team can wire up the Places widget. **Twilio SMS** (inherited from prd0001, already working) is the other critical dependency — if OTP codes don't deliver, organizers can't create turnouts.
 
-💡 **Flag dependencies early to avoid last-minute surprises.** Test the full create-moment flow (form → SMS → click → dashboard) in staging before going live.
+💡 **Flag dependencies early to avoid last-minute surprises.** Human should provision the Google Maps API key before handing off to the TDD team.
 
 ---
 
