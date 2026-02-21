@@ -158,7 +158,7 @@ This is a deliberate, informed choice. Common objections addressed:
 
 ### What We're NOT Doing (MVP)
 
-- ❌ Structured logging (CloudWatch Logs is sufficient)
+- ❌ Separate logging service (Datadog, Elasticsearch, etc.) — pino writes JSON to stdout, CloudWatch ingests it. Import `logger` from `lib/logger.ts` for server-side logging.
 - ❌ Distributed tracing (single monolith, not needed)
 - ❌ Uptime monitoring (you'll know if it's down)
 - ❌ Performance monitoring (optimize after users exist)

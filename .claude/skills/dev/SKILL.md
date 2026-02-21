@@ -25,6 +25,19 @@ The team reads context docs and coordinates. You just orchestrate.
 
 ---
 
+## Rules for Team
+
+1. Read ALL context docs (ARCHITECTURE, VISION, ROADMAP, INSPIRATION, UL)
+2. Read TDD + PRD
+3. Update `.dev-session.md`
+4. Write tests (not optional)
+5. All tests must pass
+6. Coordinate yourselves
+7. Ask for help if stuck (you monitor the log, not them)
+8. When in doubt, RTFM. (context7 mcp is your friend, so is websearch)
+
+---
+
 ## Phase 0: Setup
 
 ### Step 0.1: Get your shit together
@@ -167,17 +180,6 @@ Commit: [hash]
 All tests: ✅ Passing
 All criteria: ✅ Met
 ```
-
----
-
-## Rules for Team
-
-1. Read ALL context docs (ARCHITECTURE, VISION, ROADMAP, INSPIRATION, UL)
-2. Read TDD + PRD
-3. Update `.dev-session.md`
-4. Write tests (not optional)
-5. All tests must pass
-6. Coordinate yourselves
 
 ---
 

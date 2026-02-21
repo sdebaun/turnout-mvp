@@ -27,11 +27,10 @@ _What I found:_
 - ✅ `/organize` page — single-page creation form with reassurance copy
 - ✅ Group + Turnout + default Opportunity created atomically after auth
 - ✅ Google Places Autocomplete for location (required; no plain-text fallback)
-- ✅ `/t/[slug]` stub route — minimal public page so shared links don't 404 before TDD0003
-- ✅ `/groups/[groupId]` — minimal organizer view with prewritten invite text, shareable link
+- ✅ `/t/[slug]` — post-creation destination; shows invite UI for organizers, holding message for everyone else
 - ✅ Authenticated users skip OTP (already verified)
 - ❌ No AI-generated group name suggestions (Bob types it himself)
-- ❌ No public group pages (groups are internal; turnout pages are public, prd0003)
+- ❌ No `/groups/[groupId]` organizer dashboard (deferred to TDD0006)
 - ❌ No multiple opportunities (one default "Show Up" created automatically)
 - ❌ No group branding UI (nullable DB fields added for future use; no UI)
 - ❌ No draft mode (live immediately after OTP)
@@ -47,8 +46,7 @@ _What I found:_
 - [x] Server Actions (`apps/web/app/organize/actions.ts`)
 - [x] SST config (add `GoogleMapsApiKey` secret and `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`)
 - [x] Frontend — new page `/organize` with creation form
-- [x] Frontend — new stub route `/t/[slug]` (minimal, prevents friends getting 404s)
-- [x] Frontend — new page `/groups/[groupId]` minimal organizer view
+- [x] Frontend — new page `/t/[slug]` (post-creation destination; organizer invite UI + public holding message)
 - [x] Frontend — refactor `AuthModal` from TDD0001 (remove implicit `router.refresh()`, expose `onSuccess` callback; update existing callers)
 - [ ] Background jobs (none for this feature)
 
@@ -254,7 +252,7 @@ All marked `'use server'`. Thin orchestrators — validation and type definition
 
 ### `createGroupWithTurnoutAction(data)`
 
-**Auth required:** Yes — reads session via `getUser()`. Returns `{ error }` if no session. On success: `{ success: true, groupId, turnoutSlug }`.
+**Auth required:** Yes — reads session via `getUser()`. Returns `{ error }` if no session. On success: `{ success: true, turnoutSlug }` — the caller redirects to `/t/[slug]`.
 
 **Steps:**
 
@@ -265,7 +263,7 @@ All marked `'use server'`. Thin orchestrators — validation and type definition
 5. Validate `startsAt` is in the future → return `{ error: 'Turnout date must be in the future' }` if not
 6. Call `createGroupWithTurnout(user.id, { ...validatedData, startsAt })` from `lib/groups/`
 7. If `err`: `logger.error({ userId: user.id, groupName, error }, 'Failed to create group/turnout')` → return `{ error: message }`
-8. If `ok`: return `{ success: true, groupId, turnoutSlug }`
+8. If `ok`: return `{ success: true, turnoutSlug }`
 
 ---
 
@@ -306,19 +304,6 @@ The core atomic creation function. All 5 records in a single Prisma transaction.
 
 Returns `ok({ groupId, turnoutId, turnoutSlug })` or `err(errorMessage)`.
 
-#### `getGroupConfirmation(groupId, userId)` → `Promise<GroupConfirmation | null>`
-
-Returns minimal data for the post-creation confirmation/share page. Returns `null` if the group doesn't exist or the user isn't an organizer. The full group dashboard (TDD0006) will have a richer query — this one only fetches what the confirmation page renders: group name + mission, and for each turnout: title, startsAt, slug, primaryLocation name + formattedAddress.
-
-**Key pattern:** validate organizer membership inside the query, not after:
-```typescript
-prisma.group.findFirst({
-  where: { id: groupId, organizers: { some: { userId } } },
-  select: { ... }
-})
-```
-Returns `null` for both "group not found" and "user not an organizer" — callers can't distinguish, which is correct (don't leak group existence).
-
 ---
 
 ## Frontend Components
@@ -328,8 +313,7 @@ Returns `null` for both "group not found" and "user not an organizer" — caller
 | Route | File | Type | Auth |
 |-------|------|------|------|
 | `/organize` | `apps/web/app/organize/page.tsx` | Server Component (wrapper) | No — checked at runtime |
-| `/t/[slug]` | `apps/web/app/t/[slug]/page.tsx` | Server Component | No — public stub |
-| `/groups/[groupId]` | `apps/web/app/groups/[groupId]/page.tsx` | Server Component | Yes — redirects to `/organize` if not auth'd |
+| `/t/[slug]` | `apps/web/app/t/[slug]/page.tsx` | Server Component | No — public; organizer view shown when auth'd |
 
 ---
 
@@ -388,7 +372,7 @@ This is a small refactor of TDD0001's `AuthModal` that ships with TDD0002.
    - `body`: "We need a way to reach you — your phone number is how we'll send reminders and keep you in the loop."
    - `onSuccess`: async callback that calls `createGroupWithTurnoutAction(formData)` then redirects
 6. AuthModal handles the full phone → displayName (if new) → OTP flow exactly as TDD0001 designed it
-7. On auth success: `onSuccess` fires → `createGroupWithTurnoutAction(formData)` → `router.push('/groups/[groupId]')`
+7. On auth success: `onSuccess` fires → `createGroupWithTurnoutAction(formData)` → `router.push('/t/[slug]')`
 8. On creation error: close modal, show error banner above submit button, re-enable button
 
 **Authenticated:**
@@ -397,7 +381,7 @@ This is a small refactor of TDD0001's `AuthModal` that ships with TDD0002.
 3. Client validates → scroll to first error if any, re-enable button
 4. Capture timezone
 5. Call `createGroupWithTurnoutAction(formData)` directly — no modal
-6. On success: `router.push('/groups/[groupId]')`
+6. On success: `router.push('/t/[slug]')`
 7. On error: show error banner, re-enable button
 
 **Loading state requirements:**
@@ -425,47 +409,42 @@ Uses Google Places Autocomplete. No plain-text fallback — if the script doesn'
 
 ---
 
-### `/t/[slug]` — Stub Turnout Page
+### `/t/[slug]` — Turnout Page (Stub + Organizer Invite View)
 
-**Why this is in TDD0002 scope:** Bob will share his turnout link immediately after creation. TDD0003 ships later. If friends click the link before TDD0003 is deployed, they hit a 404 and assume it's broken. This stub prevents that.
+**`apps/web/app/t/[slug]/page.tsx`** — Server Component. Calls `getTurnoutBySlug(slug)` → `notFound()` if null. Also calls `getUser()`. No auth required — public page.
 
-**`apps/web/app/t/[slug]/page.tsx`** — Server Component. Calls `getTurnoutBySlug(slug)` → `notFound()` if null. Displays group name, turnout title, date, time, location name, and a holding message ("Full details coming soon"). No RSVP — that's TDD0003.
+`getTurnoutBySlug(slug)` in `lib/groups/groups.ts`: public lookup, returns turnout with group and primaryLocation included.
 
-`getTurnoutBySlug(slug)` in `lib/groups/groups.ts`: public lookup (no auth), returns turnout with group and primaryLocation included.
+**Two views, same route:**
 
----
+**Organizer view** (user is authenticated AND is a `GroupOrganizer` for this turnout's group):
 
-### `/groups/[groupId]` — Minimal Organizer View
-
-**`apps/web/app/groups/[groupId]/page.tsx`** — Server Component:
-
-Auth: `getUser()` → if null, `redirect('/organize')`. `getGroupConfirmation(groupId, user.id)` → if null, `notFound()`.
-
-**What it shows:**
-
-1. **Celebration header:** "Your turnout is live!" — Bob just did something he's never done before. Acknowledge it before showing anything else.
-2. Group name and mission (confirmation)
-3. Turnout title, date formatted in human-readable form, time, location name
-4. **Prewritten invite message** — a copyable block with a suggested text for Bob's group chat. The user story explicitly describes this: *"it shows him a prewritten invite text message with an RSVP link."* Generate it from turnout data:
+1. **Celebration header:** "Your turnout is live!" — Bob just did something he's never done before. Acknowledge it.
+2. Group name and mission, turnout title, date/time, location name
+3. **Prewritten invite message** — the user story explicitly describes this. Generate from turnout data:
 
 ```
 Hey! I'm organizing [turnoutTitle] for [groupName] — [formattedDate] at [formattedTime] at [locationName]. RSVP here: [turnoutUrl]
 ```
 
-5. **Copy invite button** — copies the full prewritten message (not just the URL)
-6. **Copy link button** — copies just the URL for those who want it
-7. **Web Share button** — visible only when `navigator.share` is available. Shares title, the full prewritten message as text, and the turnout URL.
-8. RSVP count: "0 people have RSVPd so far — share the link!" (hardcoded for now; real count in TDD0003)
+4. **Copy invite button** — copies the full message
+5. **Copy link button** — copies just the URL
+6. **Web Share button** — when `navigator.share` is available; shares title, full message, and URL
+7. "0 people have RSVPd so far — share the link!" (hardcoded; real count in TDD0003)
 
-**Turnout URL format:** `https://turnout.network/t/[slug]` in production; the current stage's base URL in dev. The stub `/t/[slug]` route (above) ensures this link resolves to something before TDD0003 ships.
+**Public view** (everyone else):
 
-This page is a minimal precursor to the full group dashboard in TDD0006 — it will be expanded then.
+Turnout title, group name, date, time, location name, and a holding message: "Full details coming soon. Check back before the event!" No RSVP — that's TDD0003.
+
+**Organizer check:** A simple `prisma.groupOrganizer.findFirst({ where: { groupId: turnout.groupId, userId: user.id } })` after `getTurnoutBySlug` is sufficient. Don't fold it into `getTurnoutBySlug` — that function is and should stay public/auth-free.
+
+**Turnout URL format:** Must work on both the `prod` stage (`https://turnout.network/t/[slug]`) and the `sdebaun` dev stage (CloudFront URL). Use `headers()` from `next/headers` to extract the host from the incoming request rather than hardcoding or assuming an env var — SST does not automatically expose a `NEXT_PUBLIC_APP_URL` equivalent.
 
 ---
 
 ## Auth & Permissions
 
-`/organize` and `/t/[slug]` are public. `createGroupWithTurnoutAction` validates session on every call. `/groups/[groupId]` requires auth AND organizer membership — `getGroupConfirmation` validates both in a single query, returning `null` for either failure. Callers respond with 404, not 403 (don't leak group existence). Any authenticated user can create groups.
+`/organize` and `/t/[slug]` are public. `createGroupWithTurnoutAction` validates session on every call. The organizer view on `/t/[slug]` is additive — the page renders for everyone, but richer UI appears when the viewer is an authenticated organizer. Any authenticated user can create groups.
 
 ---
 
@@ -540,12 +519,6 @@ Note: `Location` must be truncated after `Opportunity` (because Opportunity has 
 - Rollback: if any step fails, no partial records persist (test by wrapping in a tx that throws after Location creation — verify no Location record remains)
 - Slug collision retry: mock nanoid to return a colliding slug on first call, unique on second — verify success on retry
 
-`getGroupConfirmation`:
-- Returns group name, mission, and turnout list when userId is an organizer
-- Returns `null` when userId is NOT an organizer of the group
-- Returns `null` when groupId does not exist
-- Returned turnout list includes title, startsAt, slug, and primaryLocation name
-
 `generateTurnoutSlug`: standard slug sanity checks (length 8, alphabet chars only, consecutive calls differ).
 
 `getTurnoutBySlug`: returns turnout+group+location when found, null when not.
@@ -559,7 +532,7 @@ Mock `lib/groups` (return `ok(...)` or `err(...)` as needed). Use test session v
 - Returns `{ error: 'Not authenticated' }` when no session cookie present
 - Returns `{ error }` when required fields missing (groupName, mission, turnoutTitle, location.name, turnoutDate, turnoutTime)
 - Returns `{ error }` when turnoutDate is in the past
-- Returns `{ success: true, groupId, turnoutSlug }` on valid input with active session
+- Returns `{ success: true, turnoutSlug }` on valid input with active session
 - Passes `location` as nested object (not flat fields) to `createGroupWithTurnout`
 - Returns `{ error }` (not throws) when `createGroupWithTurnout` returns `err(...)`
 - Calls `logger.error` when `createGroupWithTurnout` returns `err(...)`
@@ -598,9 +571,7 @@ The existing `/api/test/seed-user` creates a user + credential but does NOT crea
 5. Fill in mission textarea
 6. Fill in group name
 7. Fill in turnout title (or accept pre-fill)
-8. Type a location name in the Places autocomplete (e.g., "Joe's Coffee"), wait for suggestions, select the first one
-   - Requires `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to be set in the dev environment (see Human Prerequisites)
-   - If running in a CI environment without the key, this test should be skipped or use Playwright request interception to stub the Maps API responses
+8. Type a location name in the Places autocomplete (e.g., "Joe's Coffee"), wait for suggestions, select the first one (requires `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` set in dev — see Human Prerequisites)
 9. Set future date via `<input type="date">`, set time via `<input type="time">`
 10. Click "Create Turnout"
 11. Assert: `AuthModal` opens (phone input visible)
@@ -608,13 +579,11 @@ The existing `/api/test/seed-user` creates a user + credential but does NOT crea
 13. Submit phone → assert: display name step visible (new user)
 14. Accept or edit display name, submit → assert: OTP step visible
 15. Enter `000000` (TEST_OTP_BYPASS code)
-16. Assert: redirected to `/groups/[groupId]`
-17. Assert: "Your turnout is live!" (or similar) visible
+16. Assert: redirected to `/t/[slug]`
+17. Assert: "Your turnout is live!" (or similar) visible (organizer view)
 18. Assert: prewritten invite message visible containing group name + turnout title
-19. Assert: turnout URL visible containing `/t/`
+19. Assert: turnout URL visible in the invite message
 20. Assert: copy button visible
-21. Navigate to the `/t/[slug]` URL extracted from the page
-22. Assert: stub page shows turnout title and group name (not 404)
 
 #### Test 2: Creation as authenticated user
 
@@ -625,7 +594,7 @@ The existing `/api/test/seed-user` creates a user + credential but does NOT crea
 5. Fill in form fields (mission, groupName, turnoutTitle, date, time); select a location via Places autocomplete
 6. Click "Create Turnout"
 7. Assert: `AuthModal` does NOT open
-8. Assert: redirected to `/groups/[groupId]` directly
+8. Assert: redirected to `/t/[slug]` directly
 
 #### Test 3: Validation errors prevent submission
 
@@ -647,10 +616,10 @@ The existing `/api/test/seed-user` creates a user + credential but does NOT crea
 ## NPM Dependencies
 
 ```bash
-pnpm add nanoid date-fns-tz @vis.gl/react-google-maps
+pnpm add nanoid@3 date-fns-tz @vis.gl/react-google-maps
 ```
 
-**`nanoid`:** URL-safe unique ID generation for slugs. Use `customAlphabet`. If `nanoid@4+` causes ESM/CJS issues with Vitest, pin to `nanoid@3` which has CJS support. Check `vitest.config.ts` for any `ssr: { external }` exclusions needed.
+**`nanoid@3`:** Pinned to v3 for CJS compatibility with Vitest. v4+ is ESM-only and breaks the test suite. Use `customAlphabet`.
 
 **`date-fns-tz`:** IANA timezone-aware date conversion. `fromZonedTime(localDateString, ianaTimezone)` → UTC Date. Handles DST correctly where raw `getTimezoneOffset()` does not.
 
@@ -663,7 +632,8 @@ pnpm add nanoid date-fns-tz @vis.gl/react-google-maps
 **Made:**
 - ✅ **Slug format:** 8-char nanoid, unambiguous alphabet. Not sequential (guessable). Not UUID (too long).
 - ✅ **Turnout URL pattern:** `/t/[slug]` — established here; TDD0003 builds the full route.
-- ✅ **Stub `/t/[slug]` route in scope:** Prevents friends hitting 404 in the TDD0002→TDD0003 gap.
+- ✅ **Redirect after creation goes to `/t/[slug]`:** Bob lands on the page he's about to share, sees it from his friends' perspective, plus the organizer invite UI. No separate confirmation page needed.
+- ✅ **`/t/[slug]` shows organizer invite UI when viewer is the organizer:** Same route, two views. Organizer check is a separate query after `getTurnoutBySlug` — don't fold it in, `getTurnoutBySlug` should stay auth-free.
 - ✅ **Single-page form:** Not multi-step wizard. PRD endorses this.
 - ✅ **No AI group name suggestion:** Bob types it himself. Placeholder text guides him.
 - ✅ **Timezone via IANA name:** `Intl.DateTimeFormat().resolvedOptions().timeZone` + `date-fns-tz`. Handles DST correctly. No user-facing timezone selector needed.
@@ -679,6 +649,7 @@ pnpm add nanoid date-fns-tz @vis.gl/react-google-maps
 - ✅ **`createdByUserId` on Turnout:** Nullable FK, always set in practice. Prevents prd0007 retrofit.
 - ✅ **`TurnoutStatus` enum:** UPCOMING default; CANCELED/COMPLETED exist for prd0005/prd0006.
 - ✅ **`endsAt` nullable on Turnout:** TDD0003 will default to `startsAt + 2h` for .ics. At least it won't be a surprise.
+- ✅ **`nanoid@3` pinned:** v4+ is ESM-only and breaks Vitest. Pin to v3 upfront, not as a fallback.
 
 **Note for TDD0003:** `Turnout.endsAt` is nullable. When generating .ics calendar files, default to `startsAt + 2 hours` if `endsAt` is null. Document this assumption in TDD0003.
 
@@ -690,4 +661,4 @@ pnpm add nanoid date-fns-tz @vis.gl/react-google-maps
 - **Roadmap Phase:** MVP Week 2-3
 - **Depends on:** TDD0001 (phone identity — shipped and live)
 - **Unlocks:** TDD0003 (public turnout pages + RSVP — builds on `/t/[slug]` route stub and Turnout data)
-- **Eventual expansion:** TDD0006 (group dashboard — `/groups/[groupId]` will be fully built out)
+- **Eventual expansion:** TDD0006 (group dashboard — `/groups/[groupId]` organizer view deferred entirely; `/t/[slug]` organizer UI will be extended when full RSVP data is available)
