@@ -107,7 +107,7 @@ This assumes solo human developer working full-time, with realistic buffer for: 
 | -------------------------------------- | --------------------------------- | -------------------- | ------------------- | ----- |
 | **Bootstrap infrastructure**           | 1-2w                              | 1.5 days             | ~7x                 | Started Mon Feb 16 morning, done Tue Feb 17 evening |
 | **Organizer phone-based auth**         | 1.5-2w                            | 1.5 days             | ~7x                 | Started Feb 18, merged+deployed Feb 19. Includes 3 hotfix PRs for missing prod migration step — deploy pipeline bug, not feature work. |
-| **Group & turnout creation**            | 1.5-2w                            | _pending_            | —                   |       |
+| **Group & turnout creation**            | 1.5-2w                            | 1.5 days             | ~7x                 | Started Feb 20, complete Feb 21. 3-agent wave team (schema-library, auth-refactor, frontend). Google Maps PlaceAutocompleteClassic missing from vis.gl@1.7.1 — worked around with classic Autocomplete widget. |
 | **Public turnout pages + RSVP**         | 1.5-2w                            | _pending_            | —                   |       |
 | **SMS verification + reminder system** | 1.5-2w                            | _pending_            | —                   |       |
 | **Check-in system**                    | 1-1.5w                            | _pending_            | —                   |       |

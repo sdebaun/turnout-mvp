@@ -52,3 +52,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://turnout:turnout_test_password@localhost:5432/turnout_test
           TEST_OTP_BYPASS: 'true'
+          # Intentionally no NEXT_PUBLIC_GOOGLE_MAPS_API_KEY here — without it, the
+          # location input degrades to a plain text input that Playwright can interact
+          # with directly. gmp-place-autocomplete shadow DOM is not reliably accessible
+          # in headless Chromium. E2E tests cover form flow, not the Maps widget.

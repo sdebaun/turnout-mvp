@@ -6,7 +6,7 @@ import { signInAction, sendOTPAction } from '../actions'
 interface OTPInputFormProps {
   phone: string
   displayName?: string
-  onSuccess: () => void
+  onSuccess: (result: { isNewUser: boolean }) => void
 }
 
 export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProps) {
@@ -49,7 +49,8 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
         setError(result.error)
         return
       }
-      onSuccess()
+      // Pass isNewUser through so callers can decide what to do post-auth
+      onSuccess({ isNewUser: result.isNewUser })
     })
   }
 

@@ -50,6 +50,7 @@ export function AuthSection({ user }: AuthSectionProps) {
       <AuthModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={() => router.refresh()}
       />
     </>
   )

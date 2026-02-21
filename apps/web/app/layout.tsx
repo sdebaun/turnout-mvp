@@ -8,8 +8,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // suppressHydrationWarning: browser extensions (WhatRuns, etc.) inject class
+  // attributes onto <html> that React didn't render, causing hydration mismatch
+  // warnings in dev mode. Safe here — only suppresses on this one element.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>{children}</body>
     </html>
   )

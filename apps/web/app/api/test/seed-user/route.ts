@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { createUserWithCredential } from '@/lib/auth/users'
+import { createSession } from '@/lib/auth/sessions'
 import { CredentialType } from '@prisma/client'
 
 /**
@@ -16,7 +17,11 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { phone, displayName } = body as { phone: string; displayName?: string }
+  const { phone, displayName, createSession: shouldCreateSession } = body as {
+    phone: string
+    displayName?: string
+    createSession?: boolean
+  }
 
   if (!phone) {
     return NextResponse.json({ error: 'phone is required' }, { status: 400 })
@@ -41,6 +46,15 @@ export async function POST(request: Request) {
   const result = await createUserWithCredential(phone, displayName)
   if (result.isErr()) {
     return NextResponse.json({ error: result.error }, { status: 500 })
+  }
+
+  // Optionally create a session so E2E tests can authenticate without the OTP flow
+  if (shouldCreateSession) {
+    const sessionResult = await createSession(result.value.userId)
+    if (sessionResult.isErr()) {
+      return NextResponse.json({ error: sessionResult.error }, { status: 500 })
+    }
+    return NextResponse.json({ userId: result.value.userId, sessionToken: sessionResult.value })
   }
 
   return NextResponse.json({ userId: result.value.userId })

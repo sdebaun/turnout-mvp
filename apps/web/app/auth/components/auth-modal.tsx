@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { PhoneInputForm } from './phone-input-form'
 import { DisplayNameForm } from './display-name-form'
 import { OTPInputForm } from './otp-input-form'
@@ -11,6 +10,7 @@ type Step = 'phone' | 'displayName' | 'otp'
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
+  onSuccess?: (result: { isNewUser: boolean }) => void
   title?: string
   body?: string
 }
@@ -18,10 +18,10 @@ interface AuthModalProps {
 export function AuthModal({
   isOpen,
   onClose,
+  onSuccess,
   title = 'Sign In or Sign Up',
   body,
 }: AuthModalProps) {
-  const router = useRouter()
   const [step, setStep] = useState<Step>('phone')
   const [phone, setPhone] = useState('')
   const [displayName, setDisplayName] = useState<string | undefined>()
@@ -49,10 +49,11 @@ export function AuthModal({
     setStep('otp')
   }, [])
 
-  const handleAuthSuccess = useCallback(() => {
+  // Close the modal first, then let the caller decide what happens next
+  const handleAuthSuccess = useCallback((result: { isNewUser: boolean }) => {
     handleClose()
-    router.refresh()
-  }, [handleClose, router])
+    onSuccess?.(result)
+  }, [handleClose, onSuccess])
 
   if (!isOpen) return null
 

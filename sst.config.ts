@@ -18,6 +18,9 @@ export default $config({
     const twilioVerifyTemplateSid = new sst.Secret("TwilioVerifyTemplateSid")
     const twilioTestSmsRecipientPhoneNumber = new sst.Secret("TwilioTestSmsRecipientPhoneNumber")
 
+    // Google Maps API key for Places Autocomplete (location input)
+    const googleMapsApiKey = new sst.Secret("GoogleMapsApiKey")
+
     // Custom domain only wired up for prod — dev stages use the auto-generated CloudFront URL
     const domain = $app.stage === "prod"
       ? {
@@ -37,6 +40,7 @@ export default $config({
         twilioVerifyServiceSid,
         twilioVerifyTemplateSid,
         twilioTestSmsRecipientPhoneNumber,
+        googleMapsApiKey,
       ],
       environment: {
         DATABASE_URL: databaseUrl.value,
@@ -45,6 +49,7 @@ export default $config({
         TWILIO_VERIFY_SERVICE_SID: twilioVerifyServiceSid.value,
         TWILIO_VERIFY_TEMPLATE_SID: twilioVerifyTemplateSid.value,
         TWILIO_TEST_SMS_RECIPIENT_PHONE_NUMBER: twilioTestSmsRecipientPhoneNumber.value,
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: googleMapsApiKey.value,
       },
       domain,
       server: { runtime: "nodejs22.x" },
