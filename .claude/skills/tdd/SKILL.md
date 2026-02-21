@@ -206,12 +206,6 @@ Write a concrete sequence and call out the parallelizable chunks explicitly. The
 
 ---
 
-## Decisions Made
-
-- **[Decision]:** [What was decided and why. Dev team does not relitigate these.]
-
----
-
 ## Prerequisites
 
 **Human tasks** _(things a human must do; flag lead times)_:
@@ -262,12 +256,14 @@ Write a concrete sequence and call out the parallelizable chunks explicitly. The
 
 1. [Action] → [what happens]
 2. [Result]
-   **E2E:** [what user does in browser → what should happen]
+
+**E2E:** [what user does in browser → what should happen]
 
 **Flow 2: [Name — include error/edge-case flows, not just happy path]**
 
 1. ...
-   **E2E:** [scenario]
+
+**E2E:** [scenario]
 
 ---
 
@@ -282,7 +278,8 @@ _`app/[feature]/actions.ts` — validate input, call lib functions, handle error
 1. Validate [what] → `{ error }` if invalid
 2. Call `libFn(...)` → `{ error }` on failure
 3. Return `{ success: true }`
-   **Tests:** [specific case: input → expected output]
+
+**Tests:** [specific case: input → expected output]
 
 ---
 
@@ -298,8 +295,10 @@ _`lib/[feature]/` — no Next.js concerns. Each function independently testable.
 [What it does, step by step]
 
 - `{ code: 'X' }` — [when]
-  **Tests:** `functionName([input])` → `ok([expected])`; `functionName([invalid])` → `err({ code: 'X' })`
-  **CI Bypass:** _(if calls external service)_ `[ENV_VAR]=true` — skips [what], returns [hardcoded]. Must never be set in production.
+
+**Tests:** `functionName([input])` → `ok([expected])`; `functionName([invalid])` → `err({ code: 'X' })`
+
+**CI Bypass:** _(if calls external service)_ `[ENV_VAR]=true` — skips [what], returns [hardcoded]. Must never be set in production.
 
 ---
 
@@ -358,6 +357,12 @@ _Only if an external system calls INTO this app. Not for UI-triggered flows._
 **Can be parallelized:**
 
 - [Task A] and [Task B] once [dependency] is done
+
+---
+
+## Decisions Made
+
+- **[Decision]:** [What was decided and why. Dev team does not relitigate these.]
 
 ---
 
