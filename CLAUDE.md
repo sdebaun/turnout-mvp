@@ -9,3 +9,5 @@
 - see [@context/ROADMAP.md](./context/ROADMAP.md) for the product roadmap (MVP scope, timelines, success metrics).
 - see [@context/ARCHITECTURE.md](./context/ARCHITECTURE.md) for technical stack decisions and implementation approach.
 - see [@context/ICEBOX.md](./context/ICEBOX.md) for MVP infrastructure work that's committed but not yet spec'd — things that need a TDD before an agent picks them up.
+- see [@context/ux/BRANDING.md](./context/BRANDING.md) for front-end branding and design guidelines.
+- see [@context/ux/DESIGN-DECISIONS.md](./context/ux/DESIGN-DECISIONS.md) for UX design decisions and the reasoning behind them.

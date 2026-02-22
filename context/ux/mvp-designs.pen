@@ -2495,7 +2495,7 @@
               "name": "Card Header",
               "slot": [],
               "width": "fill_container",
-              "height": 68,
+              "height": "fit_content(0)",
               "stroke": {
                 "align": "inside",
                 "thickness": 1
@@ -2511,7 +2511,7 @@
               "name": "Card Content",
               "slot": [],
               "width": "fill_container",
-              "height": 68,
+              "height": "fit_content(0)",
               "stroke": {
                 "align": "inside",
                 "thickness": 1
@@ -2527,7 +2527,7 @@
               "name": "Card Actions",
               "slot": [],
               "width": "fill_container",
-              "height": 68,
+              "height": "fit_content(0)",
               "stroke": {
                 "align": "inside",
                 "thickness": 1
@@ -3972,7 +3972,7 @@
                   "type": "ref",
                   "ref": "UjXug",
                   "x": 24,
-                  "y": 24,
+                  "y": 32,
                   "descendants": {
                     "zHpCv": {
                       "content": "$45.00"
@@ -3984,7 +3984,7 @@
                   "type": "ref",
                   "ref": "C10zH",
                   "x": 131,
-                  "y": 16,
+                  "y": 24,
                   "descendants": {
                     "poRwU": {
                       "content": "Add to favorites"
@@ -4455,6 +4455,1282 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "p724Y",
+      "x": 3075,
+      "y": 0,
+      "name": "Discovery – Mobile",
+      "theme": {
+        "Mode": "Dark"
+      },
+      "width": 375,
+      "fill": "#FAFAF7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "W3NPa",
+          "name": "nav",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "transparent",
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "4PcsH",
+              "name": "logo",
+              "fill": "#1E2420",
+              "content": "turnout.network",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            },
+            {
+              "id": "4I4V4",
+              "type": "ref",
+              "ref": "3f2VW",
+              "name": "signIn",
+              "descendants": {
+                "AeXMI": {
+                  "enabled": false
+                },
+                "UZfKV": {
+                  "content": "Sign in"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "K9EF9",
+          "name": "cards",
+          "width": "fill_container",
+          "fill": "transparent",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 16,
+          "children": [
+            {
+              "id": "WMWhA",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "fill": "#1E2420",
+              "stroke": {},
+              "effect": [],
+              "name": "ctaCard",
+              "descendants": {
+                "CgJv7": {
+                  "height": "fit_content",
+                  "stroke": {},
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oR558",
+                      "name": "ctaTitle",
+                      "fill": "#FAFAF7",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Someone needs to start this. It might as well be you.",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "height": "fit_content",
+                  "stroke": {},
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wDfG9",
+                      "name": "ctaDesc",
+                      "fill": "#C9B99A",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Start turning people out in two minutes. Free forever.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                "bvhSM": {
+                  "height": "fit_content",
+                  "stroke": {},
+                  "children": [
+                    {
+                      "id": "chj0u",
+                      "type": "ref",
+                      "ref": "VSnC2",
+                      "width": "fit_content",
+                      "name": "ctaBtn",
+                      "descendants": {
+                        "8jVfJ": {
+                          "enabled": false
+                        },
+                        "8tnXG": {
+                          "content": "Start a turnout →"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "bqVbS",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "name": "ec1",
+              "descendants": {
+                "CgJv7": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "gWQGx",
+                      "name": "event-image",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "djpaine",
+                        "link": "https://unsplash.com/@djpaine",
+                        "author": "DJ Paine"
+                      },
+                      "width": "fill_container",
+                      "height": 160,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1638770749574-3d519d91e6a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3ODU1NTd8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 4
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "G1e42",
+                      "name": "ec1Group",
+                      "fill": "#7A6E65",
+                      "content": "Save Willow Creek",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "SDm9n",
+                      "name": "ec1Title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Climate March",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Jae7r",
+                      "name": "ec1Date",
+                      "fill": "#7A6E65",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This Saturday · Mar 8 · 10am · City Hall Plaza",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                "bvhSM": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jsZnu",
+                      "name": "ec1Count",
+                      "fill": "#3D6B52",
+                      "content": "42 going →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "hUZF6",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "name": "ec2",
+              "descendants": {
+                "CgJv7": {
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nufFj",
+                      "name": "event-image",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "karinasarmiento",
+                        "link": "https://unsplash.com/@karinasarmiento",
+                        "author": "Karina Sarmiento"
+                      },
+                      "width": "fill_container",
+                      "height": 160,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1716069418761-e25a02806958?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3ODU1NjF8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 4
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LBwYT",
+                      "name": "ec2Group",
+                      "fill": "#7A6E65",
+                      "content": "Local Love Project",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "p9OPX",
+                      "name": "ec2Title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Food Distribution Drive",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Rqy8O",
+                      "name": "ec2Date",
+                      "fill": "#7A6E65",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This Saturday · Mar 8 · 9am · Fairgrounds, Building A",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                "bvhSM": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nA68p",
+                      "name": "ec2Count",
+                      "fill": "#3D6B52",
+                      "content": "18 going →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "5ZKqK",
+          "name": "from-the-field",
+          "width": "fill_container",
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "IhnAJ",
+              "name": "fieldLabel",
+              "fill": "#7A6E65",
+              "content": "FROM THE FIELD",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "letterSpacing": 1.5
+            },
+            {
+              "id": "5UcMl",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "name": "art1New",
+              "descendants": {
+                "CgJv7": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LzSlb",
+                      "fill": "#D95F3B",
+                      "content": "ORGANIZING",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Fft17",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "How Bob built a movement from a group chat",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "oSQ8y",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "name": "art2New",
+              "descendants": {
+                "CgJv7": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tGWu3",
+                      "fill": "#D95F3B",
+                      "content": "SHOWING UP",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "4zxDL",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "First time at a protest? Here's what helped.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "yyxwL",
+              "type": "ref",
+              "ref": "pcGlv",
+              "width": "fill_container",
+              "name": "art3New",
+              "descendants": {
+                "CgJv7": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MX6zh",
+                      "fill": "#D95F3B",
+                      "content": "TOOLS",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                "frWPV": {
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DJySq",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Why a shared link beats a group chat every time",
+                      "lineHeight": 1.4,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "30vEo",
+          "name": "footer",
+          "width": "fill_container",
+          "fill": "#1E2420",
+          "padding": [
+            24,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "TdDo5",
+              "name": "footLogo",
+              "fill": "#FAFAF7",
+              "content": "turnout.network",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FdsAQ",
+      "x": 1862,
+      "y": -1181,
+      "name": "Custom Components",
+      "clip": true,
+      "width": 1110,
+      "height": 850,
+      "fill": "#FFFFFF",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "7LLX1",
+          "x": 45,
+          "y": 37,
+          "name": "Carlos / Icon Variant",
+          "clip": true,
+          "width": 320,
+          "fill": "$--card",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": 2
+            },
+            "blur": 8
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "huENV",
+              "name": "carlos_eyebrow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lLDsZ",
+                  "name": "c_gava",
+                  "clip": true,
+                  "width": 16,
+                  "height": 16,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1559766153-91249b10ca89?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3ODk0ODZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "UEo6t",
+                  "name": "c_gname",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": 90,
+                  "content": "Bikes4aCause",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.4
+                },
+                {
+                  "type": "frame",
+                  "id": "ERO9J",
+                  "name": "c_oava",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "silverkblack",
+                    "link": "https://unsplash.com/@silverkblack",
+                    "author": "Vitaly Gariev"
+                  },
+                  "width": 16,
+                  "height": 16,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758599543122-fc551c9b4b1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTYxMTR8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 9999
+                },
+                {
+                  "type": "text",
+                  "id": "JypPF",
+                  "name": "c_oname_eyebrow",
+                  "fill": "$--muted-foreground",
+                  "content": "Carlos Landeros",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bJqde",
+              "name": "title-wrap",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "transparent",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "8pDE9",
+                  "name": "carlos_title",
+                  "fill": "$--card-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Kids Learn 2 Ride",
+                  "lineHeight": 1.1,
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "33ftO",
+              "name": "info-section",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Z9E48",
+                  "name": "date-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "cr3TX",
+                      "name": "calIco2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "calendar",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "8oj9g",
+                      "name": "date-text",
+                      "fill": "$--primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This Saturday · 10 AM",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MwjTC",
+                  "name": "loc-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "VBOL4",
+                      "name": "pinIco2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aT6Jz",
+                      "name": "loc-text",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Surfers Point Park, Ventura, CA",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qMI7U",
+              "name": "photo-roll",
+              "width": "fill_container",
+              "height": 90,
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "N1o9Q",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "tinnnass",
+                    "link": "https://unsplash.com/@tinnnass",
+                    "author": "Martina Jofré"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1612636545693-4b11f69c869a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "fyI8S",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "mrjoh3",
+                    "link": "https://unsplash.com/@mrjoh3",
+                    "author": "Matt Johnson"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1761878845535-e4e62ad14c47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "CQyoX",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "photo_collective",
+                    "link": "https://unsplash.com/@photo_collective",
+                    "author": "Robby Henry"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758648321275-3168438d396d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "e72z8",
+          "x": 395,
+          "y": 37,
+          "name": "Kat / Icon Variant",
+          "clip": true,
+          "width": 320,
+          "fill": "$--card",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": 2
+            },
+            "blur": 8
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "HqbcB",
+              "name": "kat_eyebrow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "0c3X0",
+                  "name": "k_gava",
+                  "clip": true,
+                  "width": 16,
+                  "height": 16,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./images/generated-1771789492050.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "PRvXs",
+                  "name": "k_gname",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": 115,
+                  "content": "Local Love Project",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.4
+                },
+                {
+                  "type": "frame",
+                  "id": "eL1Bm",
+                  "name": "k_oava",
+                  "width": 16,
+                  "height": 16,
+                  "fill": "$--secondary",
+                  "cornerRadius": 9999,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tzMWS",
+                      "name": "k_init",
+                      "fill": "$--secondary-foreground",
+                      "content": "KM",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 7,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "UjgcE",
+                  "name": "k_oname_eyebrow",
+                  "fill": "$--muted-foreground",
+                  "content": "Kat Merrick",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "C2j1p",
+              "name": "title-wrap",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "transparent",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WJdXo",
+                  "name": "kat_title",
+                  "fill": "$--card-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Monthly Downtown Food Distribution",
+                  "lineHeight": 1.1,
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Rig2e",
+              "name": "info-section",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aMu2X",
+                  "name": "date-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "G090w",
+                      "name": "katCalIco",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "calendar",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w9v9W",
+                      "name": "date-text",
+                      "fill": "$--primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Next Saturday · 8 AM",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mQK6X",
+                  "name": "loc-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "6s4QI",
+                      "name": "katPinIco",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ygrvw",
+                      "name": "loc-text",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Westpark Community Ctr, Ventura, CA",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w1tuy",
+              "name": "photo-roll",
+              "width": "fill_container",
+              "height": 90,
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AXeEQ",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "davidutt36",
+                    "link": "https://unsplash.com/@davidutt36",
+                    "author": "David Utt"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1636736626599-6993a1989285?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "XPhJp",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "wouter_gv",
+                    "link": "https://unsplash.com/@wouter_gv",
+                    "author": "Wouter Groote Veldman"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1765031039845-4bb510dc8112?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "XgUmt",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "justmejuliee",
+                    "link": "https://unsplash.com/@justmejuliee",
+                    "author": "Julia Taubitz"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1762967027594-86bbf9873be5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MDd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "2YRTR",
+          "x": 745,
+          "y": 37,
+          "name": "Bob / Icon Variant",
+          "clip": true,
+          "width": 320,
+          "fill": "$--card",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": 2
+            },
+            "blur": 8
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "5JIW1",
+              "name": "bob_eyebrow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "s3uEP",
+                  "name": "b_gava",
+                  "clip": true,
+                  "width": 16,
+                  "height": 16,
+                  "fill": "$--secondary",
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "4WqvD",
+                  "name": "b_gname",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": 200,
+                  "content": "Save Willow Creek",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FbX7Q",
+              "name": "title-wrap",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "transparent",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oMBwL",
+                  "name": "bob_title",
+                  "fill": "$--card-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Kickoff Meeting",
+                  "lineHeight": 1.1,
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MVvvh",
+              "name": "info-section",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FAF7Z",
+                  "name": "date-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pA6yE",
+                      "name": "bobCalIco",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "calendar",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "og1jf",
+                      "name": "date-text",
+                      "fill": "$--primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This Friday · 7 PM",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MZT45",
+                  "name": "loc-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ht7fQ",
+                      "name": "bobPinIco",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TeXyq",
+                      "name": "loc-text",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Handlebar Coffee, Ventura, CA",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lt4wx",
+              "name": "photo-roll",
+              "width": "fill_container",
+              "height": 90,
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "VGlow",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "linhquach",
+                    "link": "https://unsplash.com/@linhquach",
+                    "author": "Linh Quach"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758709859167-c5b61778b714?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "SYyyZ",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "moriiah",
+                    "link": "https://unsplash.com/@moriiah",
+                    "author": "Moriah Bender"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1643672005001-22d7569048b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "YTZrO",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "cullenjonez",
+                    "link": "https://unsplash.com/@cullenjonez",
+                    "author": "Cullen Jones"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1629918686476-f669a1ffb56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {
@@ -4632,6 +5908,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#FAFAF7"
         }
       ]
     },
@@ -4670,6 +5949,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#1E2420"
         }
       ]
     },
@@ -4712,6 +5994,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#FFFFFF"
         }
       ]
     },
@@ -4750,6 +6035,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#1E2420"
         }
       ]
     },
@@ -4987,6 +6275,9 @@
             "Mode": "Dark",
             "Accent": "Violet"
           }
+        },
+        {
+          "value": "#D95F3B"
         }
       ]
     },
@@ -5071,6 +6362,9 @@
           "theme": {
             "Accent": "Violet"
           }
+        },
+        {
+          "value": "#FAFAF7"
         }
       ]
     },
@@ -5113,6 +6407,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#EDF3EF"
         }
       ]
     },
@@ -5151,6 +6448,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#3D6B52"
         }
       ]
     },
@@ -5193,6 +6493,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#EDF3EF"
         }
       ]
     },
@@ -5259,6 +6562,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#7A6E65"
         }
       ]
     },
@@ -5301,6 +6607,9 @@
             "Mode": "Dark",
             "Base": "Zinc"
           }
+        },
+        {
+          "value": "#EDF3EF"
         }
       ]
     },
@@ -5339,6 +6648,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#1E2420"
         }
       ]
     },
@@ -5353,6 +6665,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#D95F3B"
         }
       ]
     },
@@ -5391,6 +6706,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#E5E0D8"
         }
       ]
     },
@@ -5429,6 +6747,9 @@
           "theme": {
             "Mode": "Dark"
           }
+        },
+        {
+          "value": "#E5E0D8"
         }
       ]
     },
@@ -5586,6 +6907,9 @@
             "Mode": "Dark",
             "Accent": "Violet"
           }
+        },
+        {
+          "value": "#3D6B52"
         }
       ]
     },
