@@ -32,15 +32,19 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
   const protocol = host.includes('localhost') ? 'http' : 'https'
   const turnoutUrl = `${protocol}://${host}/t/${turnout.slug}`
 
+  // timeZone must be explicit — Lambda runtime is UTC, and without it an event
+  // at "7pm Eastern" would render as "midnight UTC" to every US organizer.
   const formattedDate = turnout.startsAt.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: turnout.timezone,
   })
   const formattedTime = turnout.startsAt.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: turnout.timezone,
   })
   const locationName = turnout.primaryLocation.name
 
@@ -86,6 +90,7 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
             turnoutTitle={turnout.title}
           />
 
+          {/* TODO: wire up real RSVP count (TDD0003) */}
           <p className="text-center text-gray-500 text-sm">
             0 people have RSVPd so far — share the link!
           </p>

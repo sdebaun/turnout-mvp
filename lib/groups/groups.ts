@@ -31,6 +31,7 @@ export interface CreateGroupWithTurnoutData {
     placeId?: string
   }
   startsAt: Date
+  timezone: string // IANA timezone from the organizer's browser — stored so page.tsx can display "7pm Eastern" not "12am UTC"
 }
 
 /**
@@ -94,6 +95,7 @@ async function attemptCreate(
           primaryLocationId: location.id,
           createdByUserId: userId,
           startsAt: data.startsAt,
+          timezone: data.timezone,
         },
       })
 

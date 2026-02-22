@@ -212,13 +212,6 @@ describe('createGroupWithTurnoutAction', () => {
     await seedUserWithSession()
 
     // Mock successful creation
-    const { ok } = await import('neverthrow')
-    mockCreateGroupWithTurnout.mockReturnValue(
-      Promise.resolve(ok({ groupId: 'grp_1', turnoutId: 'trn_1', turnoutSlug: 'abc12345' }))
-        .then(v => ({ ...v, isOk: () => true, isErr: () => false }))
-    )
-
-    // Use neverthrow's ResultAsync pattern
     const { ResultAsync } = await import('neverthrow')
     mockCreateGroupWithTurnout.mockReturnValue(
       ResultAsync.fromSafePromise(

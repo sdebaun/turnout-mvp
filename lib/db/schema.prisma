@@ -170,6 +170,7 @@ model Turnout {
   createdByUser   User?   @relation(fields: [createdByUserId], references: [id])
 
   startsAt DateTime         // UTC. Converted from organizer's local time via IANA timezone.
+  timezone String   @default("UTC") // IANA source timezone at creation time — needed to display "7pm Eastern" correctly, not UTC.
   endsAt   DateTime?        // Nullable. TDD0003 will default to startsAt + 2h for .ics files.
 
   status TurnoutStatus @default(UPCOMING)

@@ -64,8 +64,14 @@ export async function createGroupWithTurnoutAction(
     return { error: 'Description must be 1000 characters or less' }
   }
 
-  // Convert local date/time/tz to UTC
-  const startsAt = toUTCDate(data.turnoutDate, data.turnoutTime, data.turnoutTimezone)
+  // Convert local date/time/tz to UTC — wrap in try/catch because date-fns-tz
+  // throws on invalid IANA timezone strings (malformed client input).
+  let startsAt: Date
+  try {
+    startsAt = toUTCDate(data.turnoutDate, data.turnoutTime, data.turnoutTimezone)
+  } catch {
+    return { error: 'Invalid timezone' }
+  }
 
   // Must be in the future
   if (startsAt <= new Date()) {
@@ -79,6 +85,7 @@ export async function createGroupWithTurnoutAction(
     description: data.description?.trim() || undefined,
     location: data.location,
     startsAt,
+    timezone: data.turnoutTimezone,
   })
 
   if (result.isErr()) {

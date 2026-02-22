@@ -65,6 +65,7 @@ const validData = {
     placeId: 'ChIJOwg_06VPwokRYv534QaPC8g',
   },
   startsAt: new Date('2099-06-15T18:00:00Z'),
+  timezone: 'America/New_York',
 }
 
 describe('generateTurnoutSlug', () => {
