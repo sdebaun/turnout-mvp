@@ -3538,7 +3538,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.019943701668048,
+                  "y": 24.01994370166805,
                   "width": "fill_container",
                   "descendants": {
                     "NEMHS": {
@@ -4591,176 +4591,146 @@
               }
             },
             {
-              "id": "bqVbS",
+              "id": "FnvxJ",
               "type": "ref",
-              "ref": "pcGlv",
+              "ref": "GvjHS",
               "width": "fill_container",
-              "name": "ec1",
+              "name": "card1",
               "descendants": {
-                "CgJv7": {
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "gWQGx",
-                      "name": "event-image",
-                      "metadata": {
-                        "type": "unsplash",
-                        "username": "djpaine",
-                        "link": "https://unsplash.com/@djpaine",
-                        "author": "DJ Paine"
-                      },
-                      "width": "fill_container",
-                      "height": 160,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1638770749574-3d519d91e6a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3ODU1NTd8&ixlib=rb-4.1.0&q=80&w=1080",
-                        "mode": "fill"
-                      },
-                      "cornerRadius": 4
-                    }
-                  ]
+                "sIUB7": {
+                  "content": "Save Willow Creek"
                 },
-                "frWPV": {
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "G1e42",
-                      "name": "ec1Group",
-                      "fill": "#7A6E65",
-                      "content": "Save Willow Creek",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "500",
-                      "letterSpacing": 0.5
-                    },
-                    {
-                      "type": "text",
-                      "id": "SDm9n",
-                      "name": "ec1Title",
-                      "fill": "#1E2420",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Climate March",
-                      "fontFamily": "Inter",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "Jae7r",
-                      "name": "ec1Date",
-                      "fill": "#7A6E65",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "This Saturday · Mar 8 · 10am · City Hall Plaza",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    }
-                  ]
+                "v6MeU": {
+                  "content": "Bob Dorrigan"
                 },
-                "bvhSM": {
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "jsZnu",
-                      "name": "ec1Count",
-                      "fill": "#3D6B52",
-                      "content": "42 going →",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    }
-                  ]
+                "BeiTK": {
+                  "content": "Kickoff Meeting"
+                },
+                "6PpjR": {
+                  "content": "This Friday · 7 PM"
+                },
+                "SYBKB": {
+                  "content": "Handlebar Coffee, Ventura, CA"
+                },
+                "1fngF": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758709859167-c5b61778b714?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "LlJu1": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1643672005001-22d7569048b3?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "u586p": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1629918686476-f669a1ffb56a?w=400",
+                    "mode": "fill"
+                  }
                 }
               }
             },
             {
-              "id": "hUZF6",
+              "id": "MfxZ9",
               "type": "ref",
-              "ref": "pcGlv",
+              "ref": "GvjHS",
               "width": "fill_container",
-              "name": "ec2",
+              "name": "card2",
               "descendants": {
-                "CgJv7": {
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "nufFj",
-                      "name": "event-image",
-                      "metadata": {
-                        "type": "unsplash",
-                        "username": "karinasarmiento",
-                        "link": "https://unsplash.com/@karinasarmiento",
-                        "author": "Karina Sarmiento"
-                      },
-                      "width": "fill_container",
-                      "height": 160,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1716069418761-e25a02806958?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3ODU1NjF8&ixlib=rb-4.1.0&q=80&w=1080",
-                        "mode": "fill"
-                      },
-                      "cornerRadius": 4
-                    }
-                  ]
+                "sIUB7": {
+                  "content": "Local Love Project"
                 },
-                "frWPV": {
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "LBwYT",
-                      "name": "ec2Group",
-                      "fill": "#7A6E65",
-                      "content": "Local Love Project",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "500",
-                      "letterSpacing": 0.5
-                    },
-                    {
-                      "type": "text",
-                      "id": "p9OPX",
-                      "name": "ec2Title",
-                      "fill": "#1E2420",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Food Distribution Drive",
-                      "fontFamily": "Inter",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "Rqy8O",
-                      "name": "ec2Date",
-                      "fill": "#7A6E65",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "This Saturday · Mar 8 · 9am · Fairgrounds, Building A",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
-                    }
-                  ]
+                "v6MeU": {
+                  "content": "Kat Merrick"
                 },
-                "bvhSM": {
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "nA68p",
-                      "name": "ec2Count",
-                      "fill": "#3D6B52",
-                      "content": "18 going →",
-                      "fontFamily": "Inter",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    }
-                  ]
+                "BeiTK": {
+                  "content": "Monthly Downtown Food Distribution"
+                },
+                "6PpjR": {
+                  "content": "Next Saturday · 8 AM"
+                },
+                "SYBKB": {
+                  "content": "Westpark Community Ctr, Ventura, CA"
+                },
+                "1fngF": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1636736626599-6993a1989285?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "LlJu1": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1765031039845-4bb510dc8112?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "u586p": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1762967027594-86bbf9873be5?w=400",
+                    "mode": "fill"
+                  }
+                }
+              }
+            },
+            {
+              "id": "7H8tu",
+              "type": "ref",
+              "ref": "GvjHS",
+              "width": "fill_container",
+              "name": "card3",
+              "descendants": {
+                "sIUB7": {
+                  "content": "Bikes4aCause"
+                },
+                "v6MeU": {
+                  "content": "Carlos Landeros"
+                },
+                "BeiTK": {
+                  "content": "Kids Learn 2 Ride"
+                },
+                "6PpjR": {
+                  "content": "This Saturday · 10 AM"
+                },
+                "SYBKB": {
+                  "content": "Surfers Point Park, Ventura, CA"
+                },
+                "1fngF": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1612636545693-4b11f69c869a?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "LlJu1": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1761878845535-e4e62ad14c47?w=400",
+                    "mode": "fill"
+                  }
+                },
+                "u586p": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758648321275-3168438d396d?w=400",
+                    "mode": "fill"
+                  }
                 }
               }
             }
@@ -5723,6 +5693,252 @@
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1629918686476-f669a1ffb56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzE3OTI0MTZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "GvjHS",
+          "x": 53,
+          "y": 425,
+          "name": "TurnoutCard",
+          "reusable": true,
+          "clip": true,
+          "width": 320,
+          "fill": "$--card",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": 2
+            },
+            "blur": 8
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "lCrFN",
+              "name": "eyebrow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "3boxV",
+                  "name": "c_gava",
+                  "clip": true,
+                  "width": 16,
+                  "height": 16,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1559766153-91249b10ca89?w=80",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "sIUB7",
+                  "name": "c_gname",
+                  "fill": "$--muted-foreground",
+                  "content": "Group Name",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.4
+                },
+                {
+                  "type": "frame",
+                  "id": "Bh2IA",
+                  "name": "c_oava",
+                  "width": 16,
+                  "height": 16,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758599543122-fc551c9b4b1c?w=80",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 9999
+                },
+                {
+                  "type": "text",
+                  "id": "v6MeU",
+                  "name": "c_oname",
+                  "fill": "$--muted-foreground",
+                  "content": "Organizer Name",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HCTVW",
+              "name": "title-wrap",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "transparent",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BeiTK",
+                  "name": "card-title",
+                  "fill": "$--card-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Turnout Title",
+                  "lineHeight": 1.1,
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jscQd",
+              "name": "info-section",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NoL8n",
+                  "name": "date-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Ws5iz",
+                      "name": "cal-icon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "calendar",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "6PpjR",
+                      "name": "date-text",
+                      "fill": "$--primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "When · Time",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cunc8",
+                  "name": "loc-row",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "oAsNe",
+                      "name": "pin-icon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SYBKB",
+                      "name": "loc-text",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Venue Name, City, State",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vJJC6",
+              "name": "photo-roll",
+              "width": "fill_container",
+              "height": 90,
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1fngF",
+                  "name": "photo1",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1612636545693-4b11f69c869a?w=400",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "LlJu1",
+                  "name": "photo2",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1761878845535-e4e62ad14c47?w=400",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "u586p",
+                  "name": "photo3",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1758648321275-3168438d396d?w=400",
                     "mode": "fill"
                   }
                 }
