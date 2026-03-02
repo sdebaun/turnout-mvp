@@ -4,7 +4,49 @@ Working notes on deliberate design choices — the reasoning behind them, not ju
 
 ---
 
+## Creation Flow
+
+### Live-building preview card
+
+The creation wizard shows a `TurnoutPreview` card between the green header and the form inputs on every step. This card is not decorative — it is a live-bound read-only render of the form state, updating in real time as the user fills in each field.
+
+**Skeleton bars** are the zero-value placeholder for each field: rounded warm-sand rectangles at approximate text width, no words. As a field receives a value, its skeleton bar dissolves and the real content appears.
+
+**Data sequence across steps:**
+- Step 1 (when/where): date, time, and location fill in live. When location is set, Google Places photos load into the photo strip.
+- Step 2 (name it): group name and turnout name fill in live. Eyebrow pills appear as names are entered.
+- Step 3 (auth): organizer name fills in as the user sets their display name.
+
+**Three static design states** (for design file representation only):
+- `TurnoutPreview/Ghost` — start of step 1, all skeleton
+- `TurnoutPreview/Partial` — start of step 2, logistics real, names skeleton, photos real
+- `TurnoutPreview/Filled` — start of step 3, everything real
+
+The card anatomy mirrors the public turnout card: eyebrow pills (group + organizer), title, date/time row, location row, photo strip. Bob is watching the shareable artifact take shape before he's finished building it.
+
+**Implementation note:** This requires the preview component to subscribe to form state. Each field maps directly to a slot in the card. Skeleton → real is a simple conditional render on field value presence, not a three-state enum.
+
+**"My Turnout" ghost title:** Both `TurnoutPreview/Ghost` and `TurnoutPreview/Partial` use "My Turnout" as the title placeholder text, colored `#DDD8D0` — the same fill as the skeleton bars. This makes "My Turnout" visually part of the skeleton pattern rather than readable placeholder text. At flow-screen scale it reads as a text-shaped ghost element, not as words. Do not change it to a more readable color like `#B5ADA8` — the intent is that the title slot looks skeleton until a real title is entered.
+
+---
+
+### Expertise fork — Path 2 locked as Phase 2
+
+The creation flow opens with an expertise fork: "Starting something new" (Bob) vs "Already organizing" (Cathy). The core principle is sound — a first-time organizer benefits from AI suggestions, default turnout type recommendations, and reassurance copy; an experienced organizer finds that same scaffolding patronizing and wants a cleaner, more direct setup experience.
+
+**Both paths create identical Group + Turnout objects.** This is not a data branch — it's an onboarding register branch. The difference is in how much hand-holding, suggestion, and guidance the flow provides.
+
+**Path 2 is locked as Phase 2.** Cathy's user story is not yet complete — her needs around existing channels, experienced-organizer setup, and integration with existing infrastructure haven't been designed. The "Already organizing" card is visually dimmed in the design file (35% opacity) and annotated as TBD. Do not design Path 2 until Cathy's full story is written.
+
+Path 1 (Bob) is fully designed and is the active MVP flow.
+
+---
+
 ## Turnout Cards
+
+### Title typography: Zilla Slab everywhere
+
+Turnout titles use Zilla Slab Bold in both the `TurnoutCard` (discovery feed) and the `TurnoutPreview` components (wizard). The display font signals that the title is the name of a real thing — an event worth showing up for — not a form field or calendar entry. Plus Jakarta Sans flattens that signal. The hierarchy is: small Plus Jakarta Sans eyebrow → Zilla Slab title → Plus Jakarta Sans metadata. Do not revert the discovery card title to Plus Jakarta Sans.
 
 ### Information hierarchy
 
