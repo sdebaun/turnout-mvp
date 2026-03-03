@@ -25,7 +25,10 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
         otp: { transport: ['sms'] },
         signal: ac.signal,
       } as CredentialRequestOptions)
-      .then((otp: any) => {
+      .then((credential) => {
+        // OTPCredential is not in the TypeScript DOM lib — WICG spec, not yet standardized
+        // https://wicg.github.io/web-otp/
+        const otp = credential as { code?: string }
         if (otp?.code) {
           setCode(otp.code)
           // Auto-submit after autofill
@@ -94,7 +97,7 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
       )}
       <button
         type="submit"
-        disabled={isPending || code.length < 4}
+        disabled={isPending || code.length < 6}
         className="bg-terracotta text-white rounded-md py-2 px-4 font-medium hover:bg-terracotta/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Verifying...' : 'Verify'}

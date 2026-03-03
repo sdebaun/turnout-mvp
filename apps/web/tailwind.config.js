@@ -15,9 +15,10 @@ module.exports = {
         offwhite: '#FAFAF7',
         warm: '#F0EDE8',
         muted: '#7A6E65',
-        sand: '#B5ADA8',
+        sand: '#C9B99A',
         tiletext: '#6B6966',
         separator: '#E5E0D8',
+        'avatar-bg': '#5A7A6A',
       },
       fontFamily: {
         heading: ['var(--font-zilla-slab)', 'serif'],

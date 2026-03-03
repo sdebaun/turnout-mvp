@@ -1,20 +1,12 @@
 'use client'
 
 import { useState, useTransition, useCallback } from 'react'
-import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator'
 import { sendOTPAction } from '../actions'
+import { generateRandomName } from '@/lib/names'
 
 interface DisplayNameFormProps {
   phone: string
   onSuccess: (displayName: string) => void
-}
-
-function generateRandomName(): string {
-  return uniqueNamesGenerator({
-    dictionaries: [adjectives, animals],
-    separator: '',
-    style: 'capital',
-  })
 }
 
 export function DisplayNameForm({ phone, onSuccess }: DisplayNameFormProps) {

@@ -38,7 +38,7 @@ export function NavAvatarDropdown({ initials, displayName }: NavAvatarDropdownPr
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-8 h-8 rounded-full bg-[#5A7A6A] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
+        className="w-8 h-8 rounded-full bg-avatar-bg flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
         aria-label="Account menu"
         aria-expanded={open}
       >

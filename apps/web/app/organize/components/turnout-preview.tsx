@@ -155,7 +155,7 @@ export function TurnoutPreview({
         <Calendar
           size={14}
           strokeWidth={1.75}
-          className={`flex-shrink-0 ${dateTimeText ? 'text-terracotta' : 'text-[#C9B99A]'}`}
+          className={`flex-shrink-0 ${dateTimeText ? 'text-terracotta' : 'text-sand'}`}
           aria-hidden="true"
         />
         {dateTimeText ? (
@@ -170,7 +170,7 @@ export function TurnoutPreview({
         <MapPin
           size={14}
           strokeWidth={1.75}
-          className={`flex-shrink-0 ${locationText ? 'text-terracotta' : 'text-[#C9B99A]'}`}
+          className={`flex-shrink-0 ${locationText ? 'text-terracotta' : 'text-sand'}`}
           aria-hidden="true"
         />
         {locationText ? (

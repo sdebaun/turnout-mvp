@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@prisma/client'
-import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator'
 import { Calendar, Clock, Phone } from 'lucide-react'
 import { WizardLayout } from './wizard-layout'
 import { TurnoutPreview } from './turnout-preview'
@@ -12,16 +11,13 @@ import { OptionGroup, type OptionItem } from '../../components/option-group'
 import { createGroupWithTurnoutAction } from '../actions'
 import { checkPhoneAction, sendOTPAction, signInAction } from '../../auth/actions'
 import type { LocationData } from '../actions'
+import { normalizePhone } from '@/lib/phone'
+import { generateRandomName } from '@/lib/names'
 
 type WizardStep = 0 | 1 | 2 | 3 | 4
 
-function generateRandomName(): string {
-  return uniqueNamesGenerator({
-    dictionaries: [adjectives, animals],
-    style: 'capital',
-    separator: '',
-  })
-}
+// Shared input element styles — all wizard text inputs use this base
+const INPUT_CLASSES = 'flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand'
 
 function getTodayString(): string {
   return new Date().toISOString().split('T')[0]
@@ -134,7 +130,10 @@ function OTPBoxes({
         otp: { transport: ['sms'] },
         signal: ac.signal,
       } as CredentialRequestOptions)
-      .then((otp: any) => {
+      .then((credential) => {
+        // OTPCredential is not in the TypeScript DOM lib — WICG spec, not yet standardized
+        // https://wicg.github.io/web-otp/
+        const otp = credential as { code?: string }
         if (otp?.code) onChange(otp.code.slice(0, 6))
       })
       .catch(() => {
@@ -388,7 +387,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 // showPicker() makes the entire input area clickable — not just the (hidden) indicator
                 onClick={(e) => { try { (e.currentTarget as any).showPicker() } catch {} }}
                 // [color-scheme:light] prevents dark-mode browsers from inverting date picker chrome
-                className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand [color-scheme:light]"
+                className={`${INPUT_CLASSES} [color-scheme:light]`}
                 data-testid="turnout-date"
               />
             </IconInputWrapper>
@@ -402,7 +401,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 onChange={(e) => setTurnoutTime(e.target.value)}
                 onClick={(e) => { try { (e.currentTarget as any).showPicker() } catch {} }}
                 // [color-scheme:light] prevents dark-mode browsers from inverting time picker chrome
-                className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand [color-scheme:light]"
+                className={`${INPUT_CLASSES} [color-scheme:light]`}
                 data-testid="turnout-time"
               />
             </IconInputWrapper>
@@ -439,7 +438,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 maxLength={100}
                 placeholder="Save Willow Creek, Local Love Project..."
                 onChange={(e) => setGroupName(e.target.value)}
-                className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
+                className={INPUT_CLASSES}
                 data-testid="group-name"
               />
             </IconInputWrapper>
@@ -453,7 +452,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 maxLength={100}
                 placeholder="Planning Meeting, Kickoff, March..."
                 onChange={(e) => setTurnoutTitle(e.target.value)}
-                className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
+                className={INPUT_CLASSES}
                 data-testid="turnout-title"
               />
             </IconInputWrapper>
@@ -497,7 +496,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                       maxLength={50}
                       placeholder="Real name, nickname, or roll one"
                       onChange={(e) => setDisplayName(e.target.value)}
-                      className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
+                      className={INPUT_CLASSES}
                       data-testid="display-name"
                     />
                   </IconInputWrapper>
@@ -521,13 +520,11 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                     value={phone}
                     placeholder="+1 (555) 000-0000"
                     onChange={(e) => {
-                      const val = e.target.value
                       // Browser autocomplete sometimes strips the leading + from E.164 numbers.
-                      // If the value is all digits (no + present), restore it.
-                      setPhone(/^\d+$/.test(val) ? `+${val}` : val)
+                      setPhone(normalizePhone(e.target.value))
                     }}
                     autoComplete="tel"
-                    className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
+                    className={INPUT_CLASSES}
                     data-testid="phone-number"
                   />
                 </IconInputWrapper>

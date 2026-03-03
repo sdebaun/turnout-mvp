@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { TopNav } from '../../components/top-nav'
+import { TopNavFocused } from '../../components/top-nav-focused'
 
 // Pip dots track progress — amber filled, off-white empty, both ringed with sage.
 // 16x16 circles straddling the header/body seam (absolute positioned, translate-y-1/2).
@@ -51,7 +51,7 @@ export function WizardLayout({
   const continueIsDisabled = continueDisabled || isSubmitting
   return (
     <div className="min-h-screen flex flex-col bg-warm">
-      <TopNav variant="focused" />
+      <TopNavFocused />
 
       {/* Header wrapper is relative so we can absolutely position the pip straddler.
           The pip is centered on the header/body seam via bottom-0 + translate-y-1/2. */}

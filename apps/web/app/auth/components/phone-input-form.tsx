@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { checkPhoneAction, sendOTPAction } from '../actions'
+import { normalizePhone } from '@/lib/phone'
 
 interface PhoneInputFormProps {
   onNewUser: (phone: string) => void
@@ -41,7 +42,7 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
 
   // Lightweight E.164 check — browser autocomplete sometimes strips the leading +
   // so we normalize all-digit values before validating.
-  const normalized = /^\d+$/.test(phone) ? `+${phone}` : phone
+  const normalized = normalizePhone(phone)
   const isValidPhone = /^\+\d{7,15}$/.test(normalized)
 
   return (
@@ -54,9 +55,8 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
         type="tel"
         value={phone}
         onChange={(e) => {
-          const val = e.target.value
           // Browser autocomplete can strip the leading + from E.164 numbers
-          setPhone(/^\d+$/.test(val) ? `+${val}` : val)
+          setPhone(normalizePhone(e.target.value))
         }}
         placeholder="+1 (555) 123-4567"
         autoComplete="tel"
