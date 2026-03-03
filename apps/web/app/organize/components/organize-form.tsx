@@ -297,12 +297,8 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
     }
     if (typeof s.groupName === 'string' && s.groupName) setGroupName(s.groupName)
     if (typeof s.turnoutTitle === 'string' && s.turnoutTitle) setTurnoutTitle(s.turnoutTitle)
-    // displayName: restore saved name or generate a fresh random one
-    if (typeof s.displayName === 'string' && s.displayName) {
-      setDisplayName(s.displayName)
-    } else {
-      setDisplayName(generateRandomName())
-    }
+    // displayName: restore only if previously saved — no auto-generation on fresh session
+    if (typeof s.displayName === 'string' && s.displayName) setDisplayName(s.displayName)
     if (typeof s.phone === 'string' && s.phone) setPhone(s.phone)
     if (s.expertisePath === 'existing') setExpertisePath('existing')
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -319,7 +315,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
   const [otpCode, setOtpCode] = useState('')
   const [authPhone, setAuthPhone] = useState('')
 
-  const handleLocationChange = useCallback((loc: LocationData) => {
+  const handleLocationChange = useCallback((loc: LocationData | null) => {
     setLocation(loc)
   }, [])
 
@@ -522,13 +518,13 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           isSubmitting={isSubmitting}
           previewZone={previewNode}
         >
-          <LabeledField label="Group name">
+          <LabeledField label="Group">
             <IconInputWrapper>
               <input
                 type="text"
                 value={groupName}
                 maxLength={100}
-                placeholder="Save Willow Creek"
+                placeholder="Save Willow Creek, Local Love Project..."
                 onChange={(e) => setGroupName(e.target.value)}
                 className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
                 data-testid="group-name"
@@ -536,13 +532,13 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
             </IconInputWrapper>
           </LabeledField>
 
-          <LabeledField label="Turnout name">
+          <LabeledField label="Turnout">
             <IconInputWrapper>
               <input
                 type="text"
                 value={turnoutTitle}
                 maxLength={100}
-                placeholder="First Planning Meeting"
+                placeholder="Planning Meeting, Kickoff, March..."
                 onChange={(e) => setTurnoutTitle(e.target.value)}
                 className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
                 data-testid="turnout-title"
@@ -586,7 +582,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                       type="text"
                       value={displayName}
                       maxLength={50}
-                      placeholder="Your display name"
+                      placeholder="Real name, nickname, or roll one"
                       onChange={(e) => setDisplayName(e.target.value)}
                       className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
                       data-testid="display-name"
@@ -619,10 +615,16 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 </IconInputWrapper>
               </LabeledField>
 
-              <p className="text-xs leading-relaxed text-muted text-center">
-                We&apos;ll send a 6-digit code to confirm your number. Your number is only
-                used for updates about your turnouts, and to let you sign in to manage them.
-              </p>
+              {/* Trust block — two text nodes per Pencil spec: large semibold + small muted */}
+              <div className="flex flex-col gap-1 text-center">
+                <p className="text-[17px] font-semibold text-charcoal leading-relaxed font-sans">
+                  We&apos;ll send a 6-digit code<br />to confirm your number.
+                </p>
+                <p className="text-xs font-normal text-muted leading-relaxed font-sans">
+                  Your number is only used for updates about your turnouts,
+                  and to let you sign in to manage them.
+                </p>
+              </div>
             </>
           )}
 

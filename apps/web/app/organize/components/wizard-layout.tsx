@@ -4,7 +4,7 @@ import React from 'react'
 import { ChevronRight } from 'lucide-react'
 
 // Pip dots track progress — amber filled, off-white empty, both ringed with sage.
-// 16x16 circles, shown only on steps 1-4 (not step 0 expertise fork).
+// 16x16 circles straddling the header/body seam (absolute positioned, translate-y-1/2).
 function PipIndicator({ current, total }: { current: number; total: number }) {
   return (
     <div className="flex items-center gap-2.5" aria-label={`Step ${current} of ${total}`}>
@@ -24,7 +24,7 @@ function PipIndicator({ current, total }: { current: number; total: number }) {
 interface WizardLayoutProps {
   headerTitle: string
   headerSubtitle: string
-  // if provided (1-4), shows pip indicator at bottom of header
+  // if provided (1-4), shows pip indicator straddling the header/body seam
   currentStep?: number
   onBack?: () => void
   onContinue: () => void
@@ -49,41 +49,45 @@ export function WizardLayout({
 }: WizardLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-warm">
-      {/* Top nav — dark forest green (#243D30), 56px, Syne Bold wordmark, centered.
-          Forest is darker than the header sage green — deliberate design decision. */}
+      {/* Top nav — dark forest green (#243D30), 56px, Syne Bold wordmark, centered. */}
       <nav className="sticky top-0 z-10 h-14 flex items-center justify-center bg-forest flex-shrink-0">
         <span className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
           turnout.network
         </span>
       </nav>
 
-      {/* Green header: sage green bg, headline + subtitle + optional pips at bottom.
-          Height is defined by content; pip row sits at the bottom of this section. */}
-      <header className="bg-sage px-5 pt-5 pb-5 flex flex-col">
-        <h1 className="font-heading font-bold text-[28px] leading-tight text-offwhite">
-          {headerTitle}
-        </h1>
-        <p className="text-sm font-normal text-white/80 mt-1.5 leading-[1.4]">
-          {headerSubtitle}
-        </p>
-        {/* Pips sit at the bottom of the header, pushed down with margin */}
+      {/* Header wrapper is relative so we can absolutely position the pip straddler.
+          The pip is centered on the header/body seam via bottom-0 + translate-y-1/2. */}
+      <div className="relative flex-shrink-0">
+        <header className="bg-sage px-5 pt-5 pb-5 flex flex-col">
+          <h1 className="font-heading font-bold text-[28px] leading-tight text-offwhite">
+            {headerTitle}
+          </h1>
+          <p className="text-sm font-normal text-white/80 mt-1.5 leading-[1.4]">
+            {headerSubtitle}
+          </p>
+        </header>
+
+        {/* Pips straddle the header/body boundary: absolute at header bottom, shifted down 50%.
+            The top 8px sits over the sage header, the bottom 8px over the body background. */}
         {currentStep !== undefined && (
-          <div className="mt-4">
+          <div className="absolute left-5 bottom-0 translate-y-1/2 z-10">
             <PipIndicator current={currentStep} total={4} />
           </div>
         )}
-      </header>
+      </div>
 
       {/* Scrollable body — two distinct zones stacked vertically.
-          previewZone is off-white (#FAFAF7), formZone is warm tan (#F0EDE8).
-          Only renders previewZone div if content was passed. */}
+          previewZone: off-white (#FAFAF7). formZone: warm tan (#F0EDE8).
+          pt-4 on previewZone gives breathing room above the pip that straddles in. */}
       <main className="flex-1 overflow-y-auto">
         {previewZone && (
-          <div className="bg-offwhite p-5">
+          <div className="bg-offwhite px-5 pt-6 pb-5">
             {previewZone}
           </div>
         )}
-        <div className="bg-warm px-5 pt-5 pb-6 flex flex-col gap-4">
+        {/* When no previewZone, pt-4 gives room for the bottom half of the pips */}
+        <div className={`bg-warm px-5 pb-6 flex flex-col gap-4 ${previewZone ? 'pt-5' : 'pt-6'}`}>
           {children}
         </div>
       </main>

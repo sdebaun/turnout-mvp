@@ -71,7 +71,7 @@ function GroupRealPill({ name }: { name: string }) {
   )
 }
 
-// Organizer skeleton pill — always shown (no real organizer pill in wizard yet)
+// Organizer skeleton pill — shown when no displayName yet
 function OrganizerSkeletonPill() {
   return (
     <div
@@ -86,9 +86,24 @@ function OrganizerSkeletonPill() {
   )
 }
 
+// Organizer real pill — shown when displayName is entered on step 3.
+// Circle avatar (rounded-full) distinguishes from group's square avatar.
+function OrganizerRealPill({ name }: { name: string }) {
+  const initials = name.slice(0, 2).toUpperCase()
+  return (
+    <div className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1">
+      <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+        <span className="text-[7px] font-bold text-white font-sans leading-none">{initials}</span>
+      </div>
+      <span className="text-xs font-medium text-muted font-sans tracking-[0.4px]">{name}</span>
+    </div>
+  )
+}
+
 export function TurnoutPreview({
   groupName,
   turnoutTitle,
+  displayName,
   date,
   time,
   locationName,
@@ -121,8 +136,7 @@ export function TurnoutPreview({
       {/* Eyebrow row: group pill + organizer skeleton pill */}
       <div className="flex items-center gap-2 flex-wrap">
         {groupName ? <GroupRealPill name={groupName} /> : <GroupSkeletonPill />}
-        {/* Organizer is always skeleton in the wizard — not yet authenticated */}
-        <OrganizerSkeletonPill />
+        {displayName ? <OrganizerRealPill name={displayName} /> : <OrganizerSkeletonPill />}
       </div>
 
       {/* Turnout title — "My Turnout" ghost color (#DDD8D0) when not yet entered.

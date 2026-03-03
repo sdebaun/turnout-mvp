@@ -3,37 +3,30 @@
 import { useRef, useEffect, useState } from 'react'
 import { APIProvider, useApiIsLoaded } from '@vis.gl/react-google-maps'
 import dynamic from 'next/dynamic'
+import { MapPin, X } from 'lucide-react'
 import type { LocationData } from '../actions'
 
 interface LocationInputInnerProps {
   value: LocationData | null
-  onChange: (location: LocationData) => void
+  onChange: (location: LocationData | null) => void
   error?: string
 }
 
 /**
- * Inner component that uses the new gmp-place-autocomplete web component.
- * Must be a child of APIProvider so the Maps JS API is loaded first.
- *
- * Uses the new Places API (not the legacy Autocomplete that died March 1 2025).
- * The gmp-select event fires with a PlacePrediction; we call toPlace().fetchFields()
- * to get coordinates and formatted address.
+ * Inner component that renders the gmp-place-autocomplete web component.
+ * Only rendered when no location is selected (LocationInputWrapper handles the selected state).
  */
-function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
+function PlacesAutocompleteInput({ onChange, error }: Omit<LocationInputInnerProps, 'value'>) {
   const elementRef = useRef<google.maps.places.PlaceAutocompleteElement>(null)
   const apiIsLoaded = useApiIsLoaded()
   const [apiError, setApiError] = useState(false)
 
   // Wire up gmp-select listener once the element is in the DOM.
-  // The web component handles its own loading — no need to wait for placesLib.
   useEffect(() => {
     const element = elementRef.current
     if (!element) return
 
     const handleSelect = async (event: Event) => {
-      // gmp-select extends plain Event (not CustomEvent) — placePrediction is on the event itself,
-      // not in event.detail. The Google types describe PlaceAutocompletePlaceSelectEvent
-      // but the actual runtime object has this shape.
       const { placePrediction } = event as Event & {
         placePrediction: google.maps.places.PlacePrediction | undefined
       }
@@ -51,7 +44,7 @@ function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
           placeId: place.id ?? undefined,
         })
       } catch {
-        // fetchFields failed — not much we can do, form stays invalid
+        // fetchFields failed — form stays invalid
       }
     }
 
@@ -69,16 +62,14 @@ function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
 
   if (apiError) {
     return (
-      <div>
-        <p className="text-sm text-red-600" role="alert">
-          Location search is unavailable. Please refresh the page or contact support.
-        </p>
-      </div>
+      <p className="text-sm text-red-600" role="alert">
+        Location search is unavailable. Please refresh the page or contact support.
+      </p>
     )
   }
 
   return (
-    <div>
+    <>
       {/* gmp-place-autocomplete is a Google Maps web component — styles are shadow DOM.
           Width and visual tokens are set via CSS custom properties in globals.css. */}
       <gmp-place-autocomplete
@@ -90,21 +81,41 @@ function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
           {error}
         </p>
       )}
-    </div>
+    </>
   )
 }
 
 /**
- * Wraps PlacesAutocompleteInput in the APIProvider.
+ * Wraps PlacesAutocompleteInput in the APIProvider, plus handles selected-state display.
+ * When a location has been selected, shows a confirmation row with the place name and a
+ * clear (×) button — matching the sage-tinted border treatment of Date/Time inputs.
  * Exported via dynamic() with ssr:false since Maps JS API needs window.
  */
 function LocationInputWrapper({ value, onChange, error }: LocationInputInnerProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
+  // Selected state — shown regardless of API key presence.
+  // The gmp-place-autocomplete element clears itself after selection (native behavior),
+  // so we replace it entirely with this visible confirmation row.
+  if (value) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 border border-sage/30">
+        <MapPin size={16} strokeWidth={1.75} className="text-terracotta flex-shrink-0" aria-hidden="true" />
+        <span className="flex-1 min-w-0 text-sm text-charcoal font-sans truncate">{value.name}</span>
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          className="flex-shrink-0 text-sand hover:text-muted rounded p-0.5 cursor-pointer"
+          aria-label="Clear location"
+        >
+          <X size={14} strokeWidth={2} />
+        </button>
+      </div>
+    )
+  }
+
+  // No API key — render a plain text input so the form stays usable in dev without SST.
   if (!apiKey) {
-    // No Maps API key — render a plain text input so the form stays usable and
-    // E2E tests can run without depending on Google's API loading in CI.
-    // Location data will have name only (no coordinates), which is fine for the form.
     return (
       <div>
         <input
@@ -127,13 +138,12 @@ function LocationInputWrapper({ value, onChange, error }: LocationInputInnerProp
 
   return (
     <APIProvider apiKey={apiKey} libraries={['places']}>
-      <PlacesAutocompleteInput value={value} onChange={onChange} error={error} />
+      <PlacesAutocompleteInput onChange={onChange} error={error} />
     </APIProvider>
   )
 }
 
 // dynamic() with ssr:false — Maps JS API needs window.
-// Disabled placeholder input as loading fallback prevents layout shift.
 const LocationInput = dynamic(
   () => Promise.resolve(LocationInputWrapper),
   {
