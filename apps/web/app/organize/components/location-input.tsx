@@ -80,10 +80,9 @@ function PlacesAutocompleteInput({ onChange, error }: LocationInputInnerProps) {
   return (
     <div>
       {/* gmp-place-autocomplete is a Google Maps web component — styles are shadow DOM.
-          We can't apply Tailwind classes to the inner input, but width is controllable. */}
+          Width and visual tokens are set via CSS custom properties in globals.css. */}
       <gmp-place-autocomplete
         ref={elementRef}
-        style={{ width: '100%' }}
         data-testid="location-input"
       />
       {error && (
@@ -112,7 +111,7 @@ function LocationInputWrapper({ value, onChange, error }: LocationInputInnerProp
           type="text"
           placeholder="Enter a location"
           data-testid="location-input"
-          className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full rounded-lg bg-white px-3 py-2.5 border border-sage/30 text-sm text-charcoal font-sans placeholder:text-sand focus:outline-none focus:border-sage"
           onChange={(e) => {
             if (e.target.value) onChange({ name: e.target.value })
           }}
@@ -144,7 +143,7 @@ const LocationInput = dynamic(
         type="text"
         disabled
         placeholder="Loading location search..."
-        className="border border-gray-300 rounded-md px-3 py-2 text-base w-full bg-gray-100 text-gray-500"
+        className="w-full rounded-lg bg-white px-3 py-2.5 border border-sage/30 text-sm text-sand font-sans opacity-60"
       />
     ),
   }

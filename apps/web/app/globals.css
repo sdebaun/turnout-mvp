@@ -14,3 +14,17 @@ body {
   font-family: var(--font-plus-jakarta), system-ui, sans-serif;
   background-color: #FAF4E8;
 }
+
+/* gmp-place-autocomplete is a Google Maps web component with a closed shadow root.
+   We can't style its internals, but we can style the host element.
+   box-shadow ring visually replaces Google's default gray border with our sage-tinted one,
+   matching the IconInputWrapper treatment on Date and Time fields. */
+gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem; /* rounded-lg — matches our other inputs */
+  /* Sage-tinted ring that visually overlays Google's default gray border */
+  box-shadow: 0 0 0 1px rgba(61, 107, 82, 0.3);
+  overflow: hidden; /* clip the inner input to our border-radius */
+  background: white;
+}

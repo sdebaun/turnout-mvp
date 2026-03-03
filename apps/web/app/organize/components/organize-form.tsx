@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@prisma/client'
 import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator'
-import { Calendar, Clock, MapPin, Phone } from 'lucide-react'
+import { Calendar, Clock, Phone } from 'lucide-react'
 import { WizardLayout } from './wizard-layout'
 import { TurnoutPreview } from './turnout-preview'
 import { LocationInput } from './location-input'
@@ -14,8 +14,6 @@ import type { LocationData } from '../actions'
 
 type WizardStep = 0 | 1 | 2 | 3 | 4
 
-// Generates a fun random display name like "BlueWombat" or "SilverFox".
-// Lives outside the component so it doesn't regenerate on every render.
 function generateRandomName(): string {
   return uniqueNamesGenerator({
     dictionaries: [adjectives, animals],
@@ -24,9 +22,35 @@ function generateRandomName(): string {
   })
 }
 
-// Today's date as YYYY-MM-DD for min attribute on date input
 function getTodayString(): string {
   return new Date().toISOString().split('T')[0]
+}
+
+// ── Session persistence ───────────────────────────────────────────────────────
+// Wizard state is stored in sessionStorage so a page refresh preserves progress.
+// Key is versioned so schema changes don't deserialize stale shape.
+const SESSION_KEY = 'organize-wizard-v1'
+
+function readSession(): Record<string, unknown> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function writeSession(data: Record<string, unknown>) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(data))
+  } catch {}
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem(SESSION_KEY)
+  } catch {}
 }
 
 interface OrganizeFormProps {
@@ -40,12 +64,14 @@ interface OrganizeFormProps {
 function IconInputWrapper({
   icon,
   children,
+  className,
 }: {
   icon?: React.ReactNode
   children: React.ReactNode
+  className?: string
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 border border-sage/30">
+    <div className={`flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 border border-sage/30 ${className ?? ''}`}>
       {icon && (
         <span className="text-muted flex-shrink-0" aria-hidden="true">
           {icon}
@@ -238,41 +264,53 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Step 1: when/where
-  const [turnoutDate, setTurnoutDate] = useState('')
-  const [turnoutTime, setTurnoutTime] = useState('')
-  const [location, setLocation] = useState<LocationData | null>(null)
+  // Step is driven PURELY from URL param — no useState.
+  // This lets you navigate directly to any step via ?step=N for dev/debugging,
+  // and means browser back/forward just works — no step state to sync.
+  const urlStep = parseInt(searchParams.get('step') ?? '0', 10)
+  const step = ([0, 1, 2, 3, 4].includes(urlStep) ? urlStep : 0) as WizardStep
 
-  // Step 2: naming
-  const [groupName, setGroupName] = useState('')
-  const [turnoutTitle, setTurnoutTitle] = useState('')
-
-  // Step 3: identity
-  const [displayName, setDisplayName] = useState(() => generateRandomName())
-  const [phone, setPhone] = useState('')
-
-  // Step 0: which path
-  const [expertisePath, setExpertisePath] = useState<ExpertisePath>('new')
-
-  // URL-based step routing — step is the source of truth, synced to ?step= param.
-  // On page load: read from URL param if form data is present, else default to 0.
-  // On refresh with step > 0: form data is empty, so redirect to step 0.
-  const urlStep = parseInt(searchParams.get('step') ?? '0', 10) as WizardStep
-  const validStep = [0, 1, 2, 3, 4].includes(urlStep) ? urlStep : 0
-
-  // If URL says step > 0 but form hasn't been started (refresh scenario), force back to 0
-  const [step, setStep] = useState<WizardStep>(() => {
-    if (validStep > 0 && !turnoutDate && !groupName) return 0
-    return validStep as WizardStep
-  })
-
-  // Sync step state → URL param. Use push so browser back button works.
   function goToStep(nextStep: WizardStep) {
-    setStep(nextStep)
     const params = new URLSearchParams(searchParams.toString())
     params.set('step', String(nextStep))
     router.push(`/organize?${params.toString()}`)
   }
+
+  // All form state initialized from empty — sessionStorage restores on mount.
+  // This pattern avoids SSR/client hydration mismatches.
+  const [turnoutDate, setTurnoutDate] = useState('')
+  const [turnoutTime, setTurnoutTime] = useState('')
+  const [location, setLocation] = useState<LocationData | null>(null)
+  const [groupName, setGroupName] = useState('')
+  const [turnoutTitle, setTurnoutTitle] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [expertisePath, setExpertisePath] = useState<ExpertisePath>('new')
+
+  // On mount: restore from sessionStorage if available
+  useEffect(() => {
+    const s = readSession()
+    if (typeof s.turnoutDate === 'string' && s.turnoutDate) setTurnoutDate(s.turnoutDate)
+    if (typeof s.turnoutTime === 'string' && s.turnoutTime) setTurnoutTime(s.turnoutTime)
+    if (s.location && typeof (s.location as Record<string, unknown>).name === 'string') {
+      setLocation(s.location as LocationData)
+    }
+    if (typeof s.groupName === 'string' && s.groupName) setGroupName(s.groupName)
+    if (typeof s.turnoutTitle === 'string' && s.turnoutTitle) setTurnoutTitle(s.turnoutTitle)
+    // displayName: restore saved name or generate a fresh random one
+    if (typeof s.displayName === 'string' && s.displayName) {
+      setDisplayName(s.displayName)
+    } else {
+      setDisplayName(generateRandomName())
+    }
+    if (typeof s.phone === 'string' && s.phone) setPhone(s.phone)
+    if (s.expertisePath === 'existing') setExpertisePath('existing')
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Persist all form state to sessionStorage on every change
+  useEffect(() => {
+    writeSession({ turnoutDate, turnoutTime, location, groupName, turnoutTitle, displayName, phone, expertisePath })
+  }, [turnoutDate, turnoutTime, location, groupName, turnoutTitle, displayName, phone, expertisePath])
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -318,6 +356,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
       setIsSubmitting(false)
       return
     }
+    clearSession()
     router.push(`/t/${result.turnoutSlug}`)
   }
 
@@ -374,6 +413,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
       return
     }
 
+    clearSession()
     router.push(`/t/${result.turnoutSlug}`)
   }
 
@@ -539,8 +579,9 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           ) : (
             <>
               <LabeledField label="Your name">
+                {/* flex-1 on wrapper so it fills available width; button is fixed 48px */}
                 <div className="flex gap-2">
-                  <IconInputWrapper>
+                  <IconInputWrapper className="flex-1 min-w-0">
                     <input
                       type="text"
                       value={displayName}
