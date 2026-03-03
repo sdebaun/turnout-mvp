@@ -1,347 +1,698 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { User } from '@prisma/client'
-import { AuthModal } from '../../auth/components/auth-modal'
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator'
+import { WizardLayout } from './wizard-layout'
+import { TurnoutPreview } from './turnout-preview'
 import { LocationInput } from './location-input'
 import { createGroupWithTurnoutAction } from '../actions'
+import { checkPhoneAction, sendOTPAction, signInAction } from '../../auth/actions'
 import type { LocationData } from '../actions'
+
+type WizardStep = 0 | 1 | 2 | 3 | 4
+
+// Generates a fun random display name like "BlueWombat" or "SilverFox".
+// Lives outside the component so it doesn't regenerate on every render.
+function generateRandomName(): string {
+  return uniqueNamesGenerator({
+    dictionaries: [adjectives, animals],
+    style: 'capital',
+    separator: '',
+  })
+}
+
+// Today's date as YYYY-MM-DD for min attribute on date input
+function getTodayString(): string {
+  return new Date().toISOString().split('T')[0]
+}
 
 interface OrganizeFormProps {
   user: User | null
 }
 
-interface FormErrors {
-  mission?: string
-  groupName?: string
-  turnoutTitle?: string
-  description?: string
-  location?: string
-  turnoutDate?: string
-  turnoutTime?: string
+// Styled form field — label above, input below, consistent look throughout wizard
+function FormField({
+  label,
+  children,
+  hint,
+}: {
+  label: string
+  children: React.ReactNode
+  hint?: string
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-semibold" style={{ color: '#1E2420' }}>
+        {label}
+      </label>
+      {hint && <p className="text-xs" style={{ color: '#6B7280' }}>{hint}</p>}
+      {children}
+    </div>
+  )
 }
 
-// Today's date as YYYY-MM-DD for the min attribute on date input
-function getTodayString(): string {
-  const d = new Date()
-  return d.toISOString().split('T')[0]
+// Consistent styled text input for the wizard
+const inputStyle: React.CSSProperties = {
+  border: '1.5px solid #DDD8D0',
+  borderRadius: '8px',
+  padding: '12px',
+  width: '100%',
+  fontSize: '1rem',
+  outline: 'none',
+  backgroundColor: 'white',
+  color: '#1E2420',
+  fontFamily: 'inherit',
 }
 
-export function OrganizeForm({ user }: OrganizeFormProps) {
-  const router = useRouter()
-  const formRef = useRef<HTMLFormElement>(null)
+function StyledInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      style={inputStyle}
+      onFocus={(e) => {
+        e.target.style.borderColor = '#3D6B52'
+        props.onFocus?.(e)
+      }}
+      onBlur={(e) => {
+        e.target.style.borderColor = '#DDD8D0'
+        props.onBlur?.(e)
+      }}
+    />
+  )
+}
 
-  // Form field state
-  const [mission, setMission] = useState('')
-  const [groupName, setGroupName] = useState('')
-  const [turnoutTitle, setTurnoutTitle] = useState('First Planning Meeting')
-  const [description, setDescription] = useState('')
-  const [location, setLocation] = useState<LocationData | null>(null)
-  const [locationSelected, setLocationSelected] = useState(false)
-  const [turnoutDate, setTurnoutDate] = useState('')
-  const [turnoutTime, setTurnoutTime] = useState('')
+// ─── Step 0: Expertise Fork ────────────────────────────────────────────────
 
-  // UI state
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showAuthModal, setShowAuthModal] = useState(false)
+type ExpertisePath = 'new' | 'existing'
 
-  // Stash validated form data so the auth callback can access it
-  const pendingDataRef = useRef<Parameters<typeof createGroupWithTurnoutAction>[0] | null>(null)
+function ExpertiseFork({
+  selected,
+  onSelect,
+}: {
+  selected: ExpertisePath
+  onSelect: (path: ExpertisePath) => void
+}) {
+  return (
+    <div className="space-y-3">
+      {/* "Starting something new" — selected by default, amber accent */}
+      <button
+        type="button"
+        onClick={() => onSelect('new')}
+        className="w-full text-left rounded-xl p-4 border-l-4 transition-all"
+        style={{
+          backgroundColor: 'white',
+          borderLeftColor: selected === 'new' ? '#C8831A' : '#DDD8D0',
+          border: '1px solid #DDD8D0',
+          borderLeft: `4px solid ${selected === 'new' ? '#C8831A' : '#DDD8D0'}`,
+          boxShadow: selected === 'new' ? '0 1px 8px rgba(200,131,26,0.12)' : 'none',
+        }}
+      >
+        <div
+          className="font-semibold text-base mb-1"
+          style={{ color: selected === 'new' ? '#C8831A' : '#1E2420' }}
+        >
+          Starting something new
+        </div>
+        <div className="text-sm" style={{ color: '#6B7280' }}>
+          You have a cause or idea and want to bring people together around it.
+        </div>
+      </button>
 
-  function validate(): FormErrors {
-    const errs: FormErrors = {}
+      {/* "Already organizing" — neutral accent when not selected */}
+      <button
+        type="button"
+        onClick={() => onSelect('existing')}
+        className="w-full text-left rounded-xl p-4 transition-all"
+        style={{
+          backgroundColor: 'white',
+          border: '1px solid #DDD8D0',
+          borderLeft: `4px solid ${selected === 'existing' ? '#1E2420' : '#DDD8D0'}`,
+          boxShadow: selected === 'existing' ? '0 1px 8px rgba(30,36,32,0.08)' : 'none',
+        }}
+      >
+        <div
+          className="font-semibold text-base mb-1"
+          style={{ color: '#1E2420' }}
+        >
+          Already organizing
+        </div>
+        <div className="text-sm" style={{ color: '#6B7280' }}>
+          You have an existing group you want to use turnout.network for.
+        </div>
+      </button>
+    </div>
+  )
+}
 
-    if (!mission.trim()) errs.mission = 'Mission is required'
-    else if (mission.length > 500) errs.mission = 'Mission must be 500 characters or less'
+// ─── Step 3: OTP boxes ────────────────────────────────────────────────────
 
-    if (!groupName.trim()) errs.groupName = 'Group name is required'
-    else if (groupName.length > 100) errs.groupName = 'Group name must be 100 characters or less'
+// Six individual digit boxes with a visual separator between box 3 and 4.
+// WebOTP API handles auto-fill on supported mobile browsers.
+function OTPBoxes({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string
+  onChange: (v: string) => void
+  disabled?: boolean
+}) {
+  const inputs = useRef<Array<HTMLInputElement | null>>([])
 
-    if (!turnoutTitle.trim()) errs.turnoutTitle = 'Turnout title is required'
-    else if (turnoutTitle.length > 100) errs.turnoutTitle = 'Turnout title must be 100 characters or less'
-
-    if (description && description.length > 1000) errs.description = 'Description must be 1000 characters or less'
-
-    if (!location || !locationSelected) {
-      errs.location = location && !locationSelected
-        ? 'Please select a location from the dropdown.'
-        : 'Location is required'
-    }
-
-    if (!turnoutDate) errs.turnoutDate = 'Turnout date is required'
-    else if (turnoutDate < getTodayString()) errs.turnoutDate = 'Turnout date must be in the future'
-
-    if (!turnoutTime) errs.turnoutTime = 'Turnout time is required'
-
-    return errs
-  }
-
-  // Focus the first field with an error so the user isn't hunting
-  function focusFirstError(errs: FormErrors) {
-    const fieldOrder: (keyof FormErrors)[] = [
-      'mission', 'groupName', 'turnoutTitle', 'description',
-      'location', 'turnoutDate', 'turnoutTime',
-    ]
-    for (const field of fieldOrder) {
-      if (errs[field]) {
-        const el = formRef.current?.querySelector(`[data-field="${field}"]`) as HTMLElement | null
-        el?.focus()
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        break
-      }
-    }
-  }
-
-  const handleLocationChange = useCallback((loc: LocationData) => {
-    setLocation(loc)
-    setLocationSelected(true)
-    // Clear location error when user selects a valid place
-    setErrors(prev => ({ ...prev, location: undefined }))
-  }, [])
-
-  async function doCreate() {
-    const data = pendingDataRef.current
-    if (!data) return
-
-    setIsSubmitting(true)
-    setSubmitError(null)
-
-    try {
-      const result = await createGroupWithTurnoutAction(data)
-
-      if ('error' in result) {
-        setSubmitError(result.error)
-        setIsSubmitting(false)
-        return
-      }
-
-      router.push(`/t/${result.turnoutSlug}`)
-    } catch {
-      setSubmitError('Something went wrong. Please try again.')
-      setIsSubmitting(false)
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setSubmitError(null)
-
-    const errs = validate()
-    setErrors(errs)
-
-    if (Object.keys(errs).length > 0) {
-      focusFirstError(errs)
-      return
-    }
-
-    // Capture timezone from browser
-    const turnoutTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-    // Stash the validated data
-    pendingDataRef.current = {
-      groupName: groupName.trim(),
-      mission: mission.trim(),
-      turnoutTitle: turnoutTitle.trim(),
-      description: description.trim() || undefined,
-      location: location!,
-      turnoutDate,
-      turnoutTime,
-      turnoutTimezone,
-    }
-
-    if (user) {
-      // Already authenticated — create directly
-      await doCreate()
-    } else {
-      // Need auth first — open the modal
-      setShowAuthModal(true)
-    }
-  }
-
-  // Called by AuthModal after successful auth
-  const handleAuthSuccess = useCallback(async () => {
-    setShowAuthModal(false)
-    await doCreate()
+  // WebOTP auto-fill — reads the SMS code and fills the input
+  useEffect(() => {
+    if (!('OTPCredential' in window)) return
+    const ac = new AbortController()
+    navigator.credentials
+      .get({
+        otp: { transport: ['sms'] },
+        signal: ac.signal,
+      } as CredentialRequestOptions)
+      .then((otp: any) => {
+        if (otp?.code) onChange(otp.code.slice(0, 6))
+      })
+      .catch(() => {
+        // Expected on desktop / user dismissal — silent fallback to manual entry
+      })
+    return () => ac.abort()
+    // Only run on mount — value/onChange refs won't change here
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, idx: number) {
+    if (e.key === 'Backspace' && !value[idx] && idx > 0) {
+      // Move focus left on backspace when box is empty
+      inputs.current[idx - 1]?.focus()
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>, idx: number) {
+    const digit = e.target.value.replace(/\D/g, '').slice(-1)
+    const chars = value.split('')
+    chars[idx] = digit
+    // Fill any gaps with empty string
+    onChange(chars.slice(0, 6).join(''))
+    if (digit && idx < 5) {
+      inputs.current[idx + 1]?.focus()
+    }
+  }
+
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    onChange(pasted)
+    // Focus the last filled box or the next empty one
+    const focusIdx = Math.min(pasted.length, 5)
+    inputs.current[focusIdx]?.focus()
+  }
+
+  const boxStyle: React.CSSProperties = {
+    width: '44px',
+    height: '52px',
+    border: '1.5px solid #DDD8D0',
+    borderRadius: '8px',
+    textAlign: 'center',
+    fontSize: '1.5rem',
+    fontFamily: 'monospace',
+    color: '#1E2420',
+    backgroundColor: 'white',
+    outline: 'none',
+  }
+
   return (
-    <>
-      <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-8" noValidate>
-        {/* Section 1: Vision */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">What are you organizing for?</h2>
+    <div className="flex items-center justify-center gap-2">
+      {[0, 1, 2].map((idx) => (
+        <input
+          key={idx}
+          ref={(el) => { inputs.current[idx] = el }}
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={1}
+          value={value[idx] ?? ''}
+          onChange={(e) => handleChange(e, idx)}
+          onKeyDown={(e) => handleKeyDown(e, idx)}
+          onPaste={handlePaste}
+          onFocus={(e) => { e.target.style.borderColor = '#3D6B52' }}
+          onBlur={(e) => { e.target.style.borderColor = '#DDD8D0' }}
+          disabled={disabled}
+          style={boxStyle}
+          aria-label={`Digit ${idx + 1}`}
+        />
+      ))}
 
-          <div>
-            <label htmlFor="mission" className="block text-sm font-medium text-gray-700 mb-1">
-              Your mission
-            </label>
-            <p className="text-xs text-gray-500 mb-1">Describe what you&apos;re fighting for or building toward.</p>
-            <textarea
-              id="mission"
-              data-field="mission"
-              value={mission}
-              onChange={(e) => setMission(e.target.value)}
-              placeholder="Stop the gravel mine from destroying Willow Creek."
-              maxLength={500}
-              rows={3}
-              className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
+      {/* Visual separator dot between box 3 and 4 */}
+      <div
+        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+        style={{ backgroundColor: '#DDD8D0' }}
+        aria-hidden="true"
+      />
+
+      {[3, 4, 5].map((idx) => (
+        <input
+          key={idx}
+          ref={(el) => { inputs.current[idx] = el }}
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={1}
+          value={value[idx] ?? ''}
+          onChange={(e) => handleChange(e, idx)}
+          onKeyDown={(e) => handleKeyDown(e, idx)}
+          onPaste={handlePaste}
+          onFocus={(e) => { e.target.style.borderColor = '#3D6B52' }}
+          onBlur={(e) => { e.target.style.borderColor = '#DDD8D0' }}
+          disabled={disabled}
+          style={boxStyle}
+          aria-label={`Digit ${idx + 1}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+// ─── Main wizard component ────────────────────────────────────────────────
+
+export function OrganizeForm({ user }: OrganizeFormProps) {
+  const router = useRouter()
+
+  // Step 1: when/where
+  const [turnoutDate, setTurnoutDate] = useState('')
+  const [turnoutTime, setTurnoutTime] = useState('')
+  const [location, setLocation] = useState<LocationData | null>(null)
+
+  // Step 2: naming
+  const [groupName, setGroupName] = useState('')
+  const [turnoutTitle, setTurnoutTitle] = useState('')
+
+  // Step 3: identity
+  const [displayName, setDisplayName] = useState(() => generateRandomName())
+  const [phone, setPhone] = useState('')
+
+  // Step 0: which path
+  const [expertisePath, setExpertisePath] = useState<ExpertisePath>('new')
+
+  // Wizard navigation
+  const [step, setStep] = useState<WizardStep>(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // Step 4: OTP
+  const [otpCode, setOtpCode] = useState('')
+  // Normalized phone stored after step 3 validates and sends code
+  const [authPhone, setAuthPhone] = useState('')
+
+  const handleLocationChange = useCallback((loc: LocationData) => {
+    setLocation(loc)
+  }, [])
+
+  // ── Continue/submit handlers per step ──
+
+  // Step 0 → 1 (trivially enabled since one option always selected)
+  function handleStep0Continue() {
+    setStep(1)
+  }
+
+  // Step 1 → 2 (enabled when date+time+location all filled)
+  function handleStep1Continue() {
+    setStep(2)
+  }
+
+  // Step 2 → 3 (enabled when groupName+turnoutTitle both filled)
+  function handleStep2Continue() {
+    setStep(3)
+  }
+
+  // Step 3 for authenticated users — skip OTP, create directly
+  async function handleAuthenticatedCreate() {
+    setIsSubmitting(true)
+    setSubmitError(null)
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const result = await createGroupWithTurnoutAction({
+      groupName,
+      mission: groupName,
+      turnoutTitle,
+      location: location!,
+      turnoutDate,
+      turnoutTime,
+      turnoutTimezone: timezone,
+    })
+    if ('error' in result) {
+      setSubmitError(result.error)
+      setIsSubmitting(false)
+      return
+    }
+    router.push(`/t/${result.turnoutSlug}`)
+  }
+
+  // Step 3 → 4 (send OTP code)
+  async function handleSendCode() {
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    const checkResult = await checkPhoneAction(phone)
+    if ('error' in checkResult) {
+      setSubmitError(checkResult.error)
+      setIsSubmitting(false)
+      return
+    }
+
+    const sendResult = await sendOTPAction(phone)
+    if ('error' in sendResult) {
+      setSubmitError(sendResult.error)
+      setIsSubmitting(false)
+      return
+    }
+
+    // Store normalized phone for step 4 — the action returns success, not the normalized number,
+    // so we keep what the user typed and let signInAction normalize it again.
+    setAuthPhone(phone)
+    setIsSubmitting(false)
+    setStep(4)
+  }
+
+  // Step 4: verify OTP + create group/turnout
+  async function handleCreateTurnout() {
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    // Verify OTP and establish session
+    const signInResult = await signInAction(authPhone, otpCode, displayName)
+    if ('error' in signInResult) {
+      setSubmitError(signInResult.error)
+      setIsSubmitting(false)
+      return
+    }
+
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const result = await createGroupWithTurnoutAction({
+      groupName,
+      mission: groupName,
+      turnoutTitle,
+      location: location!,
+      turnoutDate,
+      turnoutTime,
+      turnoutTimezone: timezone,
+    })
+
+    if ('error' in result) {
+      setSubmitError(result.error)
+      setIsSubmitting(false)
+      return
+    }
+
+    router.push(`/t/${result.turnoutSlug}`)
+  }
+
+  // ── Per-step continue logic ──
+
+  const step1Ready = Boolean(turnoutDate && turnoutTime && location)
+  const step2Ready = Boolean(groupName.trim() && turnoutTitle.trim())
+  const step3Ready = Boolean(displayName.trim() && phone.length >= 10)
+  const step4Ready = otpCode.length === 6
+
+  // Derive city from location's formattedAddress for TurnoutPreview display
+  const locationCity = location?.formattedAddress
+    ? location.formattedAddress.split(',').slice(-2).join(',').trim()
+    : undefined
+
+  // ── Step config ──
+
+  type StepConfig = {
+    headerTitle: string
+    headerSubtitle: string
+    currentStep?: number
+    continueLabel: string
+    continueDisabled: boolean
+    onBack?: () => void
+    onContinue: () => void
+  }
+
+  const stepConfigs: Record<WizardStep, StepConfig> = {
+    0: {
+      headerTitle: 'Which of these is you?',
+      headerSubtitle: "Tell us where you're starting from.",
+      continueLabel: "Let's go \u203a",
+      continueDisabled: false,
+      onContinue: handleStep0Continue,
+    },
+    1: {
+      headerTitle: 'When and where?',
+      headerSubtitle: 'Pick something — you can always adjust it later.',
+      currentStep: 1,
+      continueLabel: 'Continue \u203a',
+      continueDisabled: !step1Ready,
+      onBack: () => setStep(0),
+      onContinue: handleStep1Continue,
+    },
+    2: {
+      headerTitle: 'What are you calling it?',
+      headerSubtitle: "Don't overthink it, you can always change it.",
+      currentStep: 2,
+      continueLabel: 'Continue \u203a',
+      continueDisabled: !step2Ready,
+      onBack: () => setStep(1),
+      onContinue: handleStep2Continue,
+    },
+    3: {
+      headerTitle: 'Claim your turnout.',
+      headerSubtitle: 'One last step and it\u2019s yours.',
+      currentStep: 3,
+      continueLabel: user ? 'Create Turnout \u203a' : 'Send code \u203a',
+      continueDisabled: user ? false : !step3Ready,
+      onBack: () => setStep(2),
+      onContinue: user ? handleAuthenticatedCreate : handleSendCode,
+    },
+    4: {
+      headerTitle: 'Claim your turnout.',
+      headerSubtitle: 'Just confirm that it\u2019s you.',
+      currentStep: 4,
+      continueLabel: 'Create Turnout \u203a',
+      continueDisabled: !step4Ready,
+      onBack: () => setStep(3),
+      onContinue: handleCreateTurnout,
+    },
+  }
+
+  const config = stepConfigs[step]
+
+  // The preview card uses filled data for steps 3+, partial for step 2, ghost for step 1
+  const previewGroupName = step >= 2 ? groupName || undefined : undefined
+  const previewTitle = step >= 2 ? turnoutTitle || undefined : undefined
+  const previewOrganizer = step >= 3 ? (user?.displayName ?? displayName) : undefined
+
+  return (
+    <WizardLayout
+      headerTitle={config.headerTitle}
+      headerSubtitle={config.headerSubtitle}
+      currentStep={config.currentStep}
+      onBack={config.onBack}
+      onContinue={config.onContinue}
+      continueLabel={config.continueLabel}
+      continueDisabled={config.continueDisabled}
+      isSubmitting={isSubmitting}
+    >
+      {/* ── Step 0: Expertise fork ── */}
+      {step === 0 && (
+        <ExpertiseFork selected={expertisePath} onSelect={setExpertisePath} />
+      )}
+
+      {/* ── Step 1: When and where ── */}
+      {step === 1 && (
+        <>
+          <TurnoutPreview
+            date={turnoutDate || undefined}
+            time={turnoutTime || undefined}
+            locationName={location?.name}
+            locationCity={locationCity}
+          />
+
+          <FormField label="Date">
+            <StyledInput
+              type="date"
+              value={turnoutDate}
+              min={getTodayString()}
+              onChange={(e) => setTurnoutDate(e.target.value)}
+              data-testid="turnout-date"
             />
-            {errors.mission && (
-              <p className="text-sm text-red-600 mt-1" role="alert">{errors.mission}</p>
-            )}
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 mb-1">
-              Group name
-            </label>
-            <p className="text-xs text-gray-500 mb-1">Give your effort a name.</p>
-            <input
-              id="groupName"
-              data-field="groupName"
+          <FormField label="Time">
+            <StyledInput
+              type="time"
+              value={turnoutTime}
+              onChange={(e) => setTurnoutTime(e.target.value)}
+              data-testid="turnout-time"
+            />
+          </FormField>
+
+          <FormField label="Location">
+            <LocationInput
+              value={location}
+              onChange={handleLocationChange}
+            />
+          </FormField>
+        </>
+      )}
+
+      {/* ── Step 2: Name it ── */}
+      {step === 2 && (
+        <>
+          <TurnoutPreview
+            date={turnoutDate}
+            time={turnoutTime}
+            locationName={location?.name}
+            locationCity={locationCity}
+            groupName={previewGroupName}
+            turnoutTitle={previewTitle}
+          />
+
+          <FormField
+            label="Group name"
+            hint="What are you calling your organizing effort?"
+          >
+            <StyledInput
               type="text"
               value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              placeholder="Save Willow Creek"
               maxLength={100}
-              className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
+              placeholder="Save Willow Creek"
+              onChange={(e) => setGroupName(e.target.value)}
+              data-testid="group-name"
             />
-            {errors.groupName && (
-              <p className="text-sm text-red-600 mt-1" role="alert">{errors.groupName}</p>
-            )}
-          </div>
-        </section>
+          </FormField>
 
-        {/* Section 2: Action */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Your first turnout</h2>
-
-          <div>
-            <label htmlFor="turnoutTitle" className="block text-sm font-medium text-gray-700 mb-1">
-              Turnout title
-            </label>
-            <input
-              id="turnoutTitle"
-              data-field="turnoutTitle"
+          <FormField
+            label="Turnout name"
+            hint="What's this specific event called?"
+          >
+            <StyledInput
               type="text"
               value={turnoutTitle}
-              onChange={(e) => setTurnoutTitle(e.target.value)}
-              placeholder="First Planning Meeting"
               maxLength={100}
-              className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
+              placeholder="First Planning Meeting"
+              onChange={(e) => setTurnoutTitle(e.target.value)}
+              data-testid="turnout-title"
             />
-            {errors.turnoutTitle && (
-              <p className="text-sm text-red-600 mt-1" role="alert">{errors.turnoutTitle}</p>
-            )}
-          </div>
+          </FormField>
+        </>
+      )}
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-gray-400 font-normal">(optional)</span>
-            </label>
-            <textarea
-              id="description"
-              data-field="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What should people expect? What will you decide or work on together?"
-              maxLength={1000}
-              rows={3}
-              className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      {/* ── Step 3: Claim it ── */}
+      {step === 3 && (
+        <>
+          <TurnoutPreview
+            date={turnoutDate}
+            time={turnoutTime}
+            locationName={location?.name}
+            locationCity={locationCity}
+            groupName={groupName}
+            turnoutTitle={turnoutTitle}
+            displayName={user?.displayName ?? displayName}
+          />
+
+          {user ? (
+            // Already authenticated — skip phone/OTP, just confirm and create
+            <div
+              className="rounded-xl p-4 text-center"
+              style={{ backgroundColor: 'white', border: '1px solid #DDD8D0' }}
+            >
+              <p className="text-sm font-medium" style={{ color: '#3D6B52' }}>
+                You&apos;re organizing as <strong>{user.displayName}</strong>
+              </p>
+              <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
+                Hit &ldquo;Create Turnout&rdquo; to make it real.
+              </p>
+            </div>
+          ) : (
+            <>
+              <FormField label="Your name">
+                <div className="flex gap-2">
+                  <StyledInput
+                    type="text"
+                    value={displayName}
+                    maxLength={50}
+                    placeholder="Your display name"
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    data-testid="display-name"
+                  />
+                  {/* Reroll button — generate a new random name */}
+                  <button
+                    type="button"
+                    title="Generate a random name"
+                    onClick={() => setDisplayName(generateRandomName())}
+                    className="flex-shrink-0 w-12 rounded-lg flex items-center justify-center text-lg"
+                    style={{
+                      border: '1.5px solid #DDD8D0',
+                      backgroundColor: 'white',
+                    }}
+                    aria-label="Generate random name"
+                  >
+                    🎲
+                  </button>
+                </div>
+              </FormField>
+
+              <FormField label="Phone number">
+                <StyledInput
+                  type="tel"
+                  value={phone}
+                  placeholder="+1 (555) 000-0000"
+                  onChange={(e) => setPhone(e.target.value)}
+                  autoComplete="tel"
+                  data-testid="phone-number"
+                />
+              </FormField>
+
+              <p className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>
+                We&apos;ll send a 6-digit code to confirm your number. Your number is only
+                used for updates about your turnouts, and to let you sign in to manage them.
+              </p>
+            </>
+          )}
+        </>
+      )}
+
+      {/* ── Step 4: OTP verification ── */}
+      {step === 4 && (
+        <>
+          <TurnoutPreview
+            date={turnoutDate}
+            time={turnoutTime}
+            locationName={location?.name}
+            locationCity={locationCity}
+            groupName={groupName}
+            turnoutTitle={turnoutTitle}
+            displayName={displayName}
+          />
+
+          <div className="space-y-4">
+            <p className="text-sm text-center" style={{ color: '#6B7280' }}>
+              We just texted you a 6-digit code.
+              <br />
+              Enter the code we sent you.
+            </p>
+
+            <OTPBoxes
+              value={otpCode}
+              onChange={setOtpCode}
+              disabled={isSubmitting}
             />
-            {errors.description && (
-              <p className="text-sm text-red-600 mt-1" role="alert">{errors.description}</p>
-            )}
           </div>
+        </>
+      )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Location
-            </label>
-            <div data-field="location">
-              <LocationInput
-                value={location}
-                onChange={handleLocationChange}
-                error={errors.location}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="turnoutDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Date
-              </label>
-              <input
-                id="turnoutDate"
-                data-field="turnoutDate"
-                type="date"
-                value={turnoutDate}
-                onChange={(e) => setTurnoutDate(e.target.value)}
-                min={getTodayString()}
-                className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-              {errors.turnoutDate && (
-                <p className="text-sm text-red-600 mt-1" role="alert">{errors.turnoutDate}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="turnoutTime" className="block text-sm font-medium text-gray-700 mb-1">
-                Time
-              </label>
-              <input
-                id="turnoutTime"
-                data-field="turnoutTime"
-                type="time"
-                value={turnoutTime}
-                onChange={(e) => setTurnoutTime(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-              {errors.turnoutTime && (
-                <p className="text-sm text-red-600 mt-1" role="alert">{errors.turnoutTime}</p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Submit error banner */}
-        {submitError && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-sm text-red-700" role="alert">{submitError}</p>
-          </div>
-        )}
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white rounded-md py-3 px-4 font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Error display — shown at the bottom of the body on any step */}
+      {submitError && (
+        <div
+          className="rounded-lg p-3"
+          style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}
+          role="alert"
         >
-          {isSubmitting ? 'Creating...' : 'Create Turnout'}
-        </button>
-      </form>
-
-      {/* AuthModal — only opens for unauthenticated users after form validation passes */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => {
-          setShowAuthModal(false)
-          setIsSubmitting(false)
-        }}
-        onSuccess={handleAuthSuccess}
-        title="Before we make this official..."
-        body="We need a way to reach you — your phone number is how we'll send reminders and keep you in the loop."
-      />
-    </>
+          <p className="text-sm" style={{ color: '#B91C1C' }}>{submitError}</p>
+        </div>
+      )}
+    </WizardLayout>
   )
 }
