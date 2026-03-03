@@ -475,6 +475,8 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 value={turnoutDate}
                 min={getTodayString()}
                 onChange={(e) => setTurnoutDate(e.target.value)}
+                // showPicker() makes the entire input area clickable — not just the (hidden) indicator
+                onClick={(e) => { try { (e.currentTarget as any).showPicker() } catch {} }}
                 // [color-scheme:light] prevents dark-mode browsers from inverting date picker chrome
                 className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand [color-scheme:light]"
                 data-testid="turnout-date"
@@ -488,6 +490,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                 type="time"
                 value={turnoutTime}
                 onChange={(e) => setTurnoutTime(e.target.value)}
+                onClick={(e) => { try { (e.currentTarget as any).showPicker() } catch {} }}
                 // [color-scheme:light] prevents dark-mode browsers from inverting time picker chrome
                 className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand [color-scheme:light]"
                 data-testid="turnout-time"
