@@ -4,7 +4,7 @@
     {
       "type": "frame",
       "id": "MzSDs",
-      "x": -1506,
+      "x": -2278,
       "y": 0,
       "name": "shadcn: design system components",
       "clip": true,
@@ -4840,7 +4840,7 @@
       "type": "frame",
       "id": "FdsAQ",
       "x": 1763,
-      "y": 0,
+      "y": 448,
       "name": "Component: Turnout Discovery Card",
       "clip": true,
       "width": 1110,
@@ -5923,312 +5923,6 @@
     },
     {
       "type": "frame",
-      "id": "CLp2N",
-      "x": 6070,
-      "y": 2,
-      "name": "create turnout step3 - auth interruption – phone signup [placeholder]",
-      "width": 375,
-      "height": 812,
-      "fill": "#f0ede8",
-      "layout": "none",
-      "children": [
-        {
-          "id": "U9r0m",
-          "type": "ref",
-          "ref": "vLmOp",
-          "width": 375,
-          "height": 56,
-          "name": "topNav",
-          "x": 0,
-          "y": 0
-        },
-        {
-          "type": "frame",
-          "id": "g9Ok0",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "pHvry",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "xeUSj",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Claim your turnout.",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "onnXz",
-                  "name": "sub3",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "One last step and it's yours.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "Ju1do",
-          "x": 0,
-          "y": 200,
-          "name": "body",
-          "width": 375,
-          "height": 484,
-          "fill": "$--background-warm",
-          "layout": "vertical",
-          "children": [
-            {
-              "type": "frame",
-              "id": "xw2yE",
-              "name": "previewZone",
-              "width": "fill_container",
-              "fill": "$--background",
-              "layout": "vertical",
-              "padding": 20,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "fjqrK",
-                  "type": "ref",
-                  "ref": "trU6T",
-                  "name": "previewCard",
-                  "width": "fill_container",
-                  "descendants": {
-                    "X2efT/BMk8O": {
-                      "fill": "#7A6E65"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "DN9h0",
-              "name": "formZone",
-              "width": "fill_container",
-              "fill": "$--background-warm",
-              "layout": "vertical",
-              "gap": 16,
-              "padding": [
-                20,
-                20,
-                24,
-                20
-              ],
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "5Qd8k",
-                  "name": "displayNameField",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 6,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "2TXE8",
-                      "name": "LabelText",
-                      "width": "fill_container",
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 0,
-                        "fill": "transparent"
-                      },
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "sE9xA",
-                          "name": "Label Text",
-                          "fill": "#7A6E65",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Your name",
-                          "lineHeight": 1.4285714285714286,
-                          "fontFamily": "Plus Jakarta Sans",
-                          "fontSize": 14,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "RvGks",
-                      "name": "nameInputRow",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "4mYL2",
-                          "name": "Input",
-                          "width": "fill_container",
-                          "fill": "#ffffff",
-                          "cornerRadius": 8,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1,
-                            "fill": "#3D6B5250"
-                          },
-                          "gap": 8,
-                          "padding": [
-                            10,
-                            12
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "zl48v",
-                              "name": "Input Value",
-                              "fill": "#B5ADA8",
-                              "content": "Real name, nickname, or roll one",
-                              "lineHeight": 1.4285714285714286,
-                              "textAlignVertical": "middle",
-                              "fontFamily": "Plus Jakarta Sans",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "H3A6i",
-                          "name": "RerollButton",
-                          "width": 40,
-                          "height": 40,
-                          "fill": "#F5F0E8",
-                          "cornerRadius": 8,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1,
-                            "fill": "#3D6B5230"
-                          },
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "7zNjc",
-                              "name": "RerollIcon",
-                              "fill": "#1E2420",
-                              "content": "🎲",
-                              "lineHeight": 1,
-                              "fontFamily": "Plus Jakarta Sans",
-                              "fontSize": 18,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "id": "Dp9oA",
-                  "type": "ref",
-                  "ref": "u9MSw",
-                  "width": "fill_container",
-                  "name": "newPhoneInst"
-                },
-                {
-                  "type": "frame",
-                  "id": "hFrrp",
-                  "name": "trustBlock",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "fgoWZ",
-                      "name": "adesc",
-                      "fill": "#1E2420",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "We'll send a 6-digit code\nto confirm your number.",
-                      "lineHeight": 1.5,
-                      "textAlign": "center",
-                      "fontFamily": "Plus Jakarta Sans",
-                      "fontSize": 17,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "34zP4",
-                      "name": "newTrust",
-                      "fill": "#7A6E65",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Your number is only used for updates about your turnouts,\nand to let you sign in to manage them.",
-                      "lineHeight": 1.5,
-                      "textAlign": "center",
-                      "fontFamily": "Plus Jakarta Sans",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ms8Y6",
-          "type": "ref",
-          "ref": "DSwrF",
-          "name": "actionBar",
-          "width": 375,
-          "x": 0,
-          "y": 740,
-          "height": 72,
-          "descendants": {
-            "khRRc": {
-              "content": "Send code"
-            }
-          }
-        },
-        {
-          "id": "keVac",
-          "type": "ref",
-          "ref": "xL88K",
-          "x": 141,
-          "y": 192,
-          "width": 94,
-          "height": 16
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "QWxuG",
       "x": 7021,
       "y": 0,
@@ -6839,233 +6533,9 @@
     },
     {
       "type": "frame",
-      "id": "rpVma",
-      "x": 4700,
-      "y": 0,
-      "name": "create turnout - step0 - expertise fork [question] [PATH 2 TBD]",
-      "context": "Expertise fork: presents Bob (new organizer) vs Cathy (experienced organizer, first-time user) with different onboarding registers. PATH 1 ('Starting something new') → Bob's full hand-held flow: AI group name suggestion, default turnout type recommendation, reassurance copy. PATH 2 ('Already organizing') → PHASE 2 / TBD. Locked until Cathy's user story is complete. Both paths create identical Group + Turnout objects.",
-      "clip": true,
-      "width": 375,
-      "height": 812,
-      "fill": "$--background-warm",
-      "layout": "none",
-      "children": [
-        {
-          "id": "hzno4",
-          "type": "ref",
-          "ref": "vLmOp",
-          "width": 375,
-          "height": 56,
-          "name": "topNav",
-          "x": 0,
-          "y": 0
-        },
-        {
-          "type": "frame",
-          "id": "h3SXs",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "snQ7q",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "nSmlx",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Which of these is you?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "zUeBQ",
-                  "name": "sub0",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Tell us where you're starting from.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "nLgil",
-          "x": 0,
-          "y": 200,
-          "name": "body",
-          "width": 375,
-          "height": 484,
-          "fill": "$--background-warm",
-          "layout": "vertical",
-          "gap": 12,
-          "padding": 20,
-          "justifyContent": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "orRL5",
-              "name": "tile-new",
-              "context": "this navigates the user down the \"newbie\" onboarding focused around a simple first turnout",
-              "width": "fill_container",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "QYLMT",
-                  "name": "selectedAccent",
-                  "width": 6,
-                  "height": "fill_container",
-                  "fill": "#C8831A"
-                },
-                {
-                  "type": "frame",
-                  "id": "MvEnU",
-                  "name": "contentArea",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 12,
-                  "padding": 20,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "We22e",
-                      "name": "topRow1",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "1SBi8",
-                          "name": "t1_title",
-                          "fill": "#C8831A",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Starting something new",
-                          "lineHeight": 1.2,
-                          "fontFamily": "Plus Jakarta Sans",
-                          "fontSize": 22,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "PeSWn",
-                      "name": "t1_desc",
-                      "fill": "#6B6966",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "You have a cause or idea and want to bring people together around it.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Plus Jakarta Sans",
-                      "fontSize": 15,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "N3caY",
-              "name": "tile-existing [PHASE 2 / TBD]",
-              "context": "PHASE 2 / TBD — The 'veteran organizer' path for Cathy. Her full user story is not yet complete (existing channels integration, experienced organizer setup flow). This card is intentionally locked off. Do NOT design this path until Cathy's user story is written. Both paths currently create the same Group + Turnout objects — the fork is about onboarding register (less hand-holding, fewer AI suggestions) rather than different data operations.",
-              "width": "fill_container",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ggCbN",
-                  "name": "accentBar",
-                  "width": 6,
-                  "height": "fill_container",
-                  "fill": "#3D6B52"
-                },
-                {
-                  "type": "frame",
-                  "id": "8gHck",
-                  "name": "contentArea",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 12,
-                  "padding": 20,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "XBDZ2",
-                      "name": "t2_title",
-                      "fill": "#1E2420",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Already organizing",
-                      "lineHeight": 1.2,
-                      "fontFamily": "Plus Jakarta Sans",
-                      "fontSize": 22,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "Qj07O",
-                      "name": "t2_desc",
-                      "fill": "#6B6966",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "You have an existing group you want to use turnout.network for.",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Plus Jakarta Sans",
-                      "fontSize": 15,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "aismG",
-          "type": "ref",
-          "ref": "DSwrF",
-          "width": 375,
-          "name": "actionBar",
-          "x": 0,
-          "y": 740,
-          "height": 72,
-          "descendants": {
-            "khRRc": {
-              "content": "Let's go"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "nX0vo",
       "x": 1763,
-      "y": 1062,
+      "y": -607,
       "name": "Component: TopNav",
       "clip": true,
       "width": 1110,
@@ -7230,7 +6700,7 @@
       "type": "frame",
       "id": "D2PAA",
       "x": 1763,
-      "y": 1412,
+      "y": 32,
       "name": "Component: Identity Pills",
       "clip": true,
       "width": 1110,
@@ -7954,416 +7424,9 @@
     },
     {
       "type": "frame",
-      "id": "NnxoD",
-      "x": 5164,
-      "y": 0,
-      "name": "create turnout step1",
-      "width": 375,
-      "height": 812,
-      "fill": "#f0ede8",
-      "layout": "none",
-      "children": [
-        {
-          "id": "HIEDr",
-          "type": "ref",
-          "ref": "vLmOp",
-          "width": 375,
-          "height": 56,
-          "name": "topNav",
-          "x": 0,
-          "y": 0
-        },
-        {
-          "type": "frame",
-          "id": "tTRSb",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "1I2p0",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "CtBDX",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "When and where?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "8eOvG",
-                  "name": "sub1",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Pick something — you can always adjust it later.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "EvNbk",
-          "x": 0,
-          "y": 200,
-          "name": "body",
-          "width": 375,
-          "height": 484,
-          "fill": "$--background-warm",
-          "layout": "vertical",
-          "children": [
-            {
-              "type": "frame",
-              "id": "fdlI1",
-              "name": "previewZone",
-              "width": "fill_container",
-              "fill": "$--background",
-              "layout": "vertical",
-              "padding": 20,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "dmW2z",
-                  "type": "ref",
-                  "ref": "p2ihv",
-                  "name": "previewCard",
-                  "width": "fill_container",
-                  "descendants": {
-                    "wAY23": {
-                      "type": "text",
-                      "id": "Y7CSk",
-                      "name": "ghostTitleText",
-                      "fill": "#DDD8D0",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "My Turnout",
-                      "lineHeight": 1.2,
-                      "fontFamily": "Zilla Slab",
-                      "fontSize": 20,
-                      "fontWeight": "700"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "mrD3r",
-              "name": "formZone",
-              "width": "fill_container",
-              "fill": "$--background-warm",
-              "layout": "vertical",
-              "gap": 16,
-              "padding": [
-                20,
-                20,
-                24,
-                20
-              ],
-              "children": [
-                {
-                  "id": "erNPg",
-                  "type": "ref",
-                  "ref": "ugxum",
-                  "name": "dtFld",
-                  "width": "fill_container",
-                  "height": "fit_content",
-                  "context": "DATE PICKER: Use native <input type='date'> or shadcn Calendar. Display selected date in human-relative format on the turnout card ('This Friday · 7 PM') but store as ISO date. On mobile, native input triggers the platform date picker.",
-                  "descendants": {
-                    "b8XP0": {
-                      "content": "Choose a date",
-                      "fill": "#B5ADA8",
-                      "fontWeight": "400"
-                    }
-                  }
-                },
-                {
-                  "id": "NGao7",
-                  "type": "ref",
-                  "ref": "6Hlf3",
-                  "name": "tmFld",
-                  "width": "fill_container",
-                  "height": "fit_content",
-                  "context": "TIME PICKER: Use native <input type='time'>. Display in 12-hour format with AM/PM ('7:00 PM'). On mobile, native input triggers the platform time picker (scroll wheel on iOS, clock dial on Android).",
-                  "descendants": {
-                    "RytDw": {
-                      "content": "Choose a time",
-                      "fill": "#B5ADA8",
-                      "fontWeight": "400"
-                    }
-                  }
-                },
-                {
-                  "id": "eOMDN",
-                  "type": "ref",
-                  "ref": "fd7ut",
-                  "name": "locFld",
-                  "width": "fill_container",
-                  "height": "fit_content",
-                  "context": "GOOGLE PLACES AUTOCOMPLETE: Use useMapsLibrary('places') + google.maps.places.Autocomplete (classic API). PlaceAutocompleteClassic does NOT exist in @vis.gl/react-google-maps v1.7.1. API key: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (SST secret GoogleMapsApiKey — injected via sst dev only, NOT in .env.local). Captures place_id, formatted_address, geometry.location for lat/lng. Display as 'Venue Name, City ST' on turnout cards."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "hbsZe",
-          "type": "ref",
-          "ref": "DSwrF",
-          "name": "actionBar",
-          "width": 375,
-          "x": 0,
-          "y": 740,
-          "height": 72,
-          "descendants": {
-            "khRRc": {
-              "content": "Continue"
-            }
-          }
-        },
-        {
-          "id": "JrBIO",
-          "type": "ref",
-          "ref": "HnRj0",
-          "x": 141,
-          "y": 192,
-          "width": 94,
-          "height": 16
-        }
-      ]
-    },
-    {
-      "type": "frame",
-      "id": "7SanA",
-      "x": 5624,
-      "y": 0,
-      "name": "create turnout step2",
-      "width": 375,
-      "height": 812,
-      "fill": "#f0ede8",
-      "layout": "none",
-      "children": [
-        {
-          "id": "phpuM",
-          "type": "ref",
-          "ref": "vLmOp",
-          "width": 375,
-          "height": 56,
-          "name": "topNav",
-          "x": 0,
-          "y": 0
-        },
-        {
-          "type": "frame",
-          "id": "WpSmd",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "PyARI",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "k2kzr",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "What are you calling it?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "ckR29",
-                  "name": "sub2",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Don't overthink it, you can always change it.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "4t9Ub",
-          "x": 0,
-          "y": 200,
-          "name": "body",
-          "width": 375,
-          "height": 484,
-          "fill": "$--background-warm",
-          "layout": "vertical",
-          "children": [
-            {
-              "type": "frame",
-              "id": "6sBuU",
-              "name": "previewZone",
-              "width": "fill_container",
-              "fill": "$--background",
-              "layout": "vertical",
-              "padding": 20,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "XWl2j",
-                  "type": "ref",
-                  "ref": "1K289",
-                  "name": "previewCard",
-                  "width": "fill_container",
-                  "descendants": {
-                    "15c3Z": {
-                      "type": "text",
-                      "id": "rE1X7",
-                      "name": "ghostTitleText",
-                      "fill": "#DDD8D0",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "My Turnout",
-                      "lineHeight": 1.2,
-                      "fontFamily": "Zilla Slab",
-                      "fontSize": 20,
-                      "fontWeight": "700"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "kfGeP",
-              "name": "formZone",
-              "width": "fill_container",
-              "fill": "$--background-warm",
-              "layout": "vertical",
-              "gap": 16,
-              "padding": [
-                20,
-                20,
-                24,
-                20
-              ],
-              "children": [
-                {
-                  "id": "gP0Gn",
-                  "type": "ref",
-                  "ref": "1415a",
-                  "width": "fill_container",
-                  "name": "grpFld",
-                  "height": "fit_content",
-                  "x": 20,
-                  "y": 20,
-                  "descendants": {
-                    "BX0XX": {
-                      "content": "Group"
-                    },
-                    "i0Z3E": {
-                      "fill": "#ffffff"
-                    },
-                    "SDRKn": {
-                      "content": "Save Willow Creek, Local Love Project..."
-                    }
-                  }
-                },
-                {
-                  "id": "FcRla",
-                  "type": "ref",
-                  "ref": "1415a",
-                  "width": "fill_container",
-                  "name": "evtFld",
-                  "height": "fit_content",
-                  "x": 20,
-                  "y": 102,
-                  "descendants": {
-                    "BX0XX": {
-                      "content": "Turnout"
-                    },
-                    "i0Z3E": {
-                      "fill": "#ffffff"
-                    },
-                    "SDRKn": {
-                      "content": "Planning Meeting, Kickoff, March..."
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "fWjbO",
-          "type": "ref",
-          "ref": "DSwrF",
-          "name": "actionBar",
-          "width": 375,
-          "x": 0,
-          "y": 740,
-          "height": 72,
-          "descendants": {
-            "khRRc": {
-              "content": "Continue"
-            }
-          }
-        },
-        {
-          "id": "JGvRe",
-          "type": "ref",
-          "ref": "qVReR",
-          "x": 141,
-          "y": 192,
-          "width": 94,
-          "height": 16
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "d4MVO",
       "x": 1763,
-      "y": 1738,
+      "y": 1418,
       "name": "Component: Form Controls",
       "fill": "#FFFFFF",
       "layout": "vertical",
@@ -8858,7 +7921,7 @@
       "type": "frame",
       "id": "7lFcC",
       "x": 1763,
-      "y": 2358,
+      "y": 1879,
       "name": "Component: TurnoutPreview",
       "fill": "#FFFFFF",
       "layout": "vertical",
@@ -9428,394 +8491,6 @@
     },
     {
       "type": "frame",
-      "id": "rCsRS",
-      "x": 6512,
-      "y": 2,
-      "name": "step3.5 - OTP / Create",
-      "width": 375,
-      "height": 812,
-      "fill": "#f0ede8",
-      "layout": "none",
-      "children": [
-        {
-          "id": "9DieL",
-          "type": "ref",
-          "ref": "vLmOp",
-          "width": 375,
-          "height": 56,
-          "name": "topNav",
-          "x": 0,
-          "y": 0
-        },
-        {
-          "type": "frame",
-          "id": "Wc6vP",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "jRRKH",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "Xvs45",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Claim your turnout.",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "OuKnS",
-                  "name": "sub35",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Just confirm that it's you.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "rbdRm",
-          "x": 0,
-          "y": 200,
-          "name": "body",
-          "width": 375,
-          "height": 484,
-          "fill": "$--background-warm",
-          "layout": "vertical",
-          "children": [
-            {
-              "type": "frame",
-              "id": "1YMWr",
-              "name": "previewZone",
-              "width": "fill_container",
-              "fill": "$--background",
-              "layout": "vertical",
-              "padding": 20,
-              "alignItems": "center",
-              "children": [
-                {
-                  "id": "9EtDp",
-                  "type": "ref",
-                  "ref": "trU6T",
-                  "name": "previewCard",
-                  "width": "fill_container",
-                  "descendants": {
-                    "X2efT/BMk8O": {
-                      "fill": "#7A6E65"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "iaAJe",
-              "name": "formZone",
-              "width": "fill_container",
-              "fill": "$--background-warm",
-              "layout": "vertical",
-              "gap": 16,
-              "padding": [
-                20,
-                20,
-                24,
-                20
-              ],
-              "children": [
-                {
-                  "type": "text",
-                  "id": "hVHy3",
-                  "name": "smsConfirmLabel",
-                  "fill": "#7A6E65",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "We just texted you a 6-digit code.",
-                  "lineHeight": 1.4,
-                  "textAlign": "center",
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "N9JVa",
-                  "name": "otpLabel",
-                  "fill": "#7A6E65",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Enter the 6-digit code we sent you.",
-                  "lineHeight": 1.4,
-                  "textAlign": "center",
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "8vukn",
-                  "name": "otpRow",
-                  "width": "fill_container",
-                  "gap": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "78mIK",
-                      "name": "digit1",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "aM2yv",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "2YJ6T",
-                      "name": "digit2",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "jGhhJ",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "gxVzW",
-                      "name": "digit3",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "p94kb",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "lxZlf",
-                      "name": "digit4",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "utrNc",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "xfcBa",
-                      "name": "digit5",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "1nDPJ",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "EyBfM",
-                      "name": "digit6",
-                      "width": 44,
-                      "height": 56,
-                      "fill": "#FAFAF7",
-                      "cornerRadius": 8,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 2,
-                        "fill": "#3D6B52"
-                      },
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "1sKrE",
-                          "name": "digitText",
-                          "fill": "#1E2420",
-                          "textAlign": "center",
-                          "textAlignVertical": "middle",
-                          "fontFamily": "Zilla Slab",
-                          "fontSize": 24,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "sOCZD",
-          "type": "ref",
-          "ref": "DSwrF",
-          "name": "actionBar",
-          "width": 375,
-          "x": 0,
-          "y": 740,
-          "height": 72,
-          "descendants": {
-            "BApml": {
-              "type": "frame",
-              "id": "pxk48",
-              "name": "ContinueButton",
-              "width": "fill_container",
-              "height": 48,
-              "fill": "#D95F3B",
-              "cornerRadius": 8,
-              "gap": 6,
-              "justifyContent": "center",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "yNlTv",
-                  "name": "ButtonLabel",
-                  "fill": "#FFFFFF",
-                  "content": "Create Turnout",
-                  "textAlign": "center",
-                  "textAlignVertical": "middle",
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "oypYr",
-          "type": "ref",
-          "ref": "QvgbR",
-          "x": 141,
-          "y": 192,
-          "width": 94,
-          "height": 16
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "fnOQm",
       "x": 1763,
       "y": -219,
@@ -10088,9 +8763,10 @@
     {
       "type": "frame",
       "id": "UWkzH",
-      "x": 1763,
-      "y": -1208,
+      "x": 1270,
+      "y": -219,
       "name": "WizardLayout",
+      "context": "ActionBar CTA pattern: disabled by default on each step, activates only when step validation passes. Step 0: requires tile selection. Step 1: requires date, time, and location. Step 2: requires group name and turnout name. Step 3: requires display name and valid phone number. Step 4: requires valid 6-digit OTP entry.",
       "reusable": true,
       "clip": true,
       "width": 375,
@@ -10241,6 +8917,1105 @@
           ]
         }
       ]
+    },
+    {
+      "id": "J1dPK",
+      "type": "ref",
+      "ref": "UWkzH",
+      "name": "create turnout step1 / WizardLayout",
+      "x": 5164,
+      "y": 0,
+      "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'When and where?' / 'Pick something', body → TurnoutPreview/Ghost + Date/Time/Location fields, pip → PipGroup 1/4 (HnRj0), actionBar → DSwrF ('Continue'). In code: <WizardLayout header={<Step1Header/>} body={<WhenWhereForm/>} pip={1} actionLabel='Continue' />",
+      "descendants": {
+        "81Qi0": {
+          "type": "frame",
+          "id": "R4E34",
+          "x": 0,
+          "y": 56,
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "fill": "#3D6B52",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Vz2k1",
+              "x": 20,
+              "y": 16,
+              "name": "titleGroup",
+              "width": 335,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tn6Sl",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "When and where?",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "GdS1P",
+                  "name": "sub1",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Pick something — you can always adjust it later.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        "9EGen": {
+          "type": "frame",
+          "id": "RPhwo",
+          "x": 0,
+          "y": 200,
+          "name": "body",
+          "width": 375,
+          "height": 484,
+          "fill": "$--background-warm",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "98Pig",
+              "name": "previewZone",
+              "width": "fill_container",
+              "fill": "$--background",
+              "layout": "vertical",
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "noTbg",
+                  "type": "ref",
+                  "ref": "p2ihv",
+                  "name": "previewCard",
+                  "width": "fill_container",
+                  "descendants": {
+                    "wAY23": {
+                      "type": "text",
+                      "id": "2RXHL",
+                      "name": "ghostTitleText",
+                      "fill": "#DDD8D0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "My Turnout",
+                      "lineHeight": 1.2,
+                      "fontFamily": "Zilla Slab",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FZNth",
+              "name": "formZone",
+              "width": "fill_container",
+              "fill": "$--background-warm",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                20,
+                24,
+                20
+              ],
+              "children": [
+                {
+                  "id": "p8fh1",
+                  "type": "ref",
+                  "ref": "ugxum",
+                  "name": "dtFld",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "context": "DATE PICKER: Use native <input type='date'> or shadcn Calendar. Display selected date in human-relative format on the turnout card ('This Friday · 7 PM') but store as ISO date. On mobile, native input triggers the platform date picker.",
+                  "descendants": {
+                    "b8XP0": {
+                      "content": "Choose a date",
+                      "fill": "#B5ADA8",
+                      "fontWeight": "400"
+                    }
+                  }
+                },
+                {
+                  "id": "XBUD7",
+                  "type": "ref",
+                  "ref": "6Hlf3",
+                  "name": "tmFld",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "context": "TIME PICKER: Use native <input type='time'>. Display in 12-hour format with AM/PM ('7:00 PM'). On mobile, native input triggers the platform time picker (scroll wheel on iOS, clock dial on Android).",
+                  "descendants": {
+                    "RytDw": {
+                      "content": "Choose a time",
+                      "fill": "#B5ADA8",
+                      "fontWeight": "400"
+                    }
+                  }
+                },
+                {
+                  "id": "dBVsG",
+                  "type": "ref",
+                  "ref": "fd7ut",
+                  "name": "locFld",
+                  "width": "fill_container",
+                  "height": "fit_content",
+                  "context": "GOOGLE PLACES AUTOCOMPLETE: Use useMapsLibrary('places') + google.maps.places.Autocomplete (classic API). PlaceAutocompleteClassic does NOT exist in @vis.gl/react-google-maps v1.7.1. API key: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (SST secret GoogleMapsApiKey — injected via sst dev only, NOT in .env.local). Captures place_id, formatted_address, geometry.location for lat/lng. Display as 'Venue Name, City ST' on turnout cards."
+                }
+              ]
+            }
+          ]
+        },
+        "wUaZz": {
+          "id": "ign39",
+          "type": "ref",
+          "ref": "DSwrF",
+          "x": 0,
+          "y": 740,
+          "width": 375,
+          "height": 72,
+          "name": "actionBar",
+          "descendants": {
+            "khRRc": {
+              "content": "Continue"
+            }
+          }
+        },
+        "QEeL0": {
+          "id": "pbNCv",
+          "type": "ref",
+          "ref": "HnRj0",
+          "x": 141,
+          "y": 192,
+          "width": 94,
+          "height": 16,
+          "name": "pipSlot"
+        }
+      }
+    },
+    {
+      "id": "vWrjT",
+      "type": "ref",
+      "ref": "UWkzH",
+      "name": "create turnout step0 / WizardLayout",
+      "x": 4700,
+      "y": 0,
+      "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp (focused nav), header → step-specific (no pip in original — QEeL0 slot unused), body → step-specific fork tiles, actionBar → DSwrF ('Let's go'). In code: <WizardLayout header={<Step0Header/>} body={<ExpertiseFork/>} actionLabel='Let's go' pip={null} />",
+      "descendants": {
+        "81Qi0": {
+          "type": "frame",
+          "id": "U3qnl",
+          "x": 0,
+          "y": 56,
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "fill": "#3D6B52",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "yvh7y",
+              "x": 20,
+              "y": 16,
+              "name": "titleGroup",
+              "width": 335,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TDFAa",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Which of these is you?",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "mHm58",
+                  "name": "sub0",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Tell us where you're starting from.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        "9EGen": {
+          "type": "frame",
+          "id": "M2x3x",
+          "x": 0,
+          "y": 200,
+          "name": "body",
+          "width": 375,
+          "height": 484,
+          "fill": "$--background-warm",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 20,
+          "justifyContent": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "9NJ1F",
+              "name": "tile-new",
+              "context": "this navigates the user down the \"newbie\" onboarding focused around a simple first turnout",
+              "width": "fill_container",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nfzy4",
+                  "name": "selectedAccent",
+                  "width": 6,
+                  "height": "fill_container",
+                  "fill": "#C8831A"
+                },
+                {
+                  "type": "frame",
+                  "id": "jqvrZ",
+                  "name": "contentArea",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RjV2D",
+                      "name": "topRow1",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OSlNT",
+                          "name": "t1_title",
+                          "fill": "#C8831A",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Starting something new",
+                          "lineHeight": 1.2,
+                          "fontFamily": "Plus Jakarta Sans",
+                          "fontSize": 22,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ye4sz",
+                      "name": "t1_desc",
+                      "fill": "#6B6966",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "You have a cause or idea and want to bring people together around it.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Jpt17",
+              "name": "tile-existing [PHASE 2 / TBD]",
+              "context": "Both tiles are active and interactive. Path 2 (Cathy flow) is fast-following Path 1. Do not disable or dim. Wire up navigation for both tiles. Both paths create identical Group + Turnout objects — the fork is about onboarding register (less hand-holding, fewer AI suggestions) rather than different data operations.",
+              "width": "fill_container",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PZqJQ",
+                  "name": "accentBar",
+                  "width": 6,
+                  "height": "fill_container",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "frame",
+                  "id": "qjxoD",
+                  "name": "contentArea",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WNceL",
+                      "name": "t2_title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Already organizing",
+                      "lineHeight": 1.2,
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "q77Km",
+                      "name": "t2_desc",
+                      "fill": "#6B6966",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "You have an existing group you want to use turnout.network for.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "wUaZz": {
+          "id": "Fpho1",
+          "type": "ref",
+          "ref": "DSwrF",
+          "x": 0,
+          "y": 740,
+          "width": 375,
+          "height": 72,
+          "name": "actionBar",
+          "context": "CTA button is disabled until the user has selected one of the two fork tiles. Pattern A: tile selection activates the button. On no selection: button renders in disabled state (no tap handler). On tile selected: button activates and navigates to the corresponding wizard path. This is the universal pattern for ALL wizard steps — the actionBar CTA is disabled until the step's required fields are complete/valid.",
+          "descendants": {
+            "khRRc": {
+              "content": "Let's go"
+            }
+          }
+        },
+        "Q16JY": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "id": "R7It4",
+      "type": "ref",
+      "ref": "UWkzH",
+      "name": "create turnout step2 / WizardLayout",
+      "x": 5624,
+      "y": 0,
+      "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'What are you calling it?' / 'Don't overthink it', body → TurnoutPreview/Partial + Group/Turnout name fields, pip → PipGroup 2/4 (qVReR), actionBar → DSwrF ('Continue'). In code: <WizardLayout header={<Step2Header/>} body={<NameItForm/>} pip={2} actionLabel='Continue' />",
+      "descendants": {
+        "81Qi0": {
+          "type": "frame",
+          "id": "OTk71",
+          "x": 0,
+          "y": 56,
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "fill": "#3D6B52",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qAU4M",
+              "x": 20,
+              "y": 16,
+              "name": "titleGroup",
+              "width": 335,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ADVfc",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "What are you calling it?",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "nGmtt",
+                  "name": "sub2",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Don't overthink it, you can always change it.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        "9EGen": {
+          "type": "frame",
+          "id": "wujK8",
+          "x": 0,
+          "y": 200,
+          "name": "body",
+          "width": 375,
+          "height": 484,
+          "fill": "$--background-warm",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "eoQ3h",
+              "name": "previewZone",
+              "width": "fill_container",
+              "fill": "$--background",
+              "layout": "vertical",
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "FieyY",
+                  "type": "ref",
+                  "ref": "1K289",
+                  "name": "previewCard",
+                  "width": "fill_container",
+                  "descendants": {
+                    "15c3Z": {
+                      "type": "text",
+                      "id": "fk6YV",
+                      "name": "ghostTitleText",
+                      "fill": "#DDD8D0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "My Turnout",
+                      "lineHeight": 1.2,
+                      "fontFamily": "Zilla Slab",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PKciB",
+              "name": "formZone",
+              "width": "fill_container",
+              "fill": "$--background-warm",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                20,
+                24,
+                20
+              ],
+              "children": [
+                {
+                  "id": "5sCzp",
+                  "type": "ref",
+                  "ref": "1415a",
+                  "width": "fill_container",
+                  "name": "grpFld",
+                  "height": "fit_content",
+                  "x": 20,
+                  "y": 20,
+                  "descendants": {
+                    "BX0XX": {
+                      "content": "Group"
+                    },
+                    "i0Z3E": {
+                      "fill": "#ffffff"
+                    },
+                    "SDRKn": {
+                      "content": "Save Willow Creek, Local Love Project..."
+                    }
+                  }
+                },
+                {
+                  "id": "ahvqh",
+                  "type": "ref",
+                  "ref": "1415a",
+                  "width": "fill_container",
+                  "name": "evtFld",
+                  "height": "fit_content",
+                  "x": 20,
+                  "y": 102,
+                  "descendants": {
+                    "BX0XX": {
+                      "content": "Turnout"
+                    },
+                    "i0Z3E": {
+                      "fill": "#ffffff"
+                    },
+                    "SDRKn": {
+                      "content": "Planning Meeting, Kickoff, March..."
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "wUaZz": {
+          "id": "f8D5F",
+          "type": "ref",
+          "ref": "DSwrF",
+          "x": 0,
+          "y": 740,
+          "width": 375,
+          "height": 72,
+          "name": "actionBar",
+          "descendants": {
+            "khRRc": {
+              "content": "Continue"
+            }
+          }
+        },
+        "QEeL0": {
+          "id": "tKPUH",
+          "type": "ref",
+          "ref": "qVReR",
+          "x": 141,
+          "y": 192,
+          "width": 94,
+          "height": 16,
+          "name": "pipSlot"
+        }
+      }
+    },
+    {
+      "id": "Twn6z",
+      "type": "ref",
+      "ref": "UWkzH",
+      "name": "create turnout step3 / WizardLayout",
+      "x": 6070,
+      "y": 0,
+      "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'Claim your turnout.' / 'One last step and it's yours.', body → TurnoutPreview/Filled + DisplayName + Phone fields + trust block, pip → PipGroup 3/4 (xL88K), actionBar → DSwrF ('Send code'). In code: <WizardLayout header={<Step3Header/>} body={<AuthForm/>} pip={3} actionLabel='Send code' />",
+      "descendants": {
+        "81Qi0": {
+          "type": "frame",
+          "id": "MpayK",
+          "x": 0,
+          "y": 56,
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "fill": "#3D6B52",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "R1gUW",
+              "x": 20,
+              "y": 16,
+              "name": "titleGroup",
+              "width": 335,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cLpKl",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Claim your turnout.",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "MRZrF",
+                  "name": "sub3",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "One last step and it's yours.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        "9EGen": {
+          "type": "frame",
+          "id": "lWJj9",
+          "x": 0,
+          "y": 200,
+          "name": "body",
+          "width": 375,
+          "height": 484,
+          "fill": "$--background-warm",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "9ReZB",
+              "name": "previewZone",
+              "width": "fill_container",
+              "fill": "$--background",
+              "layout": "vertical",
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "M2bFP",
+                  "type": "ref",
+                  "ref": "trU6T",
+                  "name": "previewCard",
+                  "width": "fill_container",
+                  "descendants": {
+                    "X2efT/BMk8O": {
+                      "fill": "#7A6E65"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "LaUDp",
+              "name": "formZone",
+              "width": "fill_container",
+              "fill": "$--background-warm",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                20,
+                24,
+                20
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "V6jMI",
+                  "name": "displayNameField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RJ7sz",
+                      "name": "LabelText",
+                      "width": "fill_container",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 0,
+                        "fill": "transparent"
+                      },
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "4fVar",
+                          "name": "Label Text",
+                          "fill": "#7A6E65",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your name",
+                          "lineHeight": 1.4285714285714286,
+                          "fontFamily": "Plus Jakarta Sans",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P3WPo",
+                      "name": "nameInputRow",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gOYws",
+                          "name": "Input",
+                          "width": "fill_container",
+                          "fill": "#ffffff",
+                          "cornerRadius": 8,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#3D6B5250"
+                          },
+                          "gap": 8,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gkzRa",
+                              "name": "Input Value",
+                              "fill": "#B5ADA8",
+                              "content": "Real name, nickname, or roll one",
+                              "lineHeight": 1.4285714285714286,
+                              "textAlignVertical": "middle",
+                              "fontFamily": "Plus Jakarta Sans",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "5OWoV",
+                          "name": "RerollButton",
+                          "width": 40,
+                          "height": 40,
+                          "fill": "#F5F0E8",
+                          "cornerRadius": 8,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#3D6B5230"
+                          },
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Gt86W",
+                              "name": "RerollIcon",
+                              "fill": "#1E2420",
+                              "content": "🎲",
+                              "lineHeight": 1,
+                              "fontFamily": "Plus Jakarta Sans",
+                              "fontSize": 18,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "Mdqrn",
+                  "type": "ref",
+                  "ref": "u9MSw",
+                  "width": "fill_container",
+                  "name": "newPhoneInst"
+                },
+                {
+                  "type": "frame",
+                  "id": "x3mpk",
+                  "name": "trustBlock",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Buve0",
+                      "name": "adesc",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "We'll send a 6-digit code\nto confirm your number.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 17,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "4vOFX",
+                      "name": "newTrust",
+                      "fill": "#7A6E65",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your number is only used for updates about your turnouts,\nand to let you sign in to manage them.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "wUaZz": {
+          "id": "LTZPl",
+          "type": "ref",
+          "ref": "DSwrF",
+          "x": 0,
+          "y": 740,
+          "width": 375,
+          "height": 72,
+          "name": "actionBar",
+          "descendants": {
+            "khRRc": {
+              "content": "Send code"
+            }
+          }
+        },
+        "QEeL0": {
+          "id": "KC9nj",
+          "type": "ref",
+          "ref": "xL88K",
+          "x": 141,
+          "y": 192,
+          "width": 94,
+          "height": 16,
+          "name": "pipSlot"
+        }
+      }
+    },
+    {
+      "id": "jUrLu",
+      "type": "ref",
+      "ref": "UWkzH",
+      "name": "create turnout step3.5 / WizardLayout",
+      "x": 6512,
+      "y": 0,
+      "context": "Step 4 of 4. OTP entry is a full wizard step. Pip 4/4 is correct and intentional. Implement as a separate route or full-screen state transition — not an inline modal or overlay on step 3. COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'Claim your turnout.' / 'Just confirm that it's you.', body → TurnoutPreview/Filled + OTP digit boxes, pip → PipGroup 4/4 (QvgbR), actionBar → DSwrF ('Create Turnout'). In code: <WizardLayout header={<Step35Header/>} body={<OTPForm/>} pip={4} actionLabel='Create Turnout' />",
+      "descendants": {
+        "81Qi0": {
+          "type": "frame",
+          "id": "wJWu9",
+          "x": 0,
+          "y": 56,
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "fill": "#3D6B52",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hnmmj",
+              "x": 20,
+              "y": 16,
+              "name": "titleGroup",
+              "width": 335,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IZQQD",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Claim your turnout.",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "8tFSa",
+                  "name": "sub35",
+                  "fill": "#FFFFFFCC",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Just confirm that it's you.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        "9EGen": {
+          "type": "frame",
+          "id": "oCyV8",
+          "x": 0,
+          "y": 200,
+          "name": "body",
+          "width": 375,
+          "height": 484,
+          "fill": "$--background-warm",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "AWNYP",
+              "name": "previewZone",
+              "width": "fill_container",
+              "fill": "$--background",
+              "layout": "vertical",
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "noVQK",
+                  "type": "ref",
+                  "ref": "trU6T",
+                  "name": "previewCard",
+                  "width": "fill_container",
+                  "descendants": {
+                    "X2efT/BMk8O": {
+                      "fill": "#7A6E65"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3cjFq",
+              "name": "formZone",
+              "width": "fill_container",
+              "fill": "$--background-warm",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                20,
+                20,
+                24,
+                20
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MiRVR",
+                  "name": "smsConfirmLabel",
+                  "fill": "#7A6E65",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "We just texted you a 6-digit code.",
+                  "lineHeight": 1.4,
+                  "textAlign": "center",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Uccil",
+                  "name": "otpLabel",
+                  "fill": "#7A6E65",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Enter the 6-digit code we sent you.",
+                  "lineHeight": 1.4,
+                  "textAlign": "center",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "iftFY",
+                  "type": "ref",
+                  "ref": "02npo",
+                  "name": "otpInput",
+                  "width": "fill_container",
+                  "context": "Uses shadcn Input OTP Group component. 6 digits. WebOTP API fills all 6 at once on mobile (auto-advance). States: empty (default), filled, focused, error (stroke: #D95F3B). Font in digit boxes: Zilla Slab Bold.",
+                  "descendants": {
+                    "Dnb63": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "wUaZz": {
+          "id": "Huy7n",
+          "type": "ref",
+          "ref": "DSwrF",
+          "x": 0,
+          "y": 740,
+          "width": 375,
+          "height": 72,
+          "name": "actionBar",
+          "descendants": {
+            "BApml": {
+              "type": "frame",
+              "id": "5cTFN",
+              "name": "ContinueButton",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "#D95F3B",
+              "cornerRadius": 8,
+              "gap": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ep5bV",
+                  "name": "ButtonLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Create Turnout",
+                  "textAlign": "center",
+                  "textAlignVertical": "middle",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          }
+        },
+        "QEeL0": {
+          "id": "yyolG",
+          "type": "ref",
+          "ref": "QvgbR",
+          "x": 141,
+          "y": 192,
+          "width": 94,
+          "height": 16,
+          "name": "pipSlot"
+        }
+      }
     }
   ],
   "themes": {

@@ -30,15 +30,15 @@ The card anatomy mirrors the public turnout card: eyebrow pills (group + organiz
 
 ---
 
-### Expertise fork — Path 2 locked as Phase 2
+### Expertise fork — both tiles active, Path 2 fast-following
 
 The creation flow opens with an expertise fork: "Starting something new" (Bob) vs "Already organizing" (Cathy). The core principle is sound — a first-time organizer benefits from AI suggestions, default turnout type recommendations, and reassurance copy; an experienced organizer finds that same scaffolding patronizing and wants a cleaner, more direct setup experience.
 
 **Both paths create identical Group + Turnout objects.** This is not a data branch — it's an onboarding register branch. The difference is in how much hand-holding, suggestion, and guidance the flow provides.
 
-**Path 2 is locked as Phase 2.** Cathy's user story is not yet complete — her needs around existing channels, experienced-organizer setup, and integration with existing infrastructure haven't been designed. The "Already organizing" card is visually dimmed in the design file (35% opacity) and annotated as TBD. Do not design Path 2 until Cathy's full story is written.
+**Both tiles are rendered at full opacity and are interactive.** Path 2 (Cathy) design is coming shortly after Path 1 ships — the intent is to implement both in close succession. Do not disable or dim the "Already organizing" tile. Do not treat it as a placeholder. Engineers should wire up navigation for both tiles; the Path 2 wizard screens will follow.
 
-Path 1 (Bob) is fully designed and is the active MVP flow.
+Path 1 (Bob) is fully designed and is the initial implementation. Path 2 (Cathy) design is in progress.
 
 ---
 
