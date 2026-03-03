@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Zilla_Slab, Plus_Jakarta_Sans } from 'next/font/google'
+import { Zilla_Slab, Plus_Jakarta_Sans, Syne } from 'next/font/google'
 import './globals.css'
 
 // Zilla Slab: editorial serif for display text and turnout titles.
@@ -20,6 +20,15 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+// Syne: used exclusively for the wordmark in the top nav.
+// Has a slightly quirky geometric personality that gives the brand mark some identity.
+const syne = Syne({
+  subsets: ['latin'],
+  weight: ['700'],
+  variable: '--font-syne',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
   title: 'turnout.network',
   description: 'A living network of showing up.',
@@ -37,7 +46,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${zillaSlab.variable} ${plusJakarta.variable}`}
+      className={`${zillaSlab.variable} ${plusJakarta.variable} ${syne.variable}`}
     >
       <body className="font-sans">{children}</body>
     </html>

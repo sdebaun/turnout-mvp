@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { getUser } from '@/lib/auth/sessions'
 import { TestForm } from './test-form'
@@ -18,6 +19,14 @@ export default async function HomePage() {
       <p>Bootstrap successful!</p>
 
       <AuthSection user={user} />
+
+      {/* Start a turnout CTA — terracotta fill per branding spec */}
+      <Link
+        href="/organize"
+        className="inline-block px-6 py-3 bg-terracotta text-white rounded-lg font-semibold text-base font-sans hover:bg-terracotta/90 transition-colors"
+      >
+        Start a turnout
+      </Link>
 
       <div className="p-4 bg-gray-100 rounded">
         <p className="text-lg">

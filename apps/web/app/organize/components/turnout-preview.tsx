@@ -1,15 +1,16 @@
 'use client'
 
 import React from 'react'
+import { Calendar, MapPin } from 'lucide-react'
 
 interface TurnoutPreviewProps {
   groupName?: string      // if present: real group pill, else skeleton
   turnoutTitle?: string   // if present: real title, else "My Turnout" ghost
-  displayName?: string    // if present: real organizer pill, else skeleton
+  displayName?: string    // if present: real organizer pill, else skeleton (always skeleton for now)
   date?: string           // YYYY-MM-DD
   time?: string           // HH:MM (24-hour)
   locationName?: string   // venue name
-  locationCity?: string   // city, state
+  locationCity?: string   // "City ST" derived from formattedAddress
 }
 
 // Formats HH:MM into a human-readable time like "7 PM" or "10:30 AM"
@@ -24,11 +25,10 @@ function formatTime(time: string): string {
 }
 
 // Formats YYYY-MM-DD as human-relative text when within 7 days,
-// otherwise as a short formatted date. Avoids timezone shenanigans by
-// parsing the date string directly rather than letting Date() interpret it.
+// otherwise as a short formatted date. Parses directly to avoid timezone drift.
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-').map(Number)
-  // Local noon to avoid DST edge cases
+  // Local noon prevents DST-boundary day shifts
   const date = new Date(year, month - 1, day, 12, 0, 0)
   const today = new Date()
   today.setHours(12, 0, 0, 0)
@@ -42,136 +42,134 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// A rounded placeholder bar — stands in for any text that isn't filled in yet.
-function SkeletonBar({ width = 'w-32', height = 'h-4' }: { width?: string; height?: string }) {
+// Group skeleton pill — shown when no groupName yet
+function GroupSkeletonPill() {
   return (
     <div
-      className={`${width} ${height} rounded-full`}
-      style={{ backgroundColor: '#DDD8D0' }}
+      className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1"
       aria-hidden="true"
-    />
+    >
+      {/* Avatar placeholder — square with rounded corners to distinguish from organizer circle */}
+      <div className="w-4 h-4 rounded bg-skeleton flex-shrink-0" />
+      {/* Name bar */}
+      <div className="w-[70px] h-2.5 rounded bg-skeleton" />
+    </div>
   )
 }
 
-// Eyebrow pill for the group name
-function GroupPill({ name }: { name: string }) {
+// Group real pill — shown when groupName is present.
+// Avatar shows first 2 chars of group name as initials on sage green bg.
+function GroupRealPill({ name }: { name: string }) {
+  const initials = name.slice(0, 2).toUpperCase()
   return (
-    <span
-      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
-      style={{ backgroundColor: '#FAF4E8', color: '#3D6B52', border: '1px solid #DDD8D0' }}
-    >
-      {name}
-    </span>
+    <div className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1">
+      <div className="w-4 h-4 rounded bg-sage flex items-center justify-center flex-shrink-0">
+        <span className="text-[7px] font-bold text-white font-sans leading-none">{initials}</span>
+      </div>
+      <span className="text-xs font-medium text-muted font-sans tracking-[0.4px]">{name}</span>
+    </div>
   )
 }
 
-// Eyebrow pill for the organizer name
-function OrganizerPill({ name }: { name: string }) {
+// Organizer skeleton pill — always shown (no real organizer pill in wizard yet)
+function OrganizerSkeletonPill() {
   return (
-    <span
-      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
-      style={{ backgroundColor: '#FAF4E8', color: '#1E2420', border: '1px solid #DDD8D0' }}
+    <div
+      className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1"
+      aria-hidden="true"
     >
-      {name}
-    </span>
+      {/* Circle avatar placeholder — full circle distinguishes from group's square avatar */}
+      <div className="w-4 h-4 rounded-full bg-skeleton flex-shrink-0" />
+      {/* Name bar */}
+      <div className="w-[70px] h-2.5 rounded bg-skeleton" />
+    </div>
   )
 }
 
 export function TurnoutPreview({
   groupName,
   turnoutTitle,
-  displayName,
   date,
   time,
   locationName,
   locationCity,
 }: TurnoutPreviewProps) {
-  const hasDateTime = date && time
-  const hasLocation = locationName
+  // Date row: show as soon as date is entered, even without time.
+  // If both date+time: "This Friday · 7 PM". If only date: "This Friday". If only time: "7 PM".
+  const hasDate = Boolean(date)
+  const hasTime = Boolean(time)
+  const hasLocation = Boolean(locationName)
 
-  const formattedLocation = hasLocation
+  let dateTimeText: string | null = null
+  if (hasDate && hasTime) {
+    dateTimeText = `${formatDate(date!)} · ${formatTime(time!)}`
+  } else if (hasDate) {
+    dateTimeText = formatDate(date!)
+  } else if (hasTime) {
+    dateTimeText = formatTime(time!)
+  }
+
+  const locationText = hasLocation
     ? locationCity
       ? `${locationName}, ${locationCity}`
-      : locationName
+      : locationName!
     : null
 
   return (
-    <div
-      className="rounded-xl overflow-hidden shadow-sm"
-      style={{ backgroundColor: 'white', border: '1px solid #DDD8D0' }}
-    >
-      {/* Card header */}
-      <div className="px-4 pt-4 pb-3 space-y-2">
-        {/* Eyebrow: group + organizer pills */}
-        <div className="flex flex-wrap gap-1.5">
-          {groupName ? (
-            <GroupPill name={groupName} />
-          ) : (
-            <SkeletonBar width="w-24" height="h-5" />
-          )}
-          {displayName ? (
-            <OrganizerPill name={displayName} />
-          ) : (
-            <SkeletonBar width="w-20" height="h-5" />
-          )}
-        </div>
-
-        {/* Turnout title — "My Turnout" ghost when nothing filled, real title when filled */}
-        {turnoutTitle ? (
-          <h2
-            className="font-heading font-bold text-lg leading-tight"
-            style={{ color: '#1E2420' }}
-          >
-            {turnoutTitle}
-          </h2>
-        ) : (
-          <h2
-            className="font-heading font-bold text-lg leading-tight"
-            style={{ color: '#DDD8D0' }}
-            aria-hidden="true"
-          >
-            My Turnout
-          </h2>
-        )}
-
-        {/* Date/time row */}
-        <div className="flex items-center gap-2">
-          <span style={{ color: '#DDD8D0' }}>📅</span>
-          {hasDateTime ? (
-            <span className="text-sm font-medium" style={{ color: '#1E2420' }}>
-              {formatDate(date)} · {formatTime(time)}
-            </span>
-          ) : (
-            <SkeletonBar width="w-36" height="h-3.5" />
-          )}
-        </div>
-
-        {/* Location row */}
-        <div className="flex items-center gap-2">
-          <span style={{ color: '#DDD8D0' }}>📍</span>
-          {formattedLocation ? (
-            <span className="text-sm font-medium" style={{ color: '#1E2420' }}>
-              {formattedLocation}
-            </span>
-          ) : (
-            <SkeletonBar width="w-40" height="h-3.5" />
-          )}
-        </div>
+    // ring-1 gives an inset-style border without affecting layout box size
+    <div className="rounded-xl bg-white p-[14px_16px] flex flex-col gap-2 ring-1 ring-sage/20">
+      {/* Eyebrow row: group pill + organizer skeleton pill */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {groupName ? <GroupRealPill name={groupName} /> : <GroupSkeletonPill />}
+        {/* Organizer is always skeleton in the wizard — not yet authenticated */}
+        <OrganizerSkeletonPill />
       </div>
 
-      {/* Photo strip — 3 skeleton rectangles for MVP.
-          Photos would come from Google Places API when placeId is available,
-          but for now we keep them skeleton to avoid extra API surface in this PR. */}
-      <div
-        className="flex gap-1.5 px-4 pb-4"
-        aria-hidden="true"
+      {/* Turnout title — "My Turnout" ghost color (#DDD8D0) when not yet entered.
+          Ghost color matches skeleton bars so the title slot reads as part of the skeleton pattern. */}
+      <h2
+        className={`font-heading font-bold text-[20px] leading-tight m-0 ${
+          turnoutTitle ? 'text-charcoal' : 'text-skeleton'
+        }`}
+        aria-hidden={!turnoutTitle}
       >
+        {turnoutTitle || 'My Turnout'}
+      </h2>
+
+      {/* Date/time row — icon is sand-colored when ghost, terracotta when filled */}
+      <div className="flex items-center gap-1.5">
+        <Calendar
+          size={14}
+          strokeWidth={1.75}
+          className={`flex-shrink-0 ${dateTimeText ? 'text-terracotta' : 'text-[#C9B99A]'}`}
+          aria-hidden="true"
+        />
+        {dateTimeText ? (
+          <span className="text-sm text-charcoal font-sans">{dateTimeText}</span>
+        ) : (
+          <div className="w-[110px] h-3 rounded bg-skeleton" aria-hidden="true" />
+        )}
+      </div>
+
+      {/* Location row — same icon pattern as date row */}
+      <div className="flex items-center gap-1.5">
+        <MapPin
+          size={14}
+          strokeWidth={1.75}
+          className={`flex-shrink-0 ${locationText ? 'text-terracotta' : 'text-[#C9B99A]'}`}
+          aria-hidden="true"
+        />
+        {locationText ? (
+          <span className="text-sm text-charcoal font-sans">{locationText}</span>
+        ) : (
+          <div className="w-[140px] h-3 rounded bg-skeleton" aria-hidden="true" />
+        )}
+      </div>
+
+      {/* Photo strip — always 3 skeleton rects. Photo fetch is future work. */}
+      <div className="flex gap-1 h-[70px]" aria-hidden="true">
         {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="flex-1 h-16 rounded-lg"
-            style={{ backgroundColor: '#DDD8D0' }}
-          />
+          <div key={i} className="flex-1 rounded-md bg-skeleton" />
         ))}
       </div>
     </div>
