@@ -33,6 +33,7 @@ yarn-error.log*
 .pr-review-*.md
 CURRENT_DEBUG.md
 .playwright-mcp/*.log
+.playwright-mcp
 .dev-session.md
 .dev-session-*.md
 

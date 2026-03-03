@@ -1,0 +1,2663 @@
+{
+  "version": "2.8",
+  "children": [
+    {
+      "type": "frame",
+      "id": "M4gAl",
+      "x": -84,
+      "y": -326,
+      "name": "Homepage – Warm Clarity",
+      "clip": true,
+      "width": 1440,
+      "fill": "#FAFAF7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "p9yon",
+          "name": "nav",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "align": "outside",
+            "thickness": 1,
+            "fill": "#E5E2DC"
+          },
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "gtJtP",
+              "name": "logo",
+              "fill": "#2C2C2C",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 16,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "HLtxe",
+              "name": "navCta",
+              "height": 40,
+              "fill": "#D95F3B",
+              "cornerRadius": 8,
+              "padding": [
+                0,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FdV28",
+                  "name": "navCtaText",
+                  "fill": "#FFFFFF",
+                  "content": "Start organizing",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "X1rHb",
+          "name": "hero",
+          "width": "fill_container",
+          "fill": "#FAFAF7",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            100,
+            80,
+            120,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Kl3yi",
+              "name": "heroOverline",
+              "fill": "#3D6B52",
+              "content": "For anyone ready to show up",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 14,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "aADFi",
+              "name": "heroHeadline",
+              "fill": "#2C2C2C",
+              "textGrowth": "fixed-width",
+              "width": 860,
+              "content": "Show up. Together.",
+              "lineHeight": 1.05,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 72,
+              "fontWeight": "600",
+              "letterSpacing": -2
+            },
+            {
+              "type": "text",
+              "id": "uRhZa",
+              "name": "heroSub",
+              "fill": "#6B6B6B",
+              "textGrowth": "fixed-width",
+              "width": 580,
+              "content": "Someone creates a turnout. Someone shares it. People say yes.\nThat's how communities actually show up.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 20
+            },
+            {
+              "type": "frame",
+              "id": "udWjB",
+              "name": "heroCtas",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LXgNc",
+                  "name": "heroCtaPrimary",
+                  "height": 52,
+                  "fill": "#D95F3B",
+                  "cornerRadius": 10,
+                  "padding": [
+                    0,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "aUAju",
+                      "name": "heroCtaPrimaryText",
+                      "fill": "#FFFFFF",
+                      "content": "Start organizing →",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TOl9x",
+                  "name": "heroCtaSecondary",
+                  "height": 52,
+                  "fill": "#FAF8F4",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#D0CCC4"
+                  },
+                  "padding": [
+                    0,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vy7b8",
+                      "name": "heroCtaSecondaryText",
+                      "fill": "#2C2C2C",
+                      "content": "Find a turnout near you",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "cq7OL",
+              "name": "heroMicro",
+              "fill": "#9A9A9A",
+              "content": "Just your phone number to start. Free forever.",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "1dNM7",
+          "name": "be-first",
+          "width": "fill_container",
+          "fill": "#F5F2EC",
+          "layout": "vertical",
+          "gap": 28,
+          "padding": 80,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "bVpZe",
+              "name": "locationChip",
+              "fill": "#3D6B5215",
+              "cornerRadius": 20,
+              "gap": 6,
+              "padding": [
+                6,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "moGZ0",
+                  "name": "locationIcon",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "map-pin",
+                  "iconFontFamily": "lucide",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "text",
+                  "id": "uochj",
+                  "name": "locationText",
+                  "fill": "#3D6B52",
+                  "content": "Portland, OR",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "rxxJY",
+              "name": "beFirstTitle",
+              "fill": "#1E2420",
+              "textGrowth": "fixed-width",
+              "width": 700,
+              "content": "Someone has to go first.",
+              "lineHeight": 1.05,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 48,
+              "fontWeight": "600",
+              "letterSpacing": -1.2
+            },
+            {
+              "type": "text",
+              "id": "bbCxA",
+              "name": "beFirstSub",
+              "fill": "#6B6B6B",
+              "textGrowth": "fixed-width",
+              "width": 520,
+              "content": "No one's organized a turnout near you yet.\nBe the person who changes that.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 20,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "PiS0K",
+              "name": "beFirstBtn",
+              "height": 52,
+              "fill": "#D95F3B",
+              "cornerRadius": 10,
+              "padding": [
+                0,
+                32
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hDVXf",
+                  "name": "beFirstBtnText",
+                  "fill": "#FFFFFF",
+                  "content": "Start organizing →",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "X4Sk9",
+              "name": "beFirstNote",
+              "fill": "#9A9A9A",
+              "content": "Already have a link? Just follow it — no homepage needed.",
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QXC7g",
+          "name": "how-it-works-v2",
+          "width": "fill_container",
+          "fill": "#FAFAF7",
+          "layout": "vertical",
+          "gap": 56,
+          "padding": 80,
+          "children": [
+            {
+              "type": "frame",
+              "id": "8LXNh",
+              "name": "howHeader",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "2pMEj",
+                  "name": "howTitle",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": 600,
+                  "content": "Simple from both sides.",
+                  "textAlign": "center",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 36,
+                  "fontWeight": "600",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "text",
+                  "id": "WM2Oh",
+                  "name": "howSub",
+                  "fill": "#6B6B6B",
+                  "textGrowth": "fixed-width",
+                  "width": 520,
+                  "content": "Whether you're starting something or joining it.",
+                  "textAlign": "center",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CLSTk",
+              "name": "twocol",
+              "width": "fill_container",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2MUVd",
+                  "name": "orgCard",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": [
+                    36,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YJECg",
+                      "name": "orgBadge",
+                      "fill": "#3D6B5215",
+                      "cornerRadius": 6,
+                      "padding": [
+                        4,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vqLLH",
+                          "name": "orgBadgeText",
+                          "fill": "#3D6B52",
+                          "content": "The organizer",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "4D1MW",
+                      "name": "orgForm",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "YoI5u",
+                          "name": "orgField1",
+                          "width": "fill_container",
+                          "fill": "#F5F2EC",
+                          "cornerRadius": 8,
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "FSIKb",
+                              "name": "orgField1Label",
+                              "fill": "#9A9A9A",
+                              "content": "What are you organizing?",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "H0sXT",
+                              "name": "orgField1Value",
+                              "fill": "#1E2420",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Stop the gravel mine from destroying Willow Creek",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HIAbh",
+                          "name": "orgField2",
+                          "width": "fill_container",
+                          "fill": "#F5F2EC",
+                          "cornerRadius": 8,
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZXOPE",
+                              "name": "orgField2Label",
+                              "fill": "#9A9A9A",
+                              "content": "Where?",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wXpLt",
+                              "name": "orgField2Value",
+                              "fill": "#1E2420",
+                              "content": "Joe's Coffee, Albany, OR",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "0DRxB",
+                          "name": "orgField3",
+                          "width": "fill_container",
+                          "fill": "#F5F2EC",
+                          "cornerRadius": 8,
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gK1hx",
+                              "name": "orgField3Label",
+                              "fill": "#9A9A9A",
+                              "content": "When?",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 11,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Hwwli",
+                              "name": "orgField3Value",
+                              "fill": "#1E2420",
+                              "content": "Friday, Feb 28 · 6:00 PM",
+                              "fontFamily": "IBM Plex Sans",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "969pq",
+                      "name": "orgBtn",
+                      "height": 44,
+                      "fill": "#D95F3B",
+                      "cornerRadius": 10,
+                      "padding": [
+                        0,
+                        24
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M6N9b",
+                          "name": "orgBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Create my turnout →",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XCMMn",
+                  "name": "partCard",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": [
+                    36,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "wTNFL",
+                      "name": "partBadge",
+                      "fill": "#D95F3B15",
+                      "cornerRadius": 6,
+                      "padding": [
+                        4,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o9Loc",
+                          "name": "partBadgeText",
+                          "fill": "#D95F3B",
+                          "content": "The participant",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "wjUei",
+                      "name": "partGroup",
+                      "fill": "#3D6B52",
+                      "content": "Save Willow Creek",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o6BnK",
+                      "name": "partTitle",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "First Planning Meeting",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 22,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.3
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iJJPt",
+                      "name": "partMeta",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VU4Tm",
+                          "name": "partDate",
+                          "fill": "#6B6B6B",
+                          "content": "Friday, Feb 28 · 6:00 PM",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "K3bQU",
+                          "name": "partPlace",
+                          "fill": "#6B6B6B",
+                          "content": "Joe's Coffee, Albany, OR",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "GOmp1",
+                      "name": "partCount",
+                      "fill": "#9A9A9A",
+                      "content": "5 people going — be the 6th",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GEyOv",
+                      "name": "partBtn",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "#D95F3B",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oxuBZ",
+                          "name": "partBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Count me in →",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "j4QAw",
+          "name": "cta-section",
+          "width": "fill_container",
+          "fill": "#3D6B52",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 80,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "jdbKv",
+              "name": "ctaTitle",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": 600,
+              "content": "Ready to start something?",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 40,
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "rHxZU",
+              "name": "ctaSub",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Create your first turnout in two minutes.\nJust your phone number. No passwords, no credit card, no app.",
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 18,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Q10EP",
+              "name": "ctaBtn",
+              "height": 52,
+              "fill": "#FFFFFF",
+              "cornerRadius": 10,
+              "padding": [
+                0,
+                32
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AfWP1",
+                  "name": "ctaBtnText",
+                  "fill": "#3D6B52",
+                  "content": "Start organizing →",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lLBMW",
+          "name": "footer",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#2C2C2C",
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "vSr2C",
+              "name": "footerLogo",
+              "fill": "#FFFFFF",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "SWT1C",
+              "name": "footerLinks",
+              "gap": 32,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KamHx",
+                  "name": "footerLink1",
+                  "fill": "#9A9A9A",
+                  "content": "How it works",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "5t8xs",
+                  "name": "footerLink2",
+                  "fill": "#9A9A9A",
+                  "content": "Privacy",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "EoSCE",
+                  "name": "footerLink3",
+                  "fill": "#9A9A9A",
+                  "content": "Contact",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "YW1Jp",
+      "x": 1556,
+      "y": -326,
+      "name": "Discovery Page",
+      "clip": true,
+      "width": 1440,
+      "fill": "#FAFAF7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Uwzi0",
+          "name": "discNav",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "align": "outside",
+            "thickness": 1,
+            "fill": "#E5E2DC"
+          },
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qNMgv",
+              "name": "discLogo",
+              "fill": "#1E2420",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 16,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "Hg5Oz",
+              "name": "discNavBtn",
+              "height": 40,
+              "fill": "#D95F3B",
+              "cornerRadius": 8,
+              "padding": [
+                0,
+                20
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HOsyq",
+                  "name": "discNavBtnText",
+                  "fill": "#FFFFFF",
+                  "content": "Start organizing",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BuTLp",
+          "name": "discHeader",
+          "width": "fill_container",
+          "fill": "#FAFAF7",
+          "layout": "vertical",
+          "gap": 10,
+          "padding": [
+            44,
+            80,
+            36,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "NjY09",
+              "name": "discHeaderRow",
+              "width": "fill_container",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "R2PbS",
+                  "name": "discTitle",
+                  "fill": "#1E2420",
+                  "content": "What's happening",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 36,
+                  "fontWeight": "600",
+                  "letterSpacing": -0.8
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "2zjPY",
+              "name": "discSub",
+              "fill": "#9A9A9A",
+              "content": "Where: All turnouts",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OsWU0",
+          "name": "discGrid",
+          "width": "fill_container",
+          "fill": "#FAFAF7",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            0,
+            80,
+            40,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Wn4Ai",
+              "name": "discRow1",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "16FFE",
+                  "name": "rc1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "1ZpOy",
+                      "name": "rc1tag",
+                      "fill": "#3D6B5215",
+                      "cornerRadius": 6,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "9wlbL",
+                          "name": "rc1tagText",
+                          "fill": "#3D6B52",
+                          "content": "Climate",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Kc4qG",
+                      "name": "rc1title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Climate March",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 20,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.3
+                    },
+                    {
+                      "type": "text",
+                      "id": "KRGIF",
+                      "name": "rc1date",
+                      "fill": "#6B6B6B",
+                      "content": "Sat, Feb 22 · 2:00 PM",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iYn3x",
+                      "name": "rc1loc",
+                      "fill": "#6B6B6B",
+                      "content": "City Hall Plaza, Portland",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Vq8Qi",
+                      "name": "rc1footer",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I9YKc",
+                          "name": "rc1count",
+                          "fill": "#9A9A9A",
+                          "content": "24 people going",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "TotyO",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "chevron-right",
+                          "iconFontFamily": "lucide",
+                          "fill": "#C9B99A"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7UPqR",
+                  "name": "rc2",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lBtP3",
+                      "name": "rc2tag",
+                      "fill": "#D95F3B15",
+                      "cornerRadius": 6,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sT3BW",
+                          "name": "rc2tagText",
+                          "fill": "#D95F3B",
+                          "content": "Mutual aid",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "egGwG",
+                      "name": "rc2title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Food Distribution Drive",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 20,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.3
+                    },
+                    {
+                      "type": "text",
+                      "id": "kwUhn",
+                      "name": "rc2date",
+                      "fill": "#6B6B6B",
+                      "content": "Sun, Feb 23 · 10:00 AM",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zyx9q",
+                      "name": "rc2loc",
+                      "fill": "#6B6B6B",
+                      "content": "Eastside Community Center",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KDyKS",
+                      "name": "rc2footer",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F8BOl",
+                          "name": "rc2count",
+                          "fill": "#9A9A9A",
+                          "content": "32 people going",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "sJi20",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "chevron-right",
+                          "iconFontFamily": "lucide",
+                          "fill": "#C9B99A"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "znWKD",
+                  "name": "pc1",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#EDE9E3",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3D6B5240"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "U8Vx9",
+                      "name": "pc1Icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A8A09A"
+                    },
+                    {
+                      "type": "text",
+                      "id": "O4LHr",
+                      "name": "pc1Text",
+                      "fill": "#3D6B52",
+                      "content": "Start a turnout here",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8t8ML",
+              "name": "discRow2",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dtXqF",
+                  "name": "pc2",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#EDE9E3",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3D6B5240"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Y5ZPY",
+                      "name": "pc2Icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A8A09A"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MpxZB",
+                      "name": "pc2Text",
+                      "fill": "#3D6B52",
+                      "content": "Start a turnout here",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XkCyq",
+                  "name": "pc3",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#EDE9E3",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3D6B5240"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "XUCJD",
+                      "name": "pc3Icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A8A09A"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wF5ZD",
+                      "name": "pc3Text",
+                      "fill": "#3D6B52",
+                      "content": "Start a turnout here",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OPXvL",
+                  "name": "pc4",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#EDE9E3",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3D6B5240"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "EMdRN",
+                      "name": "pc4Icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A8A09A"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NOpx5",
+                      "name": "pc4Text",
+                      "fill": "#3D6B52",
+                      "content": "Start a turnout here",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "2NQ6R",
+          "name": "from-the-field",
+          "width": "fill_container",
+          "fill": "#FAFAF7",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            80,
+            64,
+            80
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "6tICP",
+              "name": "fromFieldLabel",
+              "fill": "#3D6B52",
+              "content": "From the field",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "500"
+            },
+            {
+              "type": "frame",
+              "id": "AyWZP",
+              "name": "fromFieldRow",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "miTt9",
+                  "name": "ac1",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6cpx7",
+                      "name": "ac1source",
+                      "fill": "#9A9A9A",
+                      "content": "Patheos · Flourishing Faith and Justice",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vje37",
+                      "name": "ac1title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Mutual Aid Isn't New: Loving Your Neighbor as Yourself",
+                      "lineHeight": 1.4,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.2
+                    },
+                    {
+                      "type": "text",
+                      "id": "MbNrd",
+                      "name": "ac1link",
+                      "fill": "#3D6B52",
+                      "content": "Read →",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZANmS",
+                  "name": "ac2",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TDuN5",
+                      "name": "ac2source",
+                      "fill": "#9A9A9A",
+                      "content": "YES! Magazine",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MJKeC",
+                      "name": "ac2title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Five Lessons From a First-Time Organizer",
+                      "lineHeight": 1.4,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.2
+                    },
+                    {
+                      "type": "text",
+                      "id": "tuMor",
+                      "name": "ac2link",
+                      "fill": "#3D6B52",
+                      "content": "Read →",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TofnL",
+                  "name": "ac3",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MLb5B",
+                      "name": "ac3source",
+                      "fill": "#9A9A9A",
+                      "content": "Shelterforce",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WWGgo",
+                      "name": "ac3title",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Why Showing Up Is the Whole Strategy",
+                      "lineHeight": 1.4,
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.2
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZkfAG",
+                      "name": "ac3link",
+                      "fill": "#3D6B52",
+                      "content": "Read →",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "l5s5V",
+          "name": "discFooter",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "#1E2420",
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "iIWNm",
+              "name": "discFooterLogo",
+              "fill": "#FFFFFF",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 14,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "FeWZE",
+              "name": "discFooterLinks",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "a5uoN",
+                  "name": "discFooterL1",
+                  "fill": "#6B6B6B",
+                  "content": "Privacy",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "dlrGo",
+                  "name": "discFooterL2",
+                  "fill": "#6B6B6B",
+                  "content": "Contact",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "KyqQo",
+      "x": 3196,
+      "y": -326,
+      "name": "Start Organizing",
+      "clip": true,
+      "width": 1440,
+      "fill": "#FAFAF7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "FX4Vg",
+          "name": "startNav",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "align": "outside",
+            "thickness": 1,
+            "fill": "#E5E2DC"
+          },
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "RKVye",
+              "name": "startLogo",
+              "fill": "#1E2420",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 16,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "qusR4",
+              "name": "startNavBack",
+              "height": 36,
+              "fill": "#FAFAF7",
+              "cornerRadius": 8,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#E5E2DC"
+              },
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M0rZ2",
+                  "name": "startNavBackText",
+                  "fill": "#6B6B6B",
+                  "content": "← See what's happening",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "C2qz1",
+          "name": "main",
+          "width": "fill_container",
+          "gap": 80,
+          "padding": [
+            60,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "iTipf",
+              "name": "leftCol",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AXqZY",
+                  "name": "leftTitle",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Start something.",
+                  "lineHeight": 1.05,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 52,
+                  "fontWeight": "600",
+                  "letterSpacing": -1.5
+                },
+                {
+                  "type": "text",
+                  "id": "SDrkK",
+                  "name": "leftSub",
+                  "fill": "#6B6B6B",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Tell us what you're organizing. We'll create your group and your first turnout — then you share the link.",
+                  "lineHeight": 1.6,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 17,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "jhiGE",
+                  "name": "previewLabel",
+                  "fill": "#9A9A9A",
+                  "content": "What participants will see:",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "8DVxr",
+                  "name": "previewCard",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "outside",
+                    "thickness": 1,
+                    "fill": "#E5E2DC"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    24,
+                    24,
+                    20,
+                    24
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iX6Oc",
+                      "name": "previewGroup",
+                      "fill": "#3D6B52",
+                      "content": "Save Willow Creek",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HI05q",
+                      "name": "previewTitle",
+                      "fill": "#1E2420",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "First Planning Meeting",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 20,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.3
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tA5vK",
+                      "name": "previewMeta",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IOvCS",
+                          "name": "previewDate",
+                          "fill": "#6B6B6B",
+                          "content": "Friday, Feb 28 · 6:00 PM",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "NVq8T",
+                          "name": "previewPlace",
+                          "fill": "#6B6B6B",
+                          "content": "Joe's Coffee, Albany, OR",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UL6v4",
+                      "name": "previewBtn",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#D95F3B",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BdqMU",
+                          "name": "previewBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Count me in →",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zJMM3",
+              "name": "rightCol",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "h4Qw8",
+                  "name": "formCard",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "outside",
+                    "thickness": 1,
+                    "fill": "#E5E2DC"
+                  },
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P6Qkb",
+                      "name": "f1",
+                      "width": "fill_container",
+                      "fill": "#F5F2EC",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WjCeb",
+                          "name": "f1Label",
+                          "fill": "#9A9A9A",
+                          "content": "What are you organizing for?",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bnK3N",
+                          "name": "f1Value",
+                          "fill": "#1E2420",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Stop the gravel mine from destroying Willow Creek",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fiC38",
+                      "name": "f2",
+                      "width": "fill_container",
+                      "fill": "#F5F2EC",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Numwh",
+                          "name": "f2Label",
+                          "fill": "#9A9A9A",
+                          "content": "What's your group called?",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "t31mO",
+                          "name": "f2Value",
+                          "fill": "#1E2420",
+                          "content": "Save Willow Creek",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Pc06A",
+                      "name": "f3",
+                      "width": "fill_container",
+                      "fill": "#F5F2EC",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Htznl",
+                          "name": "f3Label",
+                          "fill": "#9A9A9A",
+                          "content": "Where's the first meeting?",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "SXJKa",
+                          "name": "f3Value",
+                          "fill": "#1E2420",
+                          "content": "Joe's Coffee, Albany, OR",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "5F4pO",
+                      "name": "f4",
+                      "width": "fill_container",
+                      "fill": "#F5F2EC",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VThSp",
+                          "name": "f4Label",
+                          "fill": "#9A9A9A",
+                          "content": "When?",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zVSMd",
+                          "name": "f4Value",
+                          "fill": "#1E2420",
+                          "content": "Friday, Feb 28 · 6:00 PM",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mdO7H",
+                      "name": "f5",
+                      "width": "fill_container",
+                      "fill": "#F5F2EC",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "eWCwT",
+                          "name": "f5Label",
+                          "fill": "#9A9A9A",
+                          "content": "Your name",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "n5YiI",
+                          "name": "f5Value",
+                          "fill": "#1E2420",
+                          "content": "OrangeArmadillo",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TN0uT",
+                      "name": "ctaBtn",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "#D95F3B",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "y5nAa",
+                          "name": "ctaBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "Create my turnout →",
+                          "fontFamily": "IBM Plex Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MT9vM",
+                  "name": "reassurance",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "You'll confirm with your phone number after this step. Just your number — no passwords.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Fg5te",
+          "name": "startFooter",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "#1E2420",
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "fDC5q",
+              "name": "startFooterLogo",
+              "fill": "#FFFFFF",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 14,
+              "fontWeight": "600",
+              "letterSpacing": -0.3
+            },
+            {
+              "type": "frame",
+              "id": "hdMas",
+              "name": "startFooterLinks",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J9NtL",
+                  "name": "startFooterL1",
+                  "fill": "#6B6B6B",
+                  "content": "Privacy",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "sui6e",
+                  "name": "startFooterL2",
+                  "fill": "#6B6B6B",
+                  "content": "Contact",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "2LSX4",
+      "x": 5465,
+      "y": -261,
+      "name": "Discovery – Mobile",
+      "width": 375,
+      "fill": "#FAFAF7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "diS7K",
+          "name": "mNav",
+          "width": "fill_container",
+          "height": 52,
+          "fill": "#FAFAF7",
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "tYuBG",
+              "name": "mNavLogo",
+              "fill": "#1E2420",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 15,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "Ys4cY",
+              "name": "mNavSpacer",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "DIGGu",
+              "name": "mNavSignIn",
+              "fill": "#3D6B52",
+              "content": "Sign in",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "SXofa",
+          "name": "mCards",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "OprZA",
+              "name": "mCta",
+              "width": "fill_container",
+              "fill": "#EDF3EF",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "3kYaN",
+                  "name": "mCtaTitle",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": 303,
+                  "content": "No one's organizing here yet.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 18,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "SZSq7",
+                  "name": "mCtaSub",
+                  "fill": "#5A7265",
+                  "textGrowth": "fixed-width",
+                  "width": 303,
+                  "content": "You could be first. Start a turnout in two minutes.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "6u7BI",
+                  "name": "mCtaBtn",
+                  "fill": "#D95F3B",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "w3SgX",
+                      "name": "mCtaBtnTxt",
+                      "fill": "#FFFFFF",
+                      "content": "Start a turnout →",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "p963Y",
+              "name": "mCard1",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#E5E0D8"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mWmN1",
+                  "name": "mC1Tag",
+                  "fill": "#3D6B52",
+                  "cornerRadius": 100,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "b7FSj",
+                      "name": "mC1TagTxt",
+                      "fill": "#FFFFFF",
+                      "content": "Climate",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qJgvg",
+                  "name": "mC1Title",
+                  "fill": "#1E2420",
+                  "content": "Climate March",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 17,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "A1WWR",
+                  "name": "mC1Date",
+                  "fill": "#7A8070",
+                  "content": "Sat, Feb 22 · 2:00 PM",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "bBAKn",
+                  "name": "mC1Loc",
+                  "fill": "#7A8070",
+                  "content": "City Hall Plaza, Portland",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "ZJFed",
+                  "name": "mC1Foot",
+                  "width": "fill_container",
+                  "height": 24,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CXOd9",
+                      "name": "mC1Cnt",
+                      "fill": "#A09890",
+                      "content": "27 people going",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KsQ20",
+                      "name": "mC1Chev",
+                      "fill": "#C9B99A",
+                      "content": "›",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f5zVS",
+              "name": "mCard2",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#E5E0D8"
+              },
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "s8rFR",
+                  "name": "mC2Tag",
+                  "fill": "#3D6B52",
+                  "cornerRadius": 100,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ly4zh",
+                      "name": "mC2TagTxt",
+                      "fill": "#FFFFFF",
+                      "content": "Mutual Aid",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ILsuZ",
+                  "name": "mC2Title",
+                  "fill": "#1E2420",
+                  "content": "Food Distribution Drive",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 17,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "ZddUl",
+                  "name": "mC2Date",
+                  "fill": "#7A8070",
+                  "content": "Sun, Feb 23 · 10:00 AM",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "4MQ2K",
+                  "name": "mC2Loc",
+                  "fill": "#7A8070",
+                  "content": "Eastside Community Center",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "gZrbe",
+                  "name": "mC2Foot",
+                  "width": "fill_container",
+                  "height": 24,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Kv5si",
+                      "name": "mC2Cnt",
+                      "fill": "#A09890",
+                      "content": "12 people going",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "9b1O4",
+                      "name": "mC2Chev",
+                      "fill": "#C9B99A",
+                      "content": "›",
+                      "fontFamily": "IBM Plex Sans",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NmCn6",
+              "name": "mph1",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "#EDE9E3",
+              "cornerRadius": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cX3lL",
+                  "name": "mph1Txt",
+                  "fill": "#7A8A80",
+                  "content": "A turnout could live here.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "j1SeJ",
+              "name": "mph2",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "#EDE9E3",
+              "cornerRadius": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eKrkk",
+                  "name": "mph2Txt",
+                  "fill": "#7A8A80",
+                  "content": "A turnout could live here.",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iqMoM",
+          "name": "mField",
+          "width": "fill_container",
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "sbc8l",
+              "name": "mFieldLbl",
+              "fill": "#8A8278",
+              "content": "FROM THE FIELD",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 11,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "9X0yT",
+              "name": "mArt1",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 6,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "7Rj73",
+                  "name": "mArt1Src",
+                  "fill": "#A09890",
+                  "content": "Patheos · Flourishing Faith and Justice",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "yllpE",
+                  "name": "mArt1Title",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": 295,
+                  "content": "Mutual Aid Isn't New: Loving Your Neighbor as Yourself",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "4g3OI",
+                  "name": "mArt1Lnk",
+                  "fill": "#3D6B52",
+                  "content": "Read →",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gdiMD",
+              "name": "mArt2",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 6,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aEdkJ",
+                  "name": "mArt2Src",
+                  "fill": "#A09890",
+                  "content": "YES! Magazine",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "IgRAK",
+                  "name": "mArt2Title",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": 295,
+                  "content": "Five Lessons From a First-Time Organizer",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "QLMYE",
+                  "name": "mArt2Lnk",
+                  "fill": "#3D6B52",
+                  "content": "Read →",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "h0lX6",
+              "name": "mArt3",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 10,
+              "layout": "vertical",
+              "gap": 6,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zvkj1",
+                  "name": "mArt3Src",
+                  "fill": "#A09890",
+                  "content": "Shelterforce",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "56yFY",
+                  "name": "mArt3Title",
+                  "fill": "#1E2420",
+                  "textGrowth": "fixed-width",
+                  "width": 295,
+                  "content": "Why Showing Up Is the Whole Strategy",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 14,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "RDmEJ",
+                  "name": "mArt3Lnk",
+                  "fill": "#3D6B52",
+                  "content": "Read →",
+                  "fontFamily": "IBM Plex Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fBmhH",
+          "name": "mFoot",
+          "width": "fill_container",
+          "height": 52,
+          "fill": "#1E2420",
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Fg3ZW",
+              "name": "mFootLogo",
+              "fill": "#FAFAF7",
+              "content": "turnout.network",
+              "fontFamily": "IBM Plex Sans",
+              "fontSize": 13,
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
