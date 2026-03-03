@@ -567,7 +567,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
             <p className="text-sm text-center text-muted">
               We just texted you a 6-digit code.
               <br />
-              Enter the code we sent you.
+              Enter the 6-digit code we sent you.
             </p>
 
             <OTPBoxes
