@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { checkPhoneAction, sendOTPAction } from '../actions'
+import { normalizePhone } from '@/lib/phone'
 
 interface PhoneInputFormProps {
   onNewUser: (phone: string) => void
@@ -18,7 +19,7 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
     setError(null)
 
     startTransition(async () => {
-      const result = await checkPhoneAction(phone)
+      const result = await checkPhoneAction(normalized)
 
       if ('error' in result) {
         setError(result.error)
@@ -26,18 +27,23 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
       }
 
       if (result.isNewUser) {
-        onNewUser(phone)
+        onNewUser(normalized)
       } else {
         // Returning user — send OTP immediately then advance
-        const otpResult = await sendOTPAction(phone)
+        const otpResult = await sendOTPAction(normalized)
         if ('error' in otpResult) {
           setError(otpResult.error)
           return
         }
-        onReturningUser(phone)
+        onReturningUser(normalized)
       }
     })
   }
+
+  // Lightweight E.164 check — browser autocomplete sometimes strips the leading +
+  // so we normalize all-digit values before validating.
+  const normalized = normalizePhone(phone)
+  const isValidPhone = /^\+\d{7,15}$/.test(normalized)
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -48,10 +54,13 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
         id="phone"
         type="tel"
         value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        onChange={(e) => {
+          // Browser autocomplete can strip the leading + from E.164 numbers
+          setPhone(normalizePhone(e.target.value))
+        }}
         placeholder="+1 (555) 123-4567"
         autoComplete="tel"
-        className="border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
         disabled={isPending}
         required
       />
@@ -62,8 +71,8 @@ export function PhoneInputForm({ onNewUser, onReturningUser }: PhoneInputFormPro
       )}
       <button
         type="submit"
-        disabled={isPending}
-        className="bg-blue-600 text-white rounded-md py-2 px-4 font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isPending || !isValidPhone}
+        className="bg-terracotta text-white rounded-md py-2 px-4 font-medium hover:bg-terracotta/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Checking...' : 'Continue'}
       </button>

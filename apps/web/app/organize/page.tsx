@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getUser } from '@/lib/auth/sessions'
 import { OrganizeForm } from './components/organize-form'
 
@@ -7,18 +8,12 @@ export const dynamic = 'force-dynamic'
 export default async function OrganizePage() {
   const user = await getUser()
 
+  // Suspense boundary is required by Next.js when a client component inside
+  // uses useSearchParams() — without it, the build will warn and the server
+  // render will bail out to the entire page being client-rendered.
   return (
-    <main className="min-h-screen py-12 px-4">
-      <div className="max-w-2xl mx-auto mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Let&apos;s get people moving.
-        </h1>
-        <p className="text-gray-600">
-          Don&apos;t think too hard about this — you can change everything later.
-        </p>
-      </div>
-
+    <Suspense fallback={null}>
       <OrganizeForm user={user} />
-    </main>
+    </Suspense>
   )
 }

@@ -1,20 +1,12 @@
 'use client'
 
 import { useState, useTransition, useCallback } from 'react'
-import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator'
 import { sendOTPAction } from '../actions'
+import { generateRandomName } from '@/lib/names'
 
 interface DisplayNameFormProps {
   phone: string
   onSuccess: (displayName: string) => void
-}
-
-function generateRandomName(): string {
-  return uniqueNamesGenerator({
-    dictionaries: [adjectives, animals],
-    separator: '',
-    style: 'capital',
-  })
 }
 
 export function DisplayNameForm({ phone, onSuccess }: DisplayNameFormProps) {
@@ -52,7 +44,7 @@ export function DisplayNameForm({ phone, onSuccess }: DisplayNameFormProps) {
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           maxLength={50}
-          className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
           disabled={isPending}
           required
         />
@@ -77,7 +69,7 @@ export function DisplayNameForm({ phone, onSuccess }: DisplayNameFormProps) {
       <button
         type="submit"
         disabled={isPending || !displayName.trim()}
-        className="bg-blue-600 text-white rounded-md py-2 px-4 font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-terracotta text-white rounded-md py-2 px-4 font-medium hover:bg-terracotta/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Sending code...' : 'Continue'}
       </button>

@@ -37,6 +37,9 @@ CURRENT_DEBUG.md
 .dev-session.md
 .dev-session-*.md
 
+# playwright screenshots dumped at repo root during dev sessions
+/*.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

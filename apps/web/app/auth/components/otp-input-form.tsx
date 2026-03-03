@@ -25,7 +25,10 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
         otp: { transport: ['sms'] },
         signal: ac.signal,
       } as CredentialRequestOptions)
-      .then((otp: any) => {
+      .then((credential) => {
+        // OTPCredential is not in the TypeScript DOM lib — WICG spec, not yet standardized
+        // https://wicg.github.io/web-otp/
+        const otp = credential as { code?: string }
         if (otp?.code) {
           setCode(otp.code)
           // Auto-submit after autofill
@@ -83,7 +86,7 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
         onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
         placeholder="000000"
         maxLength={6}
-        className="border border-gray-300 rounded-md px-3 py-2 text-center text-2xl tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="border border-gray-300 rounded-md px-3 py-2 text-center text-2xl tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
         disabled={isPending}
         required
       />
@@ -94,8 +97,8 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
       )}
       <button
         type="submit"
-        disabled={isPending || code.length < 4}
-        className="bg-blue-600 text-white rounded-md py-2 px-4 font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isPending || code.length < 6}
+        className="bg-terracotta text-white rounded-md py-2 px-4 font-medium hover:bg-terracotta/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Verifying...' : 'Verify'}
       </button>
@@ -103,7 +106,7 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
         type="button"
         onClick={handleResend}
         disabled={resendPending || isPending}
-        className="text-sm text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+        className="text-sm text-sage hover:text-sage/80 disabled:text-sand disabled:cursor-not-allowed"
       >
         {resendPending ? 'Resending...' : "Didn't get a code? Resend"}
       </button>

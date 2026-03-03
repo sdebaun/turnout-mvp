@@ -4,6 +4,7 @@ import { getTurnoutBySlug } from '@/lib/groups'
 import { getUser } from '@/lib/auth/sessions'
 import { prisma } from '@/lib/db'
 import { ShareButtons } from './share-buttons'
+import { TopNav } from '@/app/components/top-nav'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,7 +49,14 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
     const inviteMessage = `Hey! I'm organizing ${turnout.title} for ${turnout.group.name} — ${formattedDate} at ${formattedTime} at ${locationName}. RSVP here: ${turnoutUrl}`
 
     return (
-      <main className="min-h-screen py-12 px-4">
+      <div className="min-h-screen flex flex-col">
+        <TopNav
+          variant="authed"
+          backLabel={turnout.group.name}
+          backHref="/"
+          displayName={user!.displayName ?? '??'}
+        />
+        <main className="flex-1 py-12 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <h1 className="text-2xl font-bold text-green-900 mb-2">
@@ -91,12 +99,15 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
           </p>
         </div>
       </main>
+      </div>
     )
   }
 
   // Public view — everyone else
   return (
-    <main className="min-h-screen py-12 px-4">
+    <div className="min-h-screen flex flex-col">
+      <TopNav variant="public" user={user} />
+      <main className="flex-1 py-12 px-4">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-gray-900">{turnout.title}</h1>
@@ -114,5 +125,6 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
         </div>
       </div>
     </main>
+    </div>
   )
 }
