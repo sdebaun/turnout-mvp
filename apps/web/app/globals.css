@@ -19,11 +19,12 @@ body {
    We can't style its internals, but we can style the host element.
    box-shadow ring visually replaces Google's default gray border with our sage-tinted one,
    matching the IconInputWrapper treatment on Date and Time fields. */
-/* Hide native browser calendar/clock picker indicators — we supply our own icons on the left.
-   Without this, date and time inputs show a double icon (ours left + browser's right). */
+/* Visually hide native browser calendar/clock picker indicators — we supply our own icons on the left.
+   opacity:0 instead of display:none keeps the click target alive so the picker still opens on click. */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  display: none;
+  opacity: 0;
+  cursor: pointer;
 }
 
 gmp-place-autocomplete {
@@ -32,6 +33,6 @@ gmp-place-autocomplete {
   border-radius: 0.5rem; /* rounded-lg — matches our other inputs */
   /* Sage-tinted ring that visually overlays Google's default gray border */
   box-shadow: 0 0 0 1px rgba(61, 107, 82, 0.3);
-  overflow: hidden; /* clip the inner input to our border-radius */
+  /* No overflow:hidden — that clips the autocomplete suggestions dropdown */
   background: white;
 }

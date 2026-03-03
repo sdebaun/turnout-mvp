@@ -445,7 +445,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
         <WizardLayout
           headerTitle="Which of these is you?"
           headerSubtitle="Tell us where you're starting from."
-          onBack={() => router.push('/')}
+          onBack={() => { clearSession(); router.push('/') }}
           onContinue={handleStep0Continue}
           continueLabel="Let's go"
           continueDisabled={false}

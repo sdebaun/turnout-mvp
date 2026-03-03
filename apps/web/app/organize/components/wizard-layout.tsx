@@ -59,7 +59,8 @@ export function WizardLayout({
       {/* Header wrapper is relative so we can absolutely position the pip straddler.
           The pip is centered on the header/body seam via bottom-0 + translate-y-1/2. */}
       <div className="relative flex-shrink-0">
-        <header className="bg-sage px-5 pt-5 pb-5 flex flex-col">
+        {/* h-36 = 144px fixed — matches design spec. pt-5 pb-5 provides internal breathing room. */}
+        <header className="bg-sage px-5 pt-5 pb-5 h-36 flex flex-col">
           <h1 className="font-heading font-bold text-[28px] leading-tight text-offwhite">
             {headerTitle}
           </h1>
@@ -71,7 +72,7 @@ export function WizardLayout({
         {/* Pips straddle the header/body boundary: absolute at header bottom, shifted down 50%.
             The top 8px sits over the sage header, the bottom 8px over the body background. */}
         {currentStep !== undefined && (
-          <div className="absolute left-5 bottom-0 translate-y-1/2 z-10">
+          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-10">
             <PipIndicator current={currentStep} total={4} />
           </div>
         )}
