@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@prisma/client'
 import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator'
@@ -8,6 +8,7 @@ import { Calendar, Clock, Phone } from 'lucide-react'
 import { WizardLayout } from './wizard-layout'
 import { TurnoutPreview } from './turnout-preview'
 import { LocationInput } from './location-input'
+import { OptionGroup, type OptionItem } from '../../components/option-group'
 import { createGroupWithTurnoutAction } from '../actions'
 import { checkPhoneAction, sendOTPAction, signInAction } from '../../auth/actions'
 import type { LocationData } from '../actions'
@@ -91,64 +92,22 @@ function LabeledField({ label, children }: { label: string; children: React.Reac
   )
 }
 
-// ── Step 0: Expertise fork tiles ─────────────────────────────────────────────
-// Two tiles: "Starting something new" (amber accent) and "Already organizing" (sage accent).
-// Accent bar colors are fixed — not toggled by selection.
-// Tapping a tile sets the active path; selection shown via ring outline.
+// ── Step 0: Expertise fork ───────────────────────────────────────────────────
 
 type ExpertisePath = 'new' | 'existing'
 
-function ExpertiseFork({
-  selected,
-  onSelect,
-}: {
-  selected: ExpertisePath
-  onSelect: (path: ExpertisePath) => void
-}) {
-  return (
-    <div className="flex flex-col gap-3">
-      {/* Tile 1: "Starting something new" — amber accent bar (always) */}
-      <button
-        type="button"
-        onClick={() => onSelect('new')}
-        className={`flex text-left w-full bg-white border-0 p-0 cursor-pointer ${
-          selected === 'new' ? 'ring-2 ring-amber' : 'ring-2 ring-transparent'
-        }`}
-      >
-        {/* Fixed amber accent bar */}
-        <div className="w-1.5 bg-amber self-stretch flex-shrink-0" />
-        <div className="p-5 flex flex-col gap-3 flex-1">
-          <div className="text-[22px] font-bold text-amber font-sans">
-            Starting something new
-          </div>
-          <div className="text-[15px] font-normal text-tiletext font-sans">
-            You have a cause or idea and want to bring people together around it.
-          </div>
-        </div>
-      </button>
-
-      {/* Tile 2: "Already organizing" — sage accent bar (always) */}
-      <button
-        type="button"
-        onClick={() => onSelect('existing')}
-        className={`flex text-left w-full bg-white border-0 p-0 cursor-pointer ${
-          selected === 'existing' ? 'ring-2 ring-sage' : 'ring-2 ring-transparent'
-        }`}
-      >
-        {/* Fixed sage accent bar */}
-        <div className="w-1.5 bg-sage self-stretch flex-shrink-0" />
-        <div className="p-5 flex flex-col gap-3 flex-1">
-          <div className="text-[22px] font-bold text-charcoal font-sans">
-            Already organizing
-          </div>
-          <div className="text-[15px] font-normal text-tiletext font-sans">
-            You have an existing group you want to use turnout.network for.
-          </div>
-        </div>
-      </button>
-    </div>
-  )
-}
+const EXPERTISE_OPTIONS: OptionItem[] = [
+  {
+    value: 'new',
+    label: 'Starting something new',
+    description: 'You have a cause or idea and want to bring people together around it.',
+  },
+  {
+    value: 'existing',
+    label: 'Already organizing',
+    description: 'You have an existing group you want to use turnout.network for.',
+  },
+]
 
 // ── Step 4: OTP boxes ────────────────────────────────────────────────────────
 // Six individual digit boxes with a visual separator between box 3 and 4.
@@ -216,43 +175,25 @@ function OTPBoxes({
 
   return (
     <div className="flex items-center justify-center gap-2">
-      {[0, 1, 2].map((idx) => (
-        <input
-          key={idx}
-          ref={(el) => { inputs.current[idx] = el }}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={1}
-          value={value[idx] ?? ''}
-          onChange={(e) => handleChange(e, idx)}
-          onKeyDown={(e) => handleKeyDown(e, idx)}
-          onPaste={handlePaste}
-          disabled={disabled}
-          className={boxClass}
-          aria-label={`Digit ${idx + 1}`}
-        />
-      ))}
-
-      {/* Visual separator dot between box 3 and 4 */}
-      <div className="w-1.5 h-1.5 rounded-full bg-skeleton flex-shrink-0" aria-hidden="true" />
-
-      {[3, 4, 5].map((idx) => (
-        <input
-          key={idx}
-          ref={(el) => { inputs.current[idx] = el }}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={1}
-          value={value[idx] ?? ''}
-          onChange={(e) => handleChange(e, idx)}
-          onKeyDown={(e) => handleKeyDown(e, idx)}
-          onPaste={handlePaste}
-          disabled={disabled}
-          className={boxClass}
-          aria-label={`Digit ${idx + 1}`}
-        />
+      {[0, 1, 2, 3, 4, 5].map((idx) => (
+        <React.Fragment key={idx}>
+          {/* Visual separator dot between digits 3 and 4 */}
+          {idx === 3 && <div className="w-1.5 h-1.5 rounded-full bg-skeleton flex-shrink-0" aria-hidden="true" />}
+          <input
+            ref={(el) => { inputs.current[idx] = el }}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={1}
+            value={value[idx] ?? ''}
+            onChange={(e) => handleChange(e, idx)}
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            onPaste={handlePaste}
+            disabled={disabled}
+            className={boxClass}
+            aria-label={`Digit ${idx + 1}`}
+          />
+        </React.Fragment>
       ))}
     </div>
   )
@@ -315,102 +256,64 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
   const [otpCode, setOtpCode] = useState('')
   const [authPhone, setAuthPhone] = useState('')
 
-  const handleLocationChange = useCallback((loc: LocationData | null) => {
-    setLocation(loc)
-  }, [])
-
   // ── Continue/submit handlers per step ──────────────────────────────────────
-
-  function handleStep0Continue() {
-    goToStep(1)
-  }
-
-  function handleStep1Continue() {
-    goToStep(2)
-  }
-
-  function handleStep2Continue() {
-    goToStep(3)
-  }
 
   // Step 3 for already-authenticated users — skip OTP, create directly
   async function handleAuthenticatedCreate() {
     setIsSubmitting(true)
     setSubmitError(null)
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const result = await createGroupWithTurnoutAction({
-      groupName,
-      mission: groupName,
-      turnoutTitle,
-      location: location!,
-      turnoutDate,
-      turnoutTime,
-      turnoutTimezone: timezone,
-    })
-    if ('error' in result) {
-      setSubmitError(result.error)
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const result = await createGroupWithTurnoutAction({
+        groupName, mission: groupName, turnoutTitle,
+        location: location!, turnoutDate, turnoutTime, turnoutTimezone: timezone,
+      })
+      if ('error' in result) { setSubmitError(result.error); return }
+      clearSession()
+      router.push(`/t/${result.turnoutSlug}`)
+    } finally {
       setIsSubmitting(false)
-      return
     }
-    clearSession()
-    router.push(`/t/${result.turnoutSlug}`)
   }
 
   // Step 3 → 4: send OTP code then advance
   async function handleSendCode() {
     setIsSubmitting(true)
     setSubmitError(null)
+    try {
+      const checkResult = await checkPhoneAction(phone)
+      if ('error' in checkResult) { setSubmitError(checkResult.error); return }
 
-    const checkResult = await checkPhoneAction(phone)
-    if ('error' in checkResult) {
-      setSubmitError(checkResult.error)
+      const sendResult = await sendOTPAction(phone)
+      if ('error' in sendResult) { setSubmitError(sendResult.error); return }
+
+      setAuthPhone(phone)
+      goToStep(4)
+    } finally {
       setIsSubmitting(false)
-      return
     }
-
-    const sendResult = await sendOTPAction(phone)
-    if ('error' in sendResult) {
-      setSubmitError(sendResult.error)
-      setIsSubmitting(false)
-      return
-    }
-
-    setAuthPhone(phone)
-    setIsSubmitting(false)
-    goToStep(4)
   }
 
   // Step 4: verify OTP + create group/turnout
   async function handleCreateTurnout() {
     setIsSubmitting(true)
     setSubmitError(null)
+    try {
+      const signInResult = await signInAction(authPhone, otpCode, displayName)
+      if ('error' in signInResult) { setSubmitError(signInResult.error); return }
 
-    const signInResult = await signInAction(authPhone, otpCode, displayName)
-    if ('error' in signInResult) {
-      setSubmitError(signInResult.error)
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const result = await createGroupWithTurnoutAction({
+        groupName, mission: groupName, turnoutTitle,
+        location: location!, turnoutDate, turnoutTime, turnoutTimezone: timezone,
+      })
+      if ('error' in result) { setSubmitError(result.error); return }
+
+      clearSession()
+      router.push(`/t/${result.turnoutSlug}`)
+    } finally {
       setIsSubmitting(false)
-      return
     }
-
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const result = await createGroupWithTurnoutAction({
-      groupName,
-      mission: groupName,
-      turnoutTitle,
-      location: location!,
-      turnoutDate,
-      turnoutTime,
-      turnoutTimezone: timezone,
-    })
-
-    if ('error' in result) {
-      setSubmitError(result.error)
-      setIsSubmitting(false)
-      return
-    }
-
-    clearSession()
-    router.push(`/t/${result.turnoutSlug}`)
   }
 
   // ── Per-step readiness checks ──────────────────────────────────────────────
@@ -432,9 +335,9 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
       time={turnoutTime || undefined}
       locationName={location?.name}
       locationCity={locationCity}
-      groupName={step >= 2 ? (groupName || undefined) : undefined}
-      turnoutTitle={step >= 2 ? (turnoutTitle || undefined) : undefined}
-      displayName={step >= 3 ? (user?.displayName ?? displayName) : undefined}
+      groupName={groupName || undefined}
+      turnoutTitle={turnoutTitle || undefined}
+      displayName={user?.displayName ?? (displayName || undefined)}
     />
   ) : undefined
 
@@ -446,12 +349,15 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           headerTitle="Which of these is you?"
           headerSubtitle="Tell us where you're starting from."
           onBack={() => { clearSession(); router.push('/') }}
-          onContinue={handleStep0Continue}
+          onContinue={() => goToStep(1)}
           continueLabel="Let's go"
-          continueDisabled={false}
           isSubmitting={isSubmitting}
         >
-          <ExpertiseFork selected={expertisePath} onSelect={setExpertisePath} />
+          <OptionGroup
+            options={EXPERTISE_OPTIONS}
+            value={expertisePath}
+            onChange={(v) => setExpertisePath(v as ExpertisePath)}
+          />
         </WizardLayout>
       )}
 
@@ -462,12 +368,16 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           headerSubtitle="Pick something — you can always adjust it later."
           currentStep={1}
           onBack={() => goToStep(0)}
-          onContinue={handleStep1Continue}
+          onContinue={() => goToStep(2)}
           continueLabel="Continue"
           continueDisabled={!step1Ready}
           isSubmitting={isSubmitting}
           previewZone={previewNode}
         >
+          {/* Design shows "Choose a date" / "Choose a time" as placeholder text.
+              Native date/time inputs ignore placeholder — the browser renders its own
+              format hint ("mm/dd/yyyy", "--:--") instead. Overriding this requires a
+              fully custom date picker, which is out of scope. */}
           <LabeledField label="Date">
             <IconInputWrapper icon={<Calendar size={16} strokeWidth={1.75} />}>
               <input
@@ -501,7 +411,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           {/* LocationInput is a Google Maps web component (shadow DOM) — must NOT be wrapped
               in IconInputWrapper. The component manages its own input styling entirely. */}
           <LabeledField label="Location">
-            <LocationInput value={location} onChange={handleLocationChange} />
+            <LocationInput value={location} onChange={setLocation} />
           </LabeledField>
 
           {submitError && <ErrorBanner message={submitError} />}
@@ -515,7 +425,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           headerSubtitle="Don't overthink it, you can always change it."
           currentStep={2}
           onBack={() => goToStep(1)}
-          onContinue={handleStep2Continue}
+          onContinue={() => goToStep(3)}
           continueLabel="Continue"
           continueDisabled={!step2Ready}
           isSubmitting={isSubmitting}
@@ -610,7 +520,12 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
                     type="tel"
                     value={phone}
                     placeholder="+1 (555) 000-0000"
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      // Browser autocomplete sometimes strips the leading + from E.164 numbers.
+                      // If the value is all digits (no + present), restore it.
+                      setPhone(/^\d+$/.test(val) ? `+${val}` : val)
+                    }}
                     autoComplete="tel"
                     className="flex-1 min-w-0 border-none outline-none bg-transparent text-sm text-charcoal font-normal font-sans placeholder:text-sand"
                     data-testid="phone-number"

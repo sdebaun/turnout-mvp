@@ -11,6 +11,7 @@ module.exports = {
         charcoal: '#1E2420',
         terracotta: '#D95F3B',
         forest: '#243D30',
+        pine: '#2F5441',
         offwhite: '#FAFAF7',
         warm: '#F0EDE8',
         muted: '#7A6E65',

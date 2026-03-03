@@ -8786,58 +8786,6 @@
         },
         {
           "type": "frame",
-          "id": "81Qi0",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "0SV6X",
-              "x": 20,
-              "y": 16,
-              "name": "headerSlot",
-              "width": 335,
-              "height": 108,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "cfmma",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Step headline",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "e2LF9",
-                  "name": "subtitle",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Step subtitle goes here.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
           "id": "9EGen",
           "x": 0,
           "y": 200,
@@ -8895,6 +8843,24 @@
           "y": 740
         },
         {
+          "id": "AyMvU",
+          "type": "ref",
+          "ref": "dPIB1",
+          "name": "header",
+          "width": 375,
+          "height": 144,
+          "x": 0,
+          "y": 56,
+          "descendants": {
+            "ugFmB": {
+              "content": "Step headline"
+            },
+            "K9mFz": {
+              "content": "Step subtitle goes here."
+            }
+          }
+        },
+        {
           "type": "frame",
           "id": "QEeL0",
           "x": 141,
@@ -8927,57 +8893,6 @@
       "y": 0,
       "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'When and where?' / 'Pick something', body → TurnoutPreview/Ghost + Date/Time/Location fields, pip → PipGroup 1/4 (HnRj0), actionBar → DSwrF ('Continue'). In code: <WizardLayout header={<Step1Header/>} body={<WhenWhereForm/>} pip={1} actionLabel='Continue' />",
       "descendants": {
-        "81Qi0": {
-          "type": "frame",
-          "id": "R4E34",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "Vz2k1",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "tn6Sl",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "When and where?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "GdS1P",
-                  "name": "sub1",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Pick something — you can always adjust it later.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
         "9EGen": {
           "type": "frame",
           "id": "RPhwo",
@@ -9098,6 +9013,12 @@
             }
           }
         },
+        "AyMvU/ugFmB": {
+          "content": "When and where?"
+        },
+        "AyMvU/K9mFz": {
+          "content": "Pick something — you can always adjust it later."
+        },
         "QEeL0": {
           "id": "pbNCv",
           "type": "ref",
@@ -9119,57 +9040,6 @@
       "y": 0,
       "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp (focused nav), header → step-specific (no pip in original — QEeL0 slot unused), body → step-specific fork tiles, actionBar → DSwrF ('Let's go'). In code: <WizardLayout header={<Step0Header/>} body={<ExpertiseFork/>} actionLabel='Let's go' pip={null} />",
       "descendants": {
-        "81Qi0": {
-          "type": "frame",
-          "id": "U3qnl",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "yvh7y",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "TDFAa",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Which of these is you?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "mHm58",
-                  "name": "sub0",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Tell us where you're starting from.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
         "9EGen": {
           "type": "frame",
           "id": "M2x3x",
@@ -9319,6 +9189,12 @@
             }
           }
         },
+        "AyMvU/ugFmB": {
+          "content": "Which of these is you?"
+        },
+        "AyMvU/K9mFz": {
+          "content": "Tell us where you're starting from."
+        },
         "Q16JY": {
           "enabled": false
         }
@@ -9333,57 +9209,6 @@
       "y": 0,
       "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'What are you calling it?' / 'Don't overthink it', body → TurnoutPreview/Partial + Group/Turnout name fields, pip → PipGroup 2/4 (qVReR), actionBar → DSwrF ('Continue'). In code: <WizardLayout header={<Step2Header/>} body={<NameItForm/>} pip={2} actionLabel='Continue' />",
       "descendants": {
-        "81Qi0": {
-          "type": "frame",
-          "id": "OTk71",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "qAU4M",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "ADVfc",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "What are you calling it?",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "nGmtt",
-                  "name": "sub2",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Don't overthink it, you can always change it.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
         "9EGen": {
           "type": "frame",
           "id": "wujK8",
@@ -9505,6 +9330,12 @@
             }
           }
         },
+        "AyMvU/ugFmB": {
+          "content": "What are you calling it?"
+        },
+        "AyMvU/K9mFz": {
+          "content": "Don't overthink it, you can always change it."
+        },
         "QEeL0": {
           "id": "tKPUH",
           "type": "ref",
@@ -9526,57 +9357,6 @@
       "y": 0,
       "context": "COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'Claim your turnout.' / 'One last step and it's yours.', body → TurnoutPreview/Filled + DisplayName + Phone fields + trust block, pip → PipGroup 3/4 (xL88K), actionBar → DSwrF ('Send code'). In code: <WizardLayout header={<Step3Header/>} body={<AuthForm/>} pip={3} actionLabel='Send code' />",
       "descendants": {
-        "81Qi0": {
-          "type": "frame",
-          "id": "MpayK",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "R1gUW",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "cLpKl",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Claim your turnout.",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "MRZrF",
-                  "name": "sub3",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "One last step and it's yours.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
         "9EGen": {
           "type": "frame",
           "id": "lWJj9",
@@ -9800,6 +9580,12 @@
             }
           }
         },
+        "AyMvU/ugFmB": {
+          "content": "Claim your turnout."
+        },
+        "AyMvU/K9mFz": {
+          "content": "One last step and it's yours."
+        },
         "QEeL0": {
           "id": "KC9nj",
           "type": "ref",
@@ -9821,57 +9607,6 @@
       "y": 0,
       "context": "Step 4 of 4. OTP entry is a full wizard step. Pip 4/4 is correct and intentional. Implement as a separate route or full-screen state transition — not an inline modal or overlay on step 3. COMPOSITION VIEW: WizardLayout (UWkzH). topNav → vLmOp, header → 'Claim your turnout.' / 'Just confirm that it's you.', body → TurnoutPreview/Filled + OTP digit boxes, pip → PipGroup 4/4 (QvgbR), actionBar → DSwrF ('Create Turnout'). In code: <WizardLayout header={<Step35Header/>} body={<OTPForm/>} pip={4} actionLabel='Create Turnout' />",
       "descendants": {
-        "81Qi0": {
-          "type": "frame",
-          "id": "wJWu9",
-          "x": 0,
-          "y": 56,
-          "name": "header",
-          "width": 375,
-          "height": 144,
-          "fill": "#3D6B52",
-          "layout": "none",
-          "children": [
-            {
-              "type": "frame",
-              "id": "hnmmj",
-              "x": 20,
-              "y": 16,
-              "name": "titleGroup",
-              "width": 335,
-              "layout": "vertical",
-              "gap": 6,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "IZQQD",
-                  "name": "headline",
-                  "fill": "#FAFAF7",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Claim your turnout.",
-                  "lineHeight": 1.2,
-                  "fontFamily": "Zilla Slab",
-                  "fontSize": 28,
-                  "fontWeight": "700"
-                },
-                {
-                  "type": "text",
-                  "id": "8tFSa",
-                  "name": "sub35",
-                  "fill": "#FFFFFFCC",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Just confirm that it's you.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "Plus Jakarta Sans",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        },
         "9EGen": {
           "type": "frame",
           "id": "oCyV8",
@@ -10005,6 +9740,12 @@
             }
           }
         },
+        "AyMvU/ugFmB": {
+          "content": "Claim your turnout."
+        },
+        "AyMvU/K9mFz": {
+          "content": "Just confirm that it's you."
+        },
         "QEeL0": {
           "id": "yyolG",
           "type": "ref",
@@ -10016,6 +9757,61 @@
           "name": "pipSlot"
         }
       }
+    },
+    {
+      "type": "frame",
+      "id": "dPIB1",
+      "x": 1270,
+      "y": 693,
+      "name": "WizardHeader",
+      "context": "Slot-based header for wizard steps. `headline` uses Zilla Slab Bold 28px #FAFAF7. `subtitle` uses Plus Jakarta Sans 14px #FFFFFFCC. Each wizard step overrides both text slots via component instance overrides. Do not hand-roll per-step headers.",
+      "reusable": true,
+      "width": 375,
+      "height": 144,
+      "fill": "#3D6B52",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "RpojE",
+          "x": 20.09759443872713,
+          "y": 15.69820801944843,
+          "name": "titleGroup",
+          "rotation": -0.10326233439302751,
+          "width": 335,
+          "height": 108,
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "ugFmB",
+              "name": "headline",
+              "fill": "#FAFAF7",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Step headline",
+              "lineHeight": 1.2,
+              "fontFamily": "Zilla Slab",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "K9mFz",
+              "name": "subtitle",
+              "fill": "#FFFFFFCC",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Step subtitle goes here.",
+              "lineHeight": 1.4,
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

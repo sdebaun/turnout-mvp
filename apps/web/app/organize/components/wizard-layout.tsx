@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { TopNav } from '../../components/top-nav'
 
 // Pip dots track progress — amber filled, off-white empty, both ringed with sage.
 // 16x16 circles straddling the header/body seam (absolute positioned, translate-y-1/2).
@@ -47,14 +48,10 @@ export function WizardLayout({
   previewZone,
   children,
 }: WizardLayoutProps) {
+  const continueIsDisabled = continueDisabled || isSubmitting
   return (
     <div className="min-h-screen flex flex-col bg-warm">
-      {/* Top nav — dark forest green (#243D30), 56px, Syne Bold wordmark, centered. */}
-      <nav className="sticky top-0 z-10 h-14 flex items-center justify-center bg-forest flex-shrink-0">
-        <span className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
-          turnout.network
-        </span>
-      </nav>
+      <TopNav variant="focused" />
 
       {/* Header wrapper is relative so we can absolutely position the pip straddler.
           The pip is centered on the header/body seam via bottom-0 + translate-y-1/2. */}
@@ -99,24 +96,23 @@ export function WizardLayout({
         {/* Back button — always rendered per spec. Disabled and faded when onBack is absent. */}
         <button
           type="button"
-          onClick={onBack ?? undefined}
+          onClick={onBack}
           disabled={!onBack}
           className={`flex-1 h-12 rounded-lg bg-white border border-sage/30 text-charcoal text-base font-medium font-sans flex items-center justify-center transition-opacity ${
             !onBack ? 'opacity-40' : 'hover:bg-warm'
           }`}
         >
-          Back
+          <ChevronLeft size={18} strokeWidth={2.5} />
+          <span>Back</span>
         </button>
 
         {/* CTA button — terracotta fill, white text, chevron icon. Dims when disabled. */}
         <button
           type="button"
           onClick={onContinue}
-          disabled={continueDisabled || isSubmitting}
+          disabled={continueIsDisabled}
           className={`flex-1 h-12 rounded-lg text-white text-base font-semibold font-sans flex items-center justify-center gap-1 transition-colors ${
-            continueDisabled || isSubmitting
-              ? 'bg-terracotta/60 cursor-not-allowed'
-              : 'bg-terracotta hover:bg-terracotta/90 cursor-pointer'
+            continueIsDisabled ? 'bg-terracotta/60 cursor-not-allowed' : 'bg-terracotta hover:bg-terracotta/90 cursor-pointer'
           }`}
         >
           <span>{isSubmitting ? 'Working...' : continueLabel}</span>

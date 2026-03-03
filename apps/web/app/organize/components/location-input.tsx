@@ -69,11 +69,17 @@ function PlacesAutocompleteInput({ onChange, error }: Omit<LocationInputInnerPro
   }
 
   return (
-    <>
+    <div>
       {/* gmp-place-autocomplete is a Google Maps web component — styles are shadow DOM.
-          Width and visual tokens are set via CSS custom properties in globals.css. */}
+          Inline width ensures the custom element measures its container before Maps API upgrades it.
+          Design shows a MapPin icon on the left; we get a magnifying glass instead because the
+          icon is rendered inside the shadow DOM and cannot be overridden without forking the component. */}
+      {/* placeholder spread via cast — the TS type for gmp-place-autocomplete omits this
+          valid HTML attribute so direct assignment errors; spreading as {} sidesteps it */}
       <gmp-place-autocomplete
         ref={elementRef}
+        style={{ width: '100%' }}
+        {...({ placeholder: 'Coffee shop, park, address...' } as {})}
         data-testid="location-input"
       />
       {error && (
@@ -81,7 +87,7 @@ function PlacesAutocompleteInput({ onChange, error }: Omit<LocationInputInnerPro
           {error}
         </p>
       )}
-    </>
+    </div>
   )
 }
 
