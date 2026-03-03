@@ -124,8 +124,9 @@ test.describe('group & turnout creation (TDD0002)', () => {
     // Should redirect to /t/[slug]
     await page.waitForURL(/\/t\/[a-z0-9-]+/, { timeout: 15000 })
 
-    // Turnout page should contain the group name
-    await expect(page.locator('text=Save Willow Creek')).toBeVisible({ timeout: 10000 })
+    // Turnout page should contain the group name — use data-testid to avoid strict-mode
+    // violation (the group name appears in multiple elements on the organizer page)
+    await expect(page.locator('[data-testid="invite-message"]')).toContainText('Save Willow Creek', { timeout: 10000 })
 
     // Extract slug for cleanup
     const url = page.url()
