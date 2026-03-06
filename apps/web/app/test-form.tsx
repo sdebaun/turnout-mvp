@@ -1,46 +1,42 @@
 'use client'
 
+import { useFormStatus } from 'react-dom'
 import { incrementCounter } from './actions'
 import { useState } from 'react'
 
+// SubmitButton must be a child of the form to read useFormStatus — can't be inlined.
+// This is the canonical App Router pattern for server action pending state.
+function SubmitButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+    >
+      {pending ? 'Running...' : 'Test Server Action'}
+    </button>
+  )
+}
+
 export function TestForm() {
   const [lastRun, setLastRun] = useState<string | null>(null)
-  const [isPending, setIsPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  async function handleClick() {
-    setIsPending(true)
-    setError(null)
-    try {
-      await incrementCounter()
-      setLastRun(new Date().toLocaleTimeString())
-    } catch (e) {
-      setError(String(e))
-    } finally {
-      setIsPending(false)
-    }
+  async function handleAction() {
+    await incrementCounter()
+    setLastRun(new Date().toLocaleTimeString())
   }
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={isPending}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-      >
-        {isPending ? 'Running...' : 'Test Server Action'}
-      </button>
+      <form action={handleAction}>
+        <SubmitButton />
+      </form>
 
       {lastRun && (
         <p className="text-green-600 font-semibold">
           ✓ Server Action executed at {lastRun}
-        </p>
-      )}
-
-      {error && (
-        <p className="text-red-600 font-semibold">
-          Server action error: {error}
         </p>
       )}
     </div>

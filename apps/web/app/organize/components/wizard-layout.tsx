@@ -84,7 +84,7 @@ export function WizardLayout({
 
       {/* Body: warm (form) + sage-wash (preview sidebar) on desktop, stacked on mobile.
           The preview column's bg-sage-wash fills its own column — no absolute bleed needed. */}
-      <div className="flex-1 flex bg-warm" data-testid="wizard-body">
+      <main className="flex-1 flex bg-warm" data-testid="wizard-body">
         <div className={`flex-1 flex flex-col ${hasPreview ? 'lg:flex-row' : ''}`}>
 
           {/* Form column: full-width on mobile, 60% on desktop */}
@@ -126,7 +126,7 @@ export function WizardLayout({
             </div>
           )}
         </div>
-      </div>
+      </main>
 
       {/* Sticky action bar — always centered regardless of preview presence */}
       <div

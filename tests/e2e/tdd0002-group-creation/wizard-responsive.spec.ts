@@ -3,6 +3,10 @@ import { test, expect } from '@playwright/test'
 // Layout-only tests — no auth, no data creation.
 // Navigate directly to step=1 which renders the preview zone.
 // These verify the responsive sidebar layout introduced in the desktop design pass.
+//
+// Auth note: /organize is publicly accessible — getUser() returns null for unauthenticated
+// visitors and OrganizeForm renders normally (no redirect). Auth is only required at the
+// OTP step (step 3.5), which these tests never reach.
 
 test.describe('wizard responsive layout', () => {
   test('desktop shows sidebar layout with form and preview side-by-side', async ({ page }) => {

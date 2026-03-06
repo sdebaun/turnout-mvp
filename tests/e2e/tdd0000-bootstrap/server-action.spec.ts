@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test('server action button is rendered and clickable', async ({ page }) => {
   await page.goto('/')
 
-  const button = page.locator('button[type="button"]:has-text("Test Server Action")')
+  const button = page.locator('button[type="submit"]:has-text("Test Server Action")')
   await expect(button).toBeVisible()
   await expect(button).toHaveText('Test Server Action')
 
