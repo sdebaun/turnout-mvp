@@ -1,15 +1,117 @@
 import { notFound } from 'next/navigation'
-import { headers } from 'next/headers'
-import { getTurnoutBySlug } from '@/lib/groups'
+import type { Metadata } from 'next'
+import { MapPin, Calendar } from 'lucide-react'
+import { getTurnoutBySlug, isGroupOrganizer } from '@/lib/groups'
 import { getUser } from '@/lib/auth/sessions'
-import { prisma } from '@/lib/db'
+import { getDefaultOpportunity, getRsvpCount, getUserEngagement, formatRsvpCount } from '@/lib/engagements'
+import { formatRelativeDate } from '@/lib/dates/relative'
+import { fetchVenuePhotoUrl } from '@/lib/places/server'
+import { VenuePhotoStrip } from '@/app/components/venue-photo-strip'
+import { RsvpButton } from './rsvp-button'
 import { ShareButtons } from './share-buttons'
 import { TopNav } from '@/app/components/top-nav'
+import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
+function EyebrowSection({ groupName, organizerName }: { groupName: string; organizerName: string | null }) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="inline-flex items-center gap-1.5 bg-sage/10 text-sage text-xs font-medium px-2 py-1 rounded-full">
+        <span className="w-4 h-4 rounded-sm bg-sage/20 flex items-center justify-center text-[9px] font-bold text-sage">
+          {groupName.charAt(0).toUpperCase()}
+        </span>
+        {groupName}
+      </span>
+      {organizerName && (
+        <span className="inline-flex items-center gap-1.5 bg-sand/30 text-muted text-xs font-medium px-2 py-1 rounded-full">
+          <span className="w-4 h-4 rounded-full bg-sand flex items-center justify-center text-[9px] font-bold text-charcoal">
+            {organizerName.charAt(0).toUpperCase()}
+          </span>
+          {organizerName}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function TurnoutInfo({ title, relativeDate, locationLabel, directionsHref, placeId, description }: {
+  title: string
+  relativeDate: string
+  locationLabel: string
+  directionsHref: string | null
+  placeId: string | null
+  description: string | null
+}) {
+  return (
+    <>
+      <h1 className="font-heading font-bold text-3xl text-charcoal leading-tight">{title}</h1>
+
+      {/* When */}
+      <div className="flex items-center gap-2 text-charcoal">
+        <Calendar size={16} strokeWidth={1.75} className="text-sage flex-shrink-0" />
+        <span className="text-sm font-medium">{relativeDate}</span>
+      </div>
+
+      {/* Where */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2 text-charcoal">
+          <MapPin size={16} strokeWidth={1.75} className="text-sage flex-shrink-0" />
+          <span className="text-sm font-medium">{locationLabel}</span>
+        </div>
+        {directionsHref && (
+          <a
+            href={directionsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-terracotta text-sm font-medium ml-6 hover:underline"
+            data-testid="directions-link"
+          >
+            Get Directions ↗
+          </a>
+        )}
+      </div>
+
+      {/* Venue photos */}
+      <VenuePhotoStrip placeId={placeId} />
+
+      {/* Description */}
+      {description && (
+        <p className="text-muted text-sm leading-relaxed">{description}</p>
+      )}
+    </>
+  )
+}
 
 interface TurnoutPageProps {
   params: { slug: string }
+}
+
+export async function generateMetadata({ params }: TurnoutPageProps): Promise<Metadata> {
+  const turnout = await getTurnoutBySlug(params.slug)
+  if (!turnout) return {}
+
+  const relativeDate = formatRelativeDate(turnout.startsAt)
+  const description = [
+    turnout.group.name,
+    relativeDate,
+    turnout.primaryLocation.name,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+
+  // Venue photo for og:image — makes share links in Signal/WhatsApp substantially
+  // more clickable. Fetched server-side + cached 24h. Fails silently.
+  const ogImage = await fetchVenuePhotoUrl(turnout.primaryLocation.placeId)
+
+  return {
+    title: `${turnout.title} — turnout.network`,
+    description,
+    openGraph: {
+      title: turnout.title,
+      description,
+      type: 'website',
+      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630 }] } : {}),
+    },
+  }
 }
 
 export default async function TurnoutPage({ params }: TurnoutPageProps) {
@@ -18,113 +120,172 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
 
   const user = await getUser()
 
-  // Check if the viewer is an organizer of this turnout's group
-  let isOrganizer = false
-  if (user) {
-    const organizerRecord = await prisma.groupOrganizer.findFirst({
-      where: { groupId: turnout.groupId, userId: user.id },
-    })
-    isOrganizer = !!organizerRecord
-  }
+  const isOrganizer = user ? await isGroupOrganizer(user.id, turnout.groupId) : false
 
-  // Build the turnout URL from the request host so it works on
-  // both prod (turnout.network) and dev stages (CloudFront URLs)
-  const host = headers().get('host') ?? 'turnout.network'
-  const protocol = host.includes('localhost') ? 'http' : 'https'
-  const turnoutUrl = `${protocol}://${host}/t/${turnout.slug}`
+  const defaultOpportunity = await getDefaultOpportunity(turnout.id)
+  const existingEngagement =
+    user && defaultOpportunity
+      ? await getUserEngagement(user.id, defaultOpportunity.id)
+      : null
+  const rsvpCount = defaultOpportunity ? await getRsvpCount(defaultOpportunity.id) : null
 
-  const formattedDate = turnout.startsAt.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-  const formattedTime = turnout.startsAt.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-  const locationName = turnout.primaryLocation.name
+  const relativeDate = formatRelativeDate(turnout.startsAt)
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://turnout.network'
+  const turnoutUrl = `${baseUrl}/t/${turnout.slug}`
+
+  const { primaryLocation } = turnout
+  const directionsHref =
+    primaryLocation.lat !== null && primaryLocation.lng !== null
+      ? `https://maps.google.com/maps?q=${primaryLocation.lat},${primaryLocation.lng}`
+      : primaryLocation.formattedAddress
+      ? `https://maps.google.com/maps?q=${encodeURIComponent(primaryLocation.formattedAddress)}`
+      : null
+
+  const organizerName = turnout.createdByUser?.displayName ?? null
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // ORGANIZER VIEW
+  // ─────────────────────────────────────────────────────────────────────────────
   if (isOrganizer) {
-    const inviteMessage = `Hey! I'm organizing ${turnout.title} for ${turnout.group.name} — ${formattedDate} at ${formattedTime} at ${locationName}. RSVP here: ${turnoutUrl}`
+    const inviteMessage = `${turnout.group.name} is organizing ${turnout.title} on ${relativeDate}. Join us: ${turnoutUrl}`
+
+    // Days until the turnout — shown in organizer status card
+    const now = new Date()
+    const diffMs = turnout.startsAt.getTime() - now.getTime()
+    const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
+    const daysLabel = diffDays === 0 ? 'today' : diffDays === 1 ? '1 day to go' : `${diffDays} days to go`
 
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-offwhite">
         <TopNav
           variant="authed"
           backLabel={turnout.group.name}
-          backHref="/"
+          backHref="/organize"
           displayName={user!.displayName ?? '??'}
         />
-        <main className="flex-1 py-12 px-4">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-            <h1 className="text-2xl font-bold text-green-900 mb-2">
-              Your turnout is live!
-            </h1>
-            <p className="text-green-700">
-              Share the link and get people moving.
-            </p>
+
+        <main className="flex-1 flex flex-col">
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-3 bg-warm">
+            <EyebrowSection groupName={turnout.group.name} organizerName={organizerName} />
+            <TurnoutInfo
+              title={turnout.title}
+              relativeDate={relativeDate}
+              locationLabel={primaryLocation.formattedAddress ?? primaryLocation.name}
+              directionsHref={directionsHref}
+              placeId={primaryLocation.placeId}
+              description={turnout.description}
+            />
+
+            {/* Organizer status card */}
+            <div
+              className="rounded-xl border border-sage/30 bg-[#F5F5F8] px-4 py-3 flex flex-col gap-1"
+              data-testid="organizer-status-card"
+            >
+              <div className="flex items-center gap-2 text-sage font-semibold text-base">
+                <span>You&apos;re organizing this.</span>
+              </div>
+              <p className="text-sm text-muted">
+                {rsvpCount !== null ? `${rsvpCount} RSVPs` : '–'} · {daysLabel} — share the link!
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-gray-900">{turnout.title}</h2>
-            <p className="text-gray-600">{turnout.group.name} — {turnout.group.mission}</p>
-            <p className="text-gray-700">
-              {formattedDate} at {formattedTime}
-            </p>
-            <p className="text-gray-700">{locationName}</p>
+          {/* Share bar */}
+          <div className="px-4 py-2 bg-warm border-t border-separator">
+            <ShareButtons
+              inviteMessage={inviteMessage}
+              turnoutUrl={turnoutUrl}
+              turnoutTitle={turnout.title}
+            />
           </div>
 
-          {turnout.description && (
-            <p className="text-gray-600">{turnout.description}</p>
-          )}
+          {/* Tab nav */}
+          <div className="flex border-t border-separator bg-white">
+            {/* Preview — active */}
+            <div className="flex-1 flex flex-col items-center justify-center py-3 gap-1">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D6B52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span className="text-xs font-medium text-sage">Preview</span>
+            </div>
 
-          {/* Prewritten invite message */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Invite message:</p>
-            <p className="text-gray-800 whitespace-pre-wrap" data-testid="invite-message">
-              {inviteMessage}
-            </p>
+            {/* RSVPs — links to TDD0006 organizer RSVP list (page may 404 until then) */}
+            <Link
+              href={`/organize/t/${turnout.slug}/rsvps`}
+              className="flex-1 flex flex-col items-center justify-center py-3 gap-1 text-muted hover:text-charcoal transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span className="text-xs font-medium">RSVPs</span>
+            </Link>
+
+            {/* Edit — post-MVP, disabled */}
+            <div className="flex-1 flex flex-col items-center justify-center py-3 gap-1 opacity-40 cursor-not-allowed">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <span className="text-xs font-medium text-muted">Edit</span>
+            </div>
           </div>
-
-          <ShareButtons
-            inviteMessage={inviteMessage}
-            turnoutUrl={turnoutUrl}
-            turnoutTitle={turnout.title}
-          />
-
-          <p className="text-center text-gray-500 text-sm">
-            0 people have RSVPd so far — share the link!
-          </p>
-        </div>
-      </main>
+        </main>
       </div>
     )
   }
 
-  // Public view — everyone else
+  // ─────────────────────────────────────────────────────────────────────────────
+  // PUBLIC VIEW (participants + unauthenticated)
+  // ─────────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-offwhite">
       <TopNav variant="public" user={user} />
-      <main className="flex-1 py-12 px-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-900">{turnout.title}</h1>
-          <p className="text-gray-600">{turnout.group.name}</p>
-          <p className="text-gray-700">
-            {formattedDate} at {formattedTime}
-          </p>
-          <p className="text-gray-700">{locationName}</p>
+
+      <main className="flex-1 flex flex-col">
+        {/* Scrollable content area */}
+        <div className="flex-1 px-4 py-5 flex flex-col gap-3 bg-warm">
+          <EyebrowSection groupName={turnout.group.name} organizerName={organizerName} />
+          <TurnoutInfo
+            title={turnout.title}
+            relativeDate={relativeDate}
+            locationLabel={primaryLocation.formattedAddress ?? primaryLocation.name}
+            directionsHref={directionsHref}
+            placeId={primaryLocation.placeId}
+            description={turnout.description}
+          />
+
+          {/* RSVP count — only shown when we have a reliable count (null = DB error, hide it) */}
+          {rsvpCount !== null && (
+            <div className="flex items-center gap-2 text-muted text-sm" data-testid="rsvp-count">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              {formatRsvpCount(rsvpCount)}
+            </div>
+          )}
         </div>
 
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-          <p className="text-gray-600">
-            Full details coming soon. Check back before the event!
-          </p>
+        {/* Sticky bottom bar with RSVP button */}
+        <div className="px-4 py-2 bg-offwhite border-t border-separator">
+          <RsvpButton
+            slug={turnout.slug}
+            isAuthenticated={!!user}
+            initialEngagement={existingEngagement ? { status: existingEngagement.status } : null}
+            lat={primaryLocation.lat ?? null}
+            lng={primaryLocation.lng ?? null}
+            formattedAddress={primaryLocation.formattedAddress ?? null}
+          />
         </div>
-      </div>
-    </main>
+      </main>
     </div>
   )
 }

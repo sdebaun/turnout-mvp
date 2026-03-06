@@ -3,6 +3,7 @@ export {
   generateTurnoutSlug,
   createGroupWithTurnout,
   getTurnoutBySlug,
+  isGroupOrganizer,
   type CreateGroupWithTurnoutData,
   type TurnoutWithDetails,
 } from './groups'

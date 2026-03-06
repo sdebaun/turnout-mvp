@@ -28,6 +28,16 @@ enum TurnoutStatus {
   COMPLETED
 }
 
+// Tracks what actually happened after a user RSVPs.
+// CONFIRMED is the only status set in MVP via web RSVP.
+// CANCELED set via SMS (TDD0004), CHECKED_IN + NO_SHOW set by TDD0005.
+enum EngagementStatus {
+  CONFIRMED
+  CANCELED
+  CHECKED_IN
+  NO_SHOW
+}
+
 // Core user identity
 model User {
   id          String   @id @default(cuid())
@@ -40,6 +50,7 @@ model User {
   sessions        Session[]
   groupOrganizers GroupOrganizer[]
   turnoutsCreated Turnout[]
+  engagements     Engagement[]
 }
 
 // Credentials table — credential-agnostic design so we can add email later
@@ -208,5 +219,30 @@ model Opportunity {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  engagements Engagement[]
+
   @@index([turnoutId])
+}
+
+// An engagement begins when a user RSVPs to an opportunity.
+// Records what actually happened: confirmed, canceled, checked in, or no-show.
+// Unique on (userId, opportunityId) — prevents duplicate RSVPs without
+// needing application-level dedup logic.
+model Engagement {
+  id            String           @id @default(cuid())
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityId String
+  opportunity   Opportunity      @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  status        EngagementStatus @default(CONFIRMED)
+  confirmedAt   DateTime         @default(now())
+  canceledAt    DateTime?        // Set when status → CANCELED
+  checkedInAt   DateTime?        // Set when status → CHECKED_IN (TDD0005)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Prevents duplicate RSVPs: same user, same opportunity = same promise.
+  @@unique([userId, opportunityId])
+  @@index([opportunityId])
+  @@index([userId])
 }

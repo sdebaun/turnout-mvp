@@ -1,5 +1,5 @@
 import { ResultAsync, ok, err } from 'neverthrow'
-import { customAlphabet } from 'nanoid/non-secure'
+import { customAlphabet } from 'nanoid'
 import { prisma } from '@/lib/db'
 import { logger } from '@/lib/logger'
 import { Prisma } from '@prisma/client'
@@ -126,12 +126,24 @@ async function attemptCreate(
   }
 }
 
+/**
+ * Check whether a user is an organizer for a given group.
+ * Centralised here so TDD0007 collaboration changes only need to touch lib/groups.
+ */
+export async function isGroupOrganizer(userId: string, groupId: string): Promise<boolean> {
+  const record = await prisma.groupOrganizer.findFirst({ where: { groupId, userId } })
+  return record !== null
+}
+
 // The shape returned by getTurnoutBySlug — turnout with its group and location.
-export type TurnoutWithDetails = Awaited<ReturnType<typeof getTurnoutBySlug>> & {}
+export type TurnoutWithDetails = Awaited<ReturnType<typeof getTurnoutBySlug>>
 
 /**
  * Public lookup: find a turnout by its slug, including the group and primary location.
  * Returns null if not found — that's a valid state (bad link), not an error.
+ *
+ * Next.js deduplicates fetch/Prisma calls within a single request automatically,
+ * so generateMetadata and the page component can both call this without issuing two queries.
  */
 export async function getTurnoutBySlug(slug: string) {
   return prisma.turnout.findUnique({
@@ -139,6 +151,9 @@ export async function getTurnoutBySlug(slug: string) {
     include: {
       group: true,
       primaryLocation: true,
+      // Organizer name is shown on the public turnout page for trust
+      // ("Organized by OrangeArmadillo"). Cheap to include here; ugly to retrofit later.
+      createdByUser: { select: { displayName: true } },
     },
   })
 }

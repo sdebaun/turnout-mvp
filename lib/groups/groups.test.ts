@@ -8,7 +8,7 @@ const { slugQueue } = vi.hoisted(() => ({
   slugQueue: [] as string[],
 }))
 
-vi.mock('nanoid/non-secure', () => ({
+vi.mock('nanoid', () => ({
   customAlphabet: () => () => {
     if (slugQueue.length > 0) {
       return slugQueue.shift()!

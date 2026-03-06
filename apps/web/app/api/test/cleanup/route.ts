@@ -6,10 +6,10 @@ import { CredentialType } from '@prisma/client'
  * Test-only endpoint: cleans up user data for given phone numbers.
  * Makes E2E tests idempotent — previous run data won't interfere.
  *
- * ONLY available when TEST_OTP_BYPASS=true. Returns 404 in production.
+ * ONLY available when TEST_OTP_BYPASS=true. Returns 404 otherwise.
  */
 export async function POST(request: Request) {
-  if (process.env.TEST_OTP_BYPASS !== 'true' || process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.TEST_OTP_BYPASS !== 'true') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
