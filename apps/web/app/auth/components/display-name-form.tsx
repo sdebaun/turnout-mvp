@@ -40,6 +40,7 @@ export function DisplayNameForm({ phone, onSuccess }: DisplayNameFormProps) {
       <div className="flex gap-2">
         <input
           id="displayName"
+          data-testid="display-name"
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}

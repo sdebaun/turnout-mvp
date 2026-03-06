@@ -139,6 +139,9 @@ export async function getTurnoutBySlug(slug: string) {
     include: {
       group: true,
       primaryLocation: true,
+      // Organizer name is shown on the public turnout page for trust
+      // ("Organized by OrangeArmadillo"). Cheap to include here; ugly to retrofit later.
+      createdByUser: { select: { displayName: true } },
     },
   })
 }
