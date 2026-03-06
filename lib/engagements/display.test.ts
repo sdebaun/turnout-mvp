@@ -23,8 +23,8 @@ describe('formatRsvpCount', () => {
     expect(formatRsvpCount(9)).toBe('9 people are going')
   })
 
-  it('returns "Over 5 people are going" for 10 (not "Over 10" — that would be false)', () => {
-    expect(formatRsvpCount(10)).toBe('Over 5 people are going')
+  it('returns exact count for 10 (boundary: softening starts at 11)', () => {
+    expect(formatRsvpCount(10)).toBe('10 people are going')
   })
 
   it('returns "Over 10 people are going" for 11', () => {

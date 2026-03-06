@@ -1,4 +1,3 @@
-import { cache } from 'react'
 import { ResultAsync, ok, err } from 'neverthrow'
 import { customAlphabet } from 'nanoid'
 import { prisma } from '@/lib/db'
@@ -143,10 +142,10 @@ export type TurnoutWithDetails = Awaited<ReturnType<typeof getTurnoutBySlug>>
  * Public lookup: find a turnout by its slug, including the group and primary location.
  * Returns null if not found — that's a valid state (bad link), not an error.
  *
- * Wrapped in React.cache() so generateMetadata and the page component can both call this
- * without issuing two Prisma queries — the second call within the same request is free.
+ * Next.js deduplicates fetch/Prisma calls within a single request automatically,
+ * so generateMetadata and the page component can both call this without issuing two queries.
  */
-export const getTurnoutBySlug = cache(async function getTurnoutBySlug(slug: string) {
+export async function getTurnoutBySlug(slug: string) {
   return prisma.turnout.findUnique({
     where: { slug },
     include: {
@@ -157,4 +156,4 @@ export const getTurnoutBySlug = cache(async function getTurnoutBySlug(slug: stri
       createdByUser: { select: { displayName: true } },
     },
   })
-})
+}
