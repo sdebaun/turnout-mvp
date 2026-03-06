@@ -127,7 +127,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
     // Turnout page should show the organizer status card, confirming we landed on the real page.
     // The group name appears in the back nav label and eyebrow pill.
     await expect(page.locator('[data-testid="organizer-status-card"]')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByText('Save Willow Creek')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Save Willow Creek', { exact: true })).toBeVisible({ timeout: 5000 })
 
     // Extract slug for cleanup
     const url = page.url()
