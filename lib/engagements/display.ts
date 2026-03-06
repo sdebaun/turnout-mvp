@@ -13,9 +13,9 @@ export function formatRsvpCount(count: number): string {
   if (count < 5) return 'Be the first to RSVP!'
   if (count <= 10) return `${count} people are going`
 
-  // Softening starts at 11. Math.floor(count / 5) * 5 gives the nearest 5 below count.
-  // Examples: 11 → 10, 14 → 10, 15 → 15, 23 → 20, 100 → 100
-  // This prevents the "9 people → Over 5 people" visual regression at the 10 boundary.
-  const softened = Math.floor(count / 5) * 5
+  // Math.floor((count - 1) / 5) * 5 guarantees the softened value is strictly less than count.
+  // Softening starts at 11 to avoid the 9→"Over 5" visual regression at the 10 boundary.
+  // Examples: 11 → 10, 15 → 10, 16 → 15, 23 → 20, 100 → 95
+  const softened = Math.floor((count - 1) / 5) * 5
   return `Over ${softened} people are going`
 }
