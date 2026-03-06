@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { NavAvatarDropdown } from './nav-avatar-dropdown'
-import { NavSignInButton } from './nav-sign-in-button'
+import { NavSignInButton } from '../atoms/nav-sign-in-button'
 
 // Three nav variants matching the design system:
 //

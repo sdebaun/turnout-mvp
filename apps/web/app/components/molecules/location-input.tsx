@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import { APIProvider, useApiIsLoaded } from '@vis.gl/react-google-maps'
 import dynamic from 'next/dynamic'
 import { MapPin, X } from 'lucide-react'
-import type { LocationData } from '../actions'
+import type { LocationData } from '@/app/organize/actions'
 
 interface LocationInputInnerProps {
   value: LocationData | null

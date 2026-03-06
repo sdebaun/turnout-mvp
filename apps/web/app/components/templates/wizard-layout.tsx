@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { TopNav } from '../../components/top-nav'
+import { TopNav } from '../organisms/top-nav'
 
 // Pips now live inside the header — no longer straddling the header/body seam.
 // Amber = completed, off-white = not yet, both ringed with sage.
@@ -37,6 +37,7 @@ interface WizardLayoutProps {
   continueDisabled?: boolean
   isSubmitting?: boolean
   previewZone?: React.ReactNode
+  error?: string | null
   children: React.ReactNode
 }
 
@@ -50,6 +51,7 @@ export function WizardLayout({
   continueDisabled,
   isSubmitting,
   previewZone,
+  error,
   children,
 }: WizardLayoutProps) {
   const continueIsDisabled = continueDisabled || isSubmitting
@@ -110,6 +112,11 @@ export function WizardLayout({
               data-testid="wizard-form"
             >
               {children}
+              {error && (
+                <div className="rounded-lg p-3 bg-red-50 border border-red-200" role="alert">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
             </div>
           </div>
 

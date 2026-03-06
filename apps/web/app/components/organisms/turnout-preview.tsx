@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Calendar, MapPin } from 'lucide-react'
-import { GroupPill, OrganizerPill } from '@/app/components/turnout-pills'
+import { GroupPill, OrganizerPill } from '../atoms/turnout-pills'
 
 interface TurnoutPreviewProps {
   groupName?: string      // if present: real group pill, else skeleton

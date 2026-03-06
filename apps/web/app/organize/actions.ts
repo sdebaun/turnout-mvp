@@ -3,14 +3,8 @@
 import { getUser } from '@/lib/auth/sessions'
 import { toUTCDate, createGroupWithTurnout } from '@/lib/groups'
 import { logger } from '@/lib/logger'
-
-export type LocationData = {
-  name: string
-  formattedAddress?: string
-  lat?: number
-  lng?: number
-  placeId?: string
-}
+import type { LocationData } from './schemas'
+export type { LocationData }
 
 export type CreateGroupWithTurnoutInput = {
   groupName: string

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 import { getUser } from '@/lib/auth/sessions'
 import { TestForm } from './test-form'
 import { AuthSection } from './auth-section'
-import { TopNav } from './components/top-nav'
+import { TopNav } from './components/organisms/top-nav'
 
 // page queries live DB — must render at request time, not build time
 export const dynamic = 'force-dynamic'
