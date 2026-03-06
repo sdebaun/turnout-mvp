@@ -10,35 +10,14 @@ import { VenuePhotoStrip } from '@/app/components/venue-photo-strip'
 import { RsvpButton } from './rsvp-button'
 import { ShareButtons } from './share-buttons'
 import { TopNav } from '@/app/components/top-nav'
+import { GroupPill, OrganizerPill } from '@/app/components/turnout-pills'
 import Link from 'next/link'
 
-function EyebrowSection({ groupName, organizerName }: { groupName: string; organizerName: string | null }) {
-  return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="inline-flex items-center gap-1.5 bg-sage/10 text-sage text-xs font-medium px-2 py-1 rounded-full">
-        <span className="w-4 h-4 rounded-sm bg-sage/20 flex items-center justify-center text-[9px] font-bold text-sage">
-          {groupName.charAt(0).toUpperCase()}
-        </span>
-        {groupName}
-      </span>
-      {organizerName && (
-        <span className="inline-flex items-center gap-1.5 bg-sand/30 text-muted text-xs font-medium px-2 py-1 rounded-full">
-          <span className="w-4 h-4 rounded-full bg-sand flex items-center justify-center text-[9px] font-bold text-charcoal">
-            {organizerName.charAt(0).toUpperCase()}
-          </span>
-          {organizerName}
-        </span>
-      )}
-    </div>
-  )
-}
-
-function TurnoutInfo({ title, relativeDate, locationLabel, directionsHref, placeId, description }: {
+function TurnoutInfo({ title, relativeDate, locationLabel, directionsHref, description }: {
   title: string
   relativeDate: string
   locationLabel: string
   directionsHref: string | null
-  placeId: string | null
   description: string | null
 }) {
   return (
@@ -71,7 +50,7 @@ function TurnoutInfo({ title, relativeDate, locationLabel, directionsHref, place
       </div>
 
       {/* Venue photos */}
-      <VenuePhotoStrip placeId={placeId} />
+      <VenuePhotoStrip />
 
       {/* Description */}
       {description && (
@@ -168,13 +147,15 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
         <main className="flex-1 flex flex-col">
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-3 bg-warm">
-            <EyebrowSection groupName={turnout.group.name} organizerName={organizerName} />
+            <div className="flex items-center gap-2 flex-wrap">
+              <GroupPill name={turnout.group.name} />
+              {organizerName && <OrganizerPill name={organizerName} />}
+            </div>
             <TurnoutInfo
               title={turnout.title}
               relativeDate={relativeDate}
               locationLabel={primaryLocation.formattedAddress ?? primaryLocation.name}
               directionsHref={directionsHref}
-              placeId={primaryLocation.placeId}
               description={turnout.description}
             />
 
@@ -250,7 +231,10 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
       <main className="flex-1 flex flex-col">
         {/* Scrollable content area */}
         <div className="flex-1 px-4 py-5 flex flex-col gap-3 bg-warm">
-          <EyebrowSection groupName={turnout.group.name} organizerName={organizerName} />
+          <div className="flex items-center gap-2 flex-wrap">
+            <GroupPill name={turnout.group.name} />
+            {organizerName && <OrganizerPill name={organizerName} />}
+          </div>
           <TurnoutInfo
             title={turnout.title}
             relativeDate={relativeDate}

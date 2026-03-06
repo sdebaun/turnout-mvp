@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@prisma/client'
 import { Calendar, Clock, Phone } from 'lucide-react'
@@ -8,8 +8,9 @@ import { WizardLayout } from './wizard-layout'
 import { TurnoutPreview } from './turnout-preview'
 import { LocationInput } from './location-input'
 import { OptionGroup, type OptionItem } from '../../components/option-group'
+import { OTPInputForm } from '../../auth/components/otp-input-form'
 import { createGroupWithTurnoutAction } from '../actions'
-import { checkPhoneAction, sendOTPAction, signInAction } from '../../auth/actions'
+import { checkPhoneAction, sendOTPAction } from '../../auth/actions'
 import type { LocationData } from '../actions'
 import { normalizePhone } from '@/lib/phone'
 import { generateRandomName } from '@/lib/names'
@@ -105,99 +106,6 @@ const EXPERTISE_OPTIONS: OptionItem[] = [
   },
 ]
 
-// ── Step 4: OTP boxes ────────────────────────────────────────────────────────
-// Six individual digit boxes with a visual separator between box 3 and 4.
-// WebOTP API handles auto-fill on supported mobile browsers.
-// Focus/blur state managed via Tailwind focus variants — no inline style toggling.
-
-function OTPBoxes({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: string
-  onChange: (v: string) => void
-  disabled?: boolean
-}) {
-  const inputs = useRef<Array<HTMLInputElement | null>>([])
-
-  // WebOTP auto-fill — reads the SMS code and fills the input
-  useEffect(() => {
-    if (!('OTPCredential' in window)) return
-    const ac = new AbortController()
-    navigator.credentials
-      .get({
-        otp: { transport: ['sms'] },
-        signal: ac.signal,
-      } as CredentialRequestOptions)
-      .then((credential) => {
-        // OTPCredential is not in the TypeScript DOM lib — WICG spec, not yet standardized
-        // https://wicg.github.io/web-otp/
-        const otp = credential as { code?: string }
-        if (otp?.code) onChange(otp.code.slice(0, 6))
-      })
-      .catch(() => {
-        // Expected on desktop / user dismissal — silent fallback to manual entry
-      })
-    return () => ac.abort()
-    // Only run on mount — value/onChange refs won't change here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, idx: number) {
-    if (e.key === 'Backspace' && !value[idx] && idx > 0) {
-      inputs.current[idx - 1]?.focus()
-    }
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>, idx: number) {
-    const digit = e.target.value.replace(/\D/g, '').slice(-1)
-    const chars = value.split('')
-    chars[idx] = digit
-    onChange(chars.slice(0, 6).join(''))
-    if (digit && idx < 5) {
-      inputs.current[idx + 1]?.focus()
-    }
-  }
-
-  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
-    e.preventDefault()
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
-    onChange(pasted)
-    const focusIdx = Math.min(pasted.length, 5)
-    inputs.current[focusIdx]?.focus()
-  }
-
-  // Shared box class — focus:border-sage replaces the onFocus/onBlur inline style toggling
-  const boxClass =
-    'w-11 h-[52px] border border-skeleton rounded-lg text-center text-2xl font-mono text-charcoal bg-white outline-none focus:border-sage focus:outline-none'
-
-  return (
-    <div className="flex items-center justify-center gap-2">
-      {[0, 1, 2, 3, 4, 5].map((idx) => (
-        <React.Fragment key={idx}>
-          {/* Visual separator dot between digits 3 and 4 */}
-          {idx === 3 && <div className="w-1.5 h-1.5 rounded-full bg-skeleton flex-shrink-0" aria-hidden="true" />}
-          <input
-            ref={(el) => { inputs.current[idx] = el }}
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={1}
-            value={value[idx] ?? ''}
-            onChange={(e) => handleChange(e, idx)}
-            onKeyDown={(e) => handleKeyDown(e, idx)}
-            onPaste={handlePaste}
-            disabled={disabled}
-            className={boxClass}
-            aria-label={`Digit ${idx + 1}`}
-          />
-        </React.Fragment>
-      ))}
-    </div>
-  )
-}
-
 // ── Main wizard component ────────────────────────────────────────────────────
 
 export function OrganizeForm({ user }: OrganizeFormProps) {
@@ -250,15 +158,12 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-
-  // Step 4: OTP
-  const [otpCode, setOtpCode] = useState('')
   const [authPhone, setAuthPhone] = useState('')
 
   // ── Continue/submit handlers per step ──────────────────────────────────────
 
-  // Step 3 for already-authenticated users — skip OTP, create directly
-  async function handleAuthenticatedCreate() {
+  // Shared — called after auth is confirmed (either authenticated already, or OTP verified)
+  async function doCreate() {
     setIsSubmitting(true)
     setSubmitError(null)
     try {
@@ -293,34 +198,10 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
     }
   }
 
-  // Step 4: verify OTP + create group/turnout
-  async function handleCreateTurnout() {
-    setIsSubmitting(true)
-    setSubmitError(null)
-    try {
-      const signInResult = await signInAction(authPhone, otpCode, displayName)
-      if ('error' in signInResult) { setSubmitError(signInResult.error); return }
-
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-      const result = await createGroupWithTurnoutAction({
-        groupName, mission: groupName, turnoutTitle,
-        location: location!, turnoutDate, turnoutTime, turnoutTimezone: timezone,
-      })
-      if ('error' in result) { setSubmitError(result.error); return }
-
-      clearSession()
-      router.push(`/t/${result.turnoutSlug}`)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   // ── Per-step readiness checks ──────────────────────────────────────────────
   const step1Ready = Boolean(turnoutDate && turnoutTime && location)
   const step2Ready = Boolean(groupName.trim() && turnoutTitle.trim())
   const step3Ready = Boolean(displayName.trim() && phone.length >= 10)
-  const step4Ready = otpCode.length === 6
-
   // Derive city shorthand from location's formattedAddress for TurnoutPreview
   const locationCity = location?.formattedAddress
     ? location.formattedAddress.split(',').slice(-2).join(',').trim()
@@ -469,7 +350,7 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           headerSubtitle="One last step and it's yours."
           currentStep={3}
           onBack={() => goToStep(2)}
-          onContinue={user ? handleAuthenticatedCreate : handleSendCode}
+          onContinue={user ? doCreate : handleSendCode}
           continueLabel={user ? 'Create Turnout' : 'Send code'}
           continueDisabled={user ? false : !step3Ready}
           isSubmitting={isSubmitting}
@@ -554,26 +435,17 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           headerSubtitle="Just confirm that it's you."
           currentStep={4}
           onBack={() => goToStep(3)}
-          onContinue={handleCreateTurnout}
+          onContinue={() => {}}
           continueLabel="Create Turnout"
-          continueDisabled={!step4Ready}
+          continueDisabled
           isSubmitting={isSubmitting}
           previewZone={previewNode}
         >
-          <div className="flex flex-col gap-4">
-            <p className="text-sm text-center text-muted">
-              We just texted you a 6-digit code.
-              <br />
-              Enter the 6-digit code we sent you.
-            </p>
-
-            <OTPBoxes
-              value={otpCode}
-              onChange={setOtpCode}
-              disabled={isSubmitting}
-            />
-          </div>
-
+          <OTPInputForm
+            phone={authPhone}
+            displayName={displayName}
+            onSuccess={doCreate}
+          />
           {submitError && <ErrorBanner message={submitError} />}
         </WizardLayout>
       )}

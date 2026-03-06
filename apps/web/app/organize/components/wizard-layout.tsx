@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { TopNavFocused } from '../../components/top-nav-focused'
+import { TopNav } from '../../components/top-nav'
 
 // Pips now live inside the header — no longer straddling the header/body seam.
 // Amber = completed, off-white = not yet, both ringed with sage.
@@ -57,7 +57,7 @@ export function WizardLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-warm" data-testid="wizard-layout">
-      <TopNavFocused />
+      <TopNav variant="focused" />
 
       {/* Full-width sage header. Desktop height is auto to accommodate pips below the text. */}
       <div className="flex-shrink-0 bg-sage">

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Calendar, MapPin } from 'lucide-react'
+import { GroupPill, OrganizerPill } from '@/app/components/turnout-pills'
 
 interface TurnoutPreviewProps {
   groupName?: string      // if present: real group pill, else skeleton
@@ -42,63 +43,6 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// Group skeleton pill — shown when no groupName yet
-function GroupSkeletonPill() {
-  return (
-    <div
-      className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1"
-      aria-hidden="true"
-    >
-      {/* Avatar placeholder — square with rounded corners to distinguish from organizer circle */}
-      <div className="w-4 h-4 rounded bg-skeleton flex-shrink-0" />
-      {/* Name bar */}
-      <div className="w-[70px] h-2.5 rounded bg-skeleton" />
-    </div>
-  )
-}
-
-// Group real pill — shown when groupName is present.
-// Avatar shows first 2 chars of group name as initials on sage green bg.
-function GroupRealPill({ name }: { name: string }) {
-  const initials = name.slice(0, 2).toUpperCase()
-  return (
-    <div className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1">
-      <div className="w-4 h-4 rounded bg-sage flex items-center justify-center flex-shrink-0">
-        <span className="text-[7px] font-bold text-white font-sans leading-none">{initials}</span>
-      </div>
-      <span className="text-xs font-medium text-muted font-sans tracking-[0.4px]">{name}</span>
-    </div>
-  )
-}
-
-// Organizer skeleton pill — shown when no displayName yet
-function OrganizerSkeletonPill() {
-  return (
-    <div
-      className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1"
-      aria-hidden="true"
-    >
-      {/* Circle avatar placeholder — full circle distinguishes from group's square avatar */}
-      <div className="w-4 h-4 rounded-full bg-skeleton flex-shrink-0" />
-      {/* Name bar */}
-      <div className="w-[70px] h-2.5 rounded bg-skeleton" />
-    </div>
-  )
-}
-
-// Organizer real pill — shown when displayName is entered on step 3.
-// Circle avatar (rounded-full) distinguishes from group's square avatar.
-function OrganizerRealPill({ name }: { name: string }) {
-  const initials = name.slice(0, 2).toUpperCase()
-  return (
-    <div className="inline-flex items-center gap-1.5 h-6 rounded-xl px-2 py-1">
-      <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-        <span className="text-[7px] font-bold text-white font-sans leading-none">{initials}</span>
-      </div>
-      <span className="text-xs font-medium text-muted font-sans tracking-[0.4px]">{name}</span>
-    </div>
-  )
-}
 
 export function TurnoutPreview({
   groupName,
@@ -137,10 +81,10 @@ export function TurnoutPreview({
       className="rounded-xl lg:rounded-none bg-white p-[14px_16px] flex flex-col gap-2 ring-1 ring-sage/20"
       data-testid="turnout-preview-card"
     >
-      {/* Eyebrow row: group pill + organizer skeleton pill */}
+      {/* Eyebrow row: group pill + organizer pill — skeleton when name not yet entered */}
       <div className="flex items-center gap-2 flex-wrap">
-        {groupName ? <GroupRealPill name={groupName} /> : <GroupSkeletonPill />}
-        {displayName ? <OrganizerRealPill name={displayName} /> : <OrganizerSkeletonPill />}
+        <GroupPill name={groupName} />
+        <OrganizerPill name={displayName} />
       </div>
 
       {/* Turnout title — "My Turnout" ghost color (#DDD8D0) when not yet entered.

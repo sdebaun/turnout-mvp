@@ -16,10 +16,10 @@ import { NavSignInButton } from './nav-sign-in-button'
 //           breadcrumb, not generic "back"). Right: avatar dropdown.
 //           Lighter bg (#2F5441 = pine).
 
-function getInitials(displayName: string): string {
-  const words = displayName.trim().split(/\s+/).filter(Boolean)
+function getInitials(displayName: string) {
+  const words = displayName.trim().split(/\s+/)
   return words.length >= 2
-    ? (words[0][0] + words[words.length - 1][0]).toUpperCase()
+    ? (words[0][0] + words.at(-1)![0]).toUpperCase()
     : displayName.slice(0, 2).toUpperCase()
 }
 
@@ -40,8 +40,7 @@ export function TopNav(props: TopNavProps) {
   }
 
   if (props.variant === 'public') {
-    const { user } = props
-    const displayName = user?.displayName ?? null
+    const displayName = props.user?.displayName ?? null
 
     return (
       <nav className="sticky top-0 z-10 h-14 flex items-center justify-between bg-pine flex-shrink-0 px-4">

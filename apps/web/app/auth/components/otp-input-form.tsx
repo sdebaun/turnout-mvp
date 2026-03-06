@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { signInAction, sendOTPAction } from '../actions'
+import { OTPBoxes } from './otp-boxes'
 
 interface OTPInputFormProps {
   phone: string
@@ -15,86 +16,39 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
   const [isPending, startTransition] = useTransition()
   const [resendPending, setResendPending] = useState(false)
 
-  // WebOTP API — auto-read SMS code on supported mobile browsers
-  useEffect(() => {
-    if (!('OTPCredential' in window)) return
-
-    const ac = new AbortController()
-    navigator.credentials
-      .get({
-        otp: { transport: ['sms'] },
-        signal: ac.signal,
-      } as CredentialRequestOptions)
-      .then((credential) => {
-        // OTPCredential is not in the TypeScript DOM lib — WICG spec, not yet standardized
-        // https://wicg.github.io/web-otp/
-        const otp = credential as { code?: string }
-        if (otp?.code) {
-          setCode(otp.code)
-          // Auto-submit after autofill
-          handleSubmitWithCode(otp.code)
-        }
-      })
-      .catch(() => {
-        // Expected on desktop or when user dismisses — fall back to manual entry
-      })
-
-    return () => ac.abort()
-    // Only run on mount — phone/displayName won't change during OTP step
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   function handleSubmitWithCode(submittedCode: string) {
     setError(null)
     startTransition(async () => {
       const result = await signInAction(phone, submittedCode, displayName)
-      if ('error' in result) {
-        setError(result.error)
-        return
-      }
-      // Pass isNewUser through so callers can decide what to do post-auth
+      if ('error' in result) { setError(result.error); return }
       onSuccess({ isNewUser: result.isNewUser })
     })
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    handleSubmitWithCode(code)
+  function handleChange(v: string) {
+    setCode(v)
+    // Auto-submit on WebOTP autofill (6 digits arrive at once)
+    if (v.length === 6) handleSubmitWithCode(v)
   }
 
   async function handleResend() {
     setResendPending(true)
     setError(null)
     const result = await sendOTPAction(phone)
-    if ('error' in result) {
-      setError(result.error)
-    }
+    if ('error' in result) setError(result.error)
     setResendPending(false)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <label htmlFor="otp-code" className="text-sm font-medium text-gray-700">
-        Enter the 6-digit code sent to {phone}
-      </label>
-      <input
-        id="otp-code"
-        type="text"
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        value={code}
-        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-        placeholder="000000"
-        maxLength={6}
-        className="border border-gray-300 rounded-md px-3 py-2 text-center text-2xl tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
-        disabled={isPending}
-        required
-      />
-      {error && (
-        <p className="text-sm text-red-600" role="alert">
-          {error}
-        </p>
-      )}
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmitWithCode(code) }} className="flex flex-col gap-4">
+      <p className="text-sm text-center text-muted">
+        We sent a 6-digit code to {phone}
+      </p>
+
+      <OTPBoxes value={code} onChange={handleChange} disabled={isPending} />
+
+      {error && <p className="text-sm text-red-600 text-center" role="alert">{error}</p>}
+
       <button
         type="submit"
         disabled={isPending || code.length < 6}
@@ -102,6 +56,7 @@ export function OTPInputForm({ phone, displayName, onSuccess }: OTPInputFormProp
       >
         {isPending ? 'Verifying...' : 'Verify'}
       </button>
+
       <button
         type="button"
         onClick={handleResend}
