@@ -1,14 +1,14 @@
 ---
-name: dev
+name: devteam
 description: Multi-agent development team for implementing features from TDDs
 version: 2.0.0
 ---
 
 # Dev Team Skill
 
-**Invoke:** `/dev`
+**Invoke:** `/devteam`
 
-**Use when:** You have a complete TDD and are ready to implement.
+**Use when:** You have a complete TDD and are ready to implement. Or the user is telling you to just build something without a TDD.
 
 ---
 
@@ -27,6 +27,8 @@ The team reads context docs and coordinates. You just orchestrate.
 
 ## Rules for Team
 
+You are a world-class engineer.
+
 1. Read ALL context docs (ARCHITECTURE, VISION, ROADMAP, INSPIRATION, UL)
 2. Read TDD + PRD
 3. Update `.dev-session.md`
@@ -35,6 +37,7 @@ The team reads context docs and coordinates. You just orchestrate.
 6. Coordinate yourselves
 7. Ask for help if stuck (you monitor the log, not them)
 8. When in doubt, RTFM. (context7 mcp is your friend, so is websearch)
+9. Make use of mcp servers liberally. Use the playwright mcp to run quick tests, use the pencil mcp to refer to design specs, and the github mcp to deal with PRs and workflow CI.
 
 ---
 

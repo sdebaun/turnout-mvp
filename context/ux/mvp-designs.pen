@@ -9839,9 +9839,10 @@
           "height": 144,
           "fill": "#3D6B52",
           "layout": "vertical",
+          "gap": 6,
           "padding": [
-            0,
-            80
+            20,
+            128
           ],
           "justifyContent": "center",
           "children": [
@@ -9877,17 +9878,16 @@
           "fill": "#F0EDE8",
           "layout": "vertical",
           "padding": [
-            48,
-            80
+            72,
+            128
           ],
-          "justifyContent": "center",
           "alignItems": "center",
           "children": [
             {
               "type": "frame",
               "id": "x5BHg",
               "name": "content-center",
-              "width": 480,
+              "width": 720,
               "layout": "vertical",
               "gap": 12,
               "children": [
@@ -9909,7 +9909,7 @@
                       "id": "Qo6T1",
                       "name": "accentBar",
                       "width": 6,
-                      "height": 80,
+                      "height": 88,
                       "fill": "#C8831A"
                     },
                     {
@@ -9919,7 +9919,7 @@
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 10,
-                      "padding": 20,
+                      "padding": 24,
                       "children": [
                         {
                           "type": "text",
@@ -9969,7 +9969,7 @@
                       "id": "sBs9W",
                       "name": "accentBar",
                       "width": 6,
-                      "height": 80,
+                      "height": 88,
                       "fill": "#3D6B52"
                     },
                     {
@@ -9979,7 +9979,7 @@
                       "width": "fill_container",
                       "layout": "vertical",
                       "gap": 10,
-                      "padding": 20,
+                      "padding": 24,
                       "children": [
                         {
                           "type": "text",
@@ -10022,7 +10022,17 @@
           "width": 1280,
           "height": 72,
           "name": "actionA",
+          "padding": [
+            12,
+            352
+          ],
           "descendants": {
+            "zl3mP": {
+              "width": "fill_container"
+            },
+            "BApml": {
+              "width": "fill_container"
+            },
             "khRRc": {
               "content": "Let's go"
             }
@@ -10056,99 +10066,106 @@
           "height": 144,
           "fill": "#3D6B52",
           "layout": "vertical",
+          "gap": 12,
           "padding": [
-            0,
-            80
+            20,
+            128
           ],
           "justifyContent": "center",
           "children": [
             {
-              "type": "text",
-              "id": "zLUR5",
-              "name": "headline",
-              "fill": "#FAFAF7",
-              "content": "When and where?",
-              "lineHeight": 1.2,
-              "fontFamily": "Zilla Slab",
-              "fontSize": 28,
-              "fontWeight": "700"
-            },
-            {
-              "type": "text",
-              "id": "CjeED",
-              "name": "subtitle",
-              "fill": "#FFFFFFCC",
-              "content": "Pick something — you can always adjust it later.",
-              "fontFamily": "Plus Jakarta Sans",
-              "fontSize": 14,
-              "fontWeight": "normal"
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "xdRgu",
-          "name": "pipRow",
-          "width": 1280,
-          "height": 32,
-          "fill": "#3D6B52",
-          "gap": 6,
-          "padding": [
-            0,
-            80
-          ],
-          "alignItems": "center",
-          "children": [
-            {
               "type": "frame",
-              "id": "bK6my",
-              "name": "pip-filled",
-              "width": 10,
-              "height": 10,
-              "fill": "#C8831A",
-              "cornerRadius": 99
-            },
-            {
-              "type": "frame",
-              "id": "D9hsS",
-              "name": "pip-empty",
-              "width": 10,
-              "height": 10,
+              "id": "VY4Uk",
+              "name": "textGrp",
+              "width": "fill_container",
               "fill": "transparent",
-              "cornerRadius": 99,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1.5,
-                "fill": "#FAFAF7"
-              }
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zLUR5",
+                  "name": "headline",
+                  "fill": "#FAFAF7",
+                  "content": "When and where?",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Zilla Slab",
+                  "fontSize": 34,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "CjeED",
+                  "name": "subtitle",
+                  "fill": "#FFFFFFCC",
+                  "content": "Pick something — you can always adjust it later.",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
             },
             {
               "type": "frame",
-              "id": "nUC5U",
-              "name": "pip-empty",
-              "width": 10,
-              "height": 10,
+              "id": "xKdys",
+              "name": "pipsBox",
               "fill": "transparent",
-              "cornerRadius": 99,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1.5,
-                "fill": "#FAFAF7"
-              }
-            },
-            {
-              "type": "frame",
-              "id": "agXVY",
-              "name": "pip-empty",
-              "width": 10,
-              "height": 10,
-              "fill": "transparent",
-              "cornerRadius": 99,
-              "stroke": {
-                "align": "inside",
-                "thickness": 1.5,
-                "fill": "#FAFAF7"
-              }
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "iA7mN",
+                  "name": "pip1",
+                  "fill": "#C8831A",
+                  "width": 16,
+                  "height": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#3D6B52"
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "xiQgw",
+                  "name": "pip2",
+                  "fill": "#FAFAF7",
+                  "width": 16,
+                  "height": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#3D6B52"
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "qJy3Q",
+                  "name": "pip3",
+                  "fill": "#FAFAF7",
+                  "width": 16,
+                  "height": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#3D6B52"
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "gWX7Y",
+                  "name": "pip4",
+                  "fill": "#FAFAF7",
+                  "width": 16,
+                  "height": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#3D6B52"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -10158,19 +10175,22 @@
           "name": "twoColumn",
           "width": 1280,
           "height": "fill_container",
+          "fill": "#F0EDE8",
           "children": [
             {
               "type": "frame",
               "id": "dogG6",
               "name": "leftCol-form",
-              "width": 704,
+              "width": 780,
               "height": "fill_container",
               "fill": "#F0EDE8",
               "layout": "vertical",
               "gap": 16,
               "padding": [
-                32,
-                80
+                40,
+                160,
+                40,
+                168
               ],
               "children": [
                 {
@@ -10217,12 +10237,14 @@
               "type": "frame",
               "id": "oiE4f",
               "name": "rightCol-preview",
-              "width": 576,
+              "width": "fill_container",
               "height": "fill_container",
-              "fill": "#FAFAF7",
+              "fill": "#D0D8D4",
               "layout": "vertical",
-              "padding": 40,
-              "justifyContent": "center",
+              "padding": [
+                40,
+                48
+              ],
               "alignItems": "center",
               "children": [
                 {
@@ -10230,7 +10252,13 @@
                   "type": "ref",
                   "ref": "p2ihv",
                   "width": 380,
-                  "name": "previewCard"
+                  "name": "previewCard",
+                  "cornerRadius": 0,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#FFFFFF40"
+                  }
                 }
               ]
             }
@@ -10243,7 +10271,18 @@
           "width": 1280,
           "height": 72,
           "name": "actionB",
+          "padding": [
+            12,
+            352
+          ],
+          "justifyContent": "center",
           "descendants": {
+            "zl3mP": {
+              "width": "fill_container"
+            },
+            "BApml": {
+              "width": "fill_container"
+            },
             "khRRc": {
               "content": "Continue"
             }

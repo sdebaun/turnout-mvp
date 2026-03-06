@@ -76,10 +76,12 @@ function PlacesAutocompleteInput({ onChange, error }: Omit<LocationInputInnerPro
           icon is rendered inside the shadow DOM and cannot be overridden without forking the component. */}
       {/* placeholder spread via cast — the TS type for gmp-place-autocomplete omits this
           valid HTML attribute so direct assignment errors; spreading as {} sidesteps it */}
+      {/* types="establishment|address" excludes city/region geocode results — users must
+          pick a named place (park, venue, business) or a specific street address, not just "Ventura" */}
       <gmp-place-autocomplete
         ref={elementRef}
         style={{ width: '100%' }}
-        {...({ placeholder: 'Coffee shop, park, address...' } as {})}
+        {...({ placeholder: 'Coffee shop, park, address...', types: 'establishment|address' } as {})}
         data-testid="location-input"
       />
       {error && (

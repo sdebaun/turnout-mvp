@@ -19,6 +19,7 @@ module.exports = {
         tiletext: '#6B6966',
         separator: '#E5E0D8',
         'avatar-bg': '#5A7A6A',
+        'sage-wash': '#D0D8D4',
       },
       fontFamily: {
         heading: ['var(--font-zilla-slab)', 'serif'],

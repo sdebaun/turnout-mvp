@@ -4,11 +4,15 @@ import React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { TopNavFocused } from '../../components/top-nav-focused'
 
-// Pip dots track progress — amber filled, off-white empty, both ringed with sage.
-// 16x16 circles straddling the header/body seam (absolute positioned, translate-y-1/2).
+// Pips now live inside the header — no longer straddling the header/body seam.
+// Amber = completed, off-white = not yet, both ringed with sage.
 function PipIndicator({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-2.5" aria-label={`Step ${current} of ${total}`}>
+    <div
+      className="flex items-center gap-2.5"
+      data-testid="pip-indicator"
+      aria-label={`Step ${current} of ${total}`}
+    >
       {Array.from({ length: total }, (_, i) => (
         <div
           key={i}
@@ -25,7 +29,7 @@ function PipIndicator({ current, total }: { current: number; total: number }) {
 interface WizardLayoutProps {
   headerTitle: string
   headerSubtitle: string
-  // if provided (1-4), shows pip indicator straddling the header/body seam
+  // if provided (1-4), shows pip indicator inside the header, below title/subtitle
   currentStep?: number
   onBack?: () => void
   onContinue: () => void
@@ -52,69 +56,71 @@ export function WizardLayout({
   const hasPreview = Boolean(previewZone)
 
   return (
-    <div className="min-h-screen flex flex-col bg-warm">
+    <div className="min-h-screen flex flex-col bg-warm" data-testid="wizard-layout">
       <TopNavFocused />
 
-      {/* Full-width sage header background; content constrained to match the body below. */}
-      <div className="relative flex-shrink-0 bg-sage">
+      {/* Full-width sage header. Desktop height is auto to accommodate pips below the text. */}
+      <div className="flex-shrink-0 bg-sage">
         <div className="lg:max-w-5xl lg:mx-auto">
-          <header className="px-5 pt-5 pb-5 h-36 flex flex-col lg:px-10">
-            <h1 className="font-heading font-bold text-[28px] leading-tight text-offwhite">
+          <header
+            className="px-5 pt-5 pb-5 h-36 lg:h-auto flex flex-col lg:px-10 lg:pt-8 lg:pb-6 lg:justify-center"
+            data-testid="wizard-header"
+          >
+            <h1 className="font-heading font-bold text-[28px] lg:text-[34px] leading-tight text-offwhite">
               {headerTitle}
             </h1>
             <p className="text-sm font-normal text-white/80 mt-1.5 leading-[1.4]">
               {headerSubtitle}
             </p>
+            {/* Pips sit below the subtitle — no longer floated to straddle the seam */}
+            {currentStep !== undefined && (
+              <div className="mt-4">
+                <PipIndicator current={currentStep} total={4} />
+              </div>
+            )}
           </header>
         </div>
-
-        {/* Pips straddle the full-width header/body seam — centered always.
-            Attempting left-alignment relative to the constrained content container
-            is more trouble than it's worth given the absolute positioning context. */}
-        {currentStep !== undefined && (
-          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-10">
-            <PipIndicator current={currentStep} total={4} />
-          </div>
-        )}
       </div>
 
-      {/* Outer: flex-1 fills remaining height. Using flex (row) so mx-auto on the inner
-          constrained box actually centers it — mx-auto on a flex-col child doesn't absorb
-          horizontal space reliably, but on a flex-row child it does. bg-warm shows on the
-          sides beyond the 5xl max-width box. */}
-      <div className="flex-1 flex bg-warm">
+      {/* Body: warm (form) + sage-wash (preview sidebar) on desktop, stacked on mobile.
+          The preview column's bg-sage-wash fills its own column — no absolute bleed needed. */}
+      <div className="flex-1 flex bg-warm" data-testid="wizard-body">
+        <div className={`flex-1 flex flex-col ${hasPreview ? 'lg:flex-row' : ''}`}>
 
-        {/* Inner: constrained to max-w-5xl, centered, stretches full height via
-            align-items:stretch (default). Switches to row at desktop when preview present. */}
-        <div className={`flex-1 max-w-5xl mx-auto flex flex-col ${
-          hasPreview ? 'lg:flex-row' : ''
-        }`}>
+          {/* Form column: full-width on mobile, 60% on desktop */}
+          <div className={`flex flex-col ${hasPreview ? 'lg:w-3/5' : ''}`}>
 
-          {/* Left column: mobile preview (hidden on desktop) + form */}
-          <div className={`flex flex-col ${hasPreview ? 'lg:w-[55%]' : ''}`}>
-
-            {/* Preview zone — mobile only. Desktop right column handles it.
-                pt-6 breathes above the pip bottom half. */}
+            {/* Preview zone — mobile only. Desktop sidebar handles it. */}
             {previewZone && (
               <div className="bg-offwhite px-5 pt-6 pb-5 lg:hidden">
                 {previewZone}
               </div>
             )}
 
-            {/* Form zone. Step 0 gets centered + constrained; steps 1-4 fill left column. */}
-            <div className={`bg-warm px-5 pb-6 flex flex-col gap-4 ${
-              previewZone ? 'pt-5' : 'pt-6'
-            } lg:px-10 lg:pt-6 ${hasPreview ? 'lg:flex-1' : 'lg:max-w-xl lg:mx-auto lg:w-full'}`}>
+            {/* Form zone. Step 0 (no preview) gets centered + constrained; steps 1-4 fill left column.
+                lg:pr-40 prevents fields from stretching the full 60% column width. */}
+            <div
+              className={`bg-warm px-5 pb-6 flex flex-col gap-4 ${
+                previewZone ? 'pt-5' : 'pt-6'
+              } ${
+                hasPreview
+                  ? 'lg:px-10 lg:pr-40 lg:pt-6 lg:flex-1'
+                  : 'lg:max-w-xl lg:mx-auto lg:w-full lg:pt-6 lg:px-10'
+              }`}
+              data-testid="wizard-form"
+            >
               {children}
             </div>
           </div>
 
-          {/* Right column: preview card, desktop only.
-              Stretches full height (no sticky/self-start) so offwhite bg fills all the way
-              down to the action bar. */}
+          {/* Preview sidebar — desktop only, 40% width, sage-wash background.
+              Top-aligned so the card sits near the header rather than floating mid-column. */}
           {previewZone && (
-            <div className="hidden lg:flex lg:flex-col lg:w-[45%] lg:bg-offwhite lg:items-center lg:justify-start lg:pt-12 lg:px-8">
-              <div className="w-full max-w-sm">
+            <div
+              className="hidden lg:flex lg:flex-col lg:w-2/5 bg-sage-wash lg:justify-start lg:pt-10 lg:px-12 lg:pb-8"
+              data-testid="wizard-preview"
+            >
+              <div className="w-full max-w-[380px]">
                 {previewZone}
               </div>
             </div>
@@ -122,35 +128,35 @@ export function WizardLayout({
         </div>
       </div>
 
-      {/* Sticky action bar — full-width bg + border. Content constrained to match body above.
-          Buttons sit at the left edge of the content container via the inner max-w-xs wrapper. */}
-      <div className="sticky bottom-0 z-10 bg-offwhite border-t border-separator">
-        <div className="lg:max-w-5xl lg:mx-auto">
-          <div className="flex items-center px-4 py-3 gap-2 lg:max-w-xs">
-            <button
-              type="button"
-              onClick={onBack}
-              disabled={!onBack}
-              className={`flex-1 h-12 rounded-lg bg-white border border-sage/30 text-charcoal text-base font-medium font-sans flex items-center justify-center transition-opacity ${
-                !onBack ? 'opacity-40' : 'hover:bg-warm'
-              }`}
-            >
-              <ChevronLeft size={18} strokeWidth={2.5} />
-              <span>Back</span>
-            </button>
+      {/* Sticky action bar — always centered regardless of preview presence */}
+      <div
+        className="sticky bottom-0 z-10 bg-offwhite border-t border-separator"
+        data-testid="wizard-action-bar"
+      >
+        <div className="flex items-center px-4 py-3 gap-2 lg:max-w-xl lg:mx-auto lg:w-full">
+          <button
+            type="button"
+            onClick={onBack}
+            disabled={!onBack}
+            className={`flex-1 h-12 rounded-lg bg-white border border-sage/30 text-charcoal text-base font-medium font-sans flex items-center justify-center transition-opacity ${
+              !onBack ? 'opacity-40' : 'hover:bg-warm'
+            }`}
+          >
+            <ChevronLeft size={18} strokeWidth={2.5} />
+            <span>Back</span>
+          </button>
 
-            <button
-              type="button"
-              onClick={onContinue}
-              disabled={continueIsDisabled}
-              className={`flex-1 h-12 rounded-lg text-white text-base font-semibold font-sans flex items-center justify-center gap-1 transition-colors ${
-                continueIsDisabled ? 'bg-terracotta/60 cursor-not-allowed' : 'bg-terracotta hover:bg-terracotta/90 cursor-pointer'
-              }`}
-            >
-              <span>{isSubmitting ? 'Working...' : continueLabel}</span>
-              {!isSubmitting && <ChevronRight size={18} strokeWidth={2.5} />}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onContinue}
+            disabled={continueIsDisabled}
+            className={`flex-1 h-12 rounded-lg text-white text-base font-semibold font-sans flex items-center justify-center gap-1 transition-colors ${
+              continueIsDisabled ? 'bg-terracotta/60 cursor-not-allowed' : 'bg-terracotta hover:bg-terracotta/90 cursor-pointer'
+            }`}
+          >
+            <span>{isSubmitting ? 'Working...' : continueLabel}</span>
+            {!isSubmitting && <ChevronRight size={18} strokeWidth={2.5} />}
+          </button>
         </div>
       </div>
     </div>
