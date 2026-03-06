@@ -9,10 +9,10 @@ import { CredentialType } from '@prisma/client'
  * without going through the OTP flow. Idempotent — if the user already
  * exists for this phone, deletes and recreates cleanly.
  *
- * ONLY available when TEST_OTP_BYPASS=true. Returns 404 in production.
+ * ONLY available when TEST_OTP_BYPASS=true. Returns 404 otherwise.
  */
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.TEST_OTP_BYPASS !== 'true') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 

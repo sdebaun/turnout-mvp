@@ -63,6 +63,12 @@ interface VenuePhotoStripProps {
 /**
  * Renders 3 venue photos from Google Places for a given placeId.
  *
+ * SCAFFOLDING — this component is a placeholder until organizers can upload their own photos.
+ * The long-term model: organizers upload to S3 (or we pre-populate from Places on turnout
+ * creation), and this component just renders <img> tags from stored URLs. At that point this
+ * entire client-side SDK (250KB+) goes away and the component becomes a simple server component.
+ * Tracked in ICEBOX.
+ *
  * APIProvider is scoped here rather than in the root layout — the Maps JS API
  * is only needed on turnout pages, not the whole app.
  *

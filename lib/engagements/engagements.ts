@@ -1,6 +1,6 @@
 import { ResultAsync, ok, err } from 'neverthrow'
 import { prisma } from '@/lib/db'
-import { EngagementStatus } from '@prisma/client'
+import { EngagementStatus, Prisma } from '@prisma/client'
 
 // Typed errors the caller can match on — no string-matching, no instanceof.
 // OPPORTUNITY_NOT_FOUND is theoretically impossible in MVP (TDD0002 always
@@ -78,6 +78,15 @@ export function createEngagement(
       (e as { code: string }).code === 'OPPORTUNITY_NOT_FOUND'
     ) {
       return { code: 'OPPORTUNITY_NOT_FOUND' } as EngagementError
+    }
+    // P2002 unique constraint violation — two concurrent RSVP requests raced past the
+    // findUnique check and both hit create(). The second request lost the race but the
+    // user IS successfully RSVPed (via the first). Treat as ALREADY_RSVPD, not a DB error.
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === 'P2002'
+    ) {
+      return { code: 'ALREADY_RSVPD' } as EngagementError
     }
     return { code: 'DB_ERROR', message: (e as Error).message ?? String(e) } as EngagementError
   })

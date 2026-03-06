@@ -7,10 +7,10 @@ import { Session } from '@prisma/client'
  * Test-only endpoint: creates a group + turnout for a given session token.
  * Used by E2E tests that need a real turnout without running the full wizard UI.
  *
- * ONLY available when TEST_OTP_BYPASS=true. Returns 404 in production.
+ * ONLY available when TEST_OTP_BYPASS=true. Returns 404 otherwise.
  */
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.TEST_OTP_BYPASS !== 'true') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 

@@ -30,6 +30,9 @@ const syne = Syne({
 })
 
 export const metadata: Metadata = {
+  // metadataBase lets Next.js resolve relative og:image URLs (e.g. /api/venue-photo?placeId=...)
+  // into absolute URLs for social media crawlers. Falls back to production URL.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://turnout.network'),
   title: 'turnout.network',
   description: 'A living network of showing up.',
 }

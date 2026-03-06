@@ -30,9 +30,9 @@ export async function GET(
   // the event as an instant-long slot.
   const endsAt = turnout.endsAt ?? new Date(turnout.startsAt.getTime() + 2 * 60 * 60 * 1000)
 
-  const host = request.headers.get('host') ?? 'turnout.network'
-  const protocol = host.includes('localhost') ? 'http' : 'https'
-  const url = `${protocol}://${host}/t/${turnout.slug}`
+  // Use env-configured base URL rather than the attacker-controllable Host header.
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://turnout.network'
+  const url = `${baseUrl}/t/${turnout.slug}`
 
   // Prefer formattedAddress for navigation; fall back to the short name.
   const location = turnout.primaryLocation.formattedAddress ?? turnout.primaryLocation.name

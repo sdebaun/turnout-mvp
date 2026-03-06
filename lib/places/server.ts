@@ -1,36 +1,14 @@
 /**
- * Server-only Places API utilities.
- * Uses GOOGLE_MAPS_API_KEY (no NEXT_PUBLIC_ prefix) — never exposed to the browser.
- * Failures are always silent — a missing og:image is fine, a 500 is not.
- */
-
-/**
- * Fetches the first photo URL for a Google Places location.
- * Used to populate og:image on turnout pages — a venue photo makes share links
- * significantly more clickable in Signal/WhatsApp group chats, which is the
- * primary viral vector for turnout discovery.
+ * Returns a URL for a venue photo suitable for use in og:image.
+ * Points to /api/venue-photo?placeId=... (our server-side proxy) rather than
+ * the raw Google endpoint, so the API key never appears in HTML source.
  *
- * Cache TTL: 24h — venue photos change rarely, so this mostly hits cache.
+ * Returns null if placeId is missing — callers skip og:image in that case.
  */
-export async function fetchVenuePhotoUrl(placeId: string | null): Promise<string | null> {
+export function fetchVenuePhotoUrl(placeId: string | null): string | null {
   if (!placeId) return null
-
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY
-  if (!apiKey) return null
-
-  try {
-    const res = await fetch(
-      `https://places.googleapis.com/v1/places/${placeId}?fields=photos&key=${apiKey}`,
-      { next: { revalidate: 86400 } }
-    )
-    if (!res.ok) return null
-
-    const data = await res.json()
-    const ref = data.photos?.[0]?.name
-    if (!ref) return null
-
-    return `https://places.googleapis.com/v1/${ref}/media?maxWidthPx=1200&key=${apiKey}`
-  } catch {
-    return null
-  }
+  // NEXT_PUBLIC_GOOGLE_MAPS_API_KEY must exist for the proxy to work.
+  // If it's not set (local dev without Google Maps configured), skip og:image silently.
+  if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) return null
+  return `/api/venue-photo?placeId=${encodeURIComponent(placeId)}`
 }

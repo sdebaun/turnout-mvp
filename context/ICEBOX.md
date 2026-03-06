@@ -16,4 +16,6 @@ Things we've explicitly committed to building for MVP that don't yet have a TDD.
 
 - **Desktop share UX** — The Web Share button is currently hidden on desktop (`navigator.maxTouchPoints === 0`) because it triggers an unfamiliar macOS/Windows native share sheet. Desktop users get "Copy Invite" and "Copy Link" which are good enough for now. Eventually we want a proper desktop share experience — maybe a dropdown with direct options (copy, email, tweet, etc.) or a share modal. Needs UX thought before building.
 
+- **Venue photo storage + organizer uploads** — `VenuePhotoStrip` is scaffolding: it loads the full 250KB Maps JS SDK client-side just to fetch Google Places photos. The real model: on turnout creation, fetch Place photos and store them in S3. Organizers can replace/supplement with their own uploads. `VenuePhotoStrip` becomes a simple server component rendering `<img>` tags from stored URLs. The client-side SDK goes away entirely. Needs: S3 bucket config in SST, a photo-fetch-on-creation job, organizer upload UI (post-MVP), and a `VenuePhotoStrip` rewrite.
+
 - bugfix: currently, entering a phone number is crappy in the ux. chrome is autocompleting my "+1234567890" phone number. but when i select that autocomplete the field drops the "+". and then form validation eats it. is there a better 3p component we can put in there?

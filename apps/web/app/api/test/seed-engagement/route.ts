@@ -5,10 +5,10 @@ import { prisma } from '@/lib/db'
  * Test-only endpoint: creates a CONFIRMED engagement for a given userId + turnout slug.
  * Used by E2E tests that need to pre-seed an RSVP without going through the UI flow.
  *
- * ONLY available when TEST_OTP_BYPASS=true. Returns 404 in production.
+ * ONLY available when TEST_OTP_BYPASS=true. Returns 404 otherwise.
  */
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.TEST_OTP_BYPASS !== 'true') {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
