@@ -4,6 +4,8 @@ import { useFormStatus } from 'react-dom'
 import { incrementCounter } from './actions'
 import { useState } from 'react'
 
+// SubmitButton must be a child of the form to read useFormStatus — can't be inlined.
+// This is the canonical App Router pattern for server action pending state.
 function SubmitButton() {
   const { pending } = useFormStatus()
 

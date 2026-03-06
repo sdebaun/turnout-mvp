@@ -131,8 +131,12 @@ export function TurnoutPreview({
     : null
 
   return (
+    // rounded-xl on mobile; sharp on desktop (sidebar butts against the viewport edge)
     // ring-1 gives an inset-style border without affecting layout box size
-    <div className="rounded-xl bg-white p-[14px_16px] flex flex-col gap-2 ring-1 ring-sage/20">
+    <div
+      className="rounded-xl lg:rounded-none bg-white p-[14px_16px] flex flex-col gap-2 ring-1 ring-sage/20"
+      data-testid="turnout-preview-card"
+    >
       {/* Eyebrow row: group pill + organizer skeleton pill */}
       <div className="flex items-center gap-2 flex-wrap">
         {groupName ? <GroupRealPill name={groupName} /> : <GroupSkeletonPill />}
