@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 import { getUser } from '@/lib/auth/sessions'
 import { TestForm } from './test-form'
 import { AuthSection } from './auth-section'
-import { TopNav } from './components/top-nav'
+import { TopNav } from './components/organisms/top-nav'
 
 // page queries live DB — must render at request time, not build time
 export const dynamic = 'force-dynamic'
@@ -16,7 +16,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <TopNav variant="public" user={user} />
+      <TopNav user={user} />
       <main className="flex flex-1 flex-col items-center justify-center p-24 gap-8">
       <h1 className="text-4xl font-bold">Hello Turnout</h1>
       <p>Bootstrap successful!</p>

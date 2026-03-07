@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { rsvpAction } from './actions'
 import { AuthModal } from '@/app/auth/components/auth-modal'
-import { Calendar, MapPin } from 'lucide-react'
+import { CalendarIcon, MapPinIcon } from '@/app/components/atoms/icons'
 
 interface RsvpButtonProps {
   slug: string
@@ -87,7 +87,7 @@ export function RsvpButton({
             download
             className="flex-1 h-12 rounded-lg bg-white border border-separator text-charcoal text-sm font-medium flex items-center justify-center gap-2 hover:bg-warm transition-colors"
           >
-            <Calendar size={16} strokeWidth={1.75} />
+            <CalendarIcon />
             Add to Calendar
           </a>
           {directionsHref && (
@@ -97,7 +97,7 @@ export function RsvpButton({
               rel="noopener noreferrer"
               className="flex-1 h-12 rounded-lg bg-white border border-separator text-charcoal text-sm font-medium flex items-center justify-center gap-2 hover:bg-warm transition-colors"
             >
-              <MapPin size={16} strokeWidth={1.75} />
+              <MapPinIcon />
               Get Directions
             </a>
           )}

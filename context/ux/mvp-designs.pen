@@ -3437,7 +3437,7 @@
                   "type": "ref",
                   "ref": "C3KOZ",
                   "x": 24,
-                  "y": 24.019943701668048,
+                  "y": 24.01994370166805,
                   "width": "fill_container",
                   "descendants": {
                     "NEMHS": {
@@ -10287,6 +10287,1224 @@
               "content": "Continue"
             }
           }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "CZUdC",
+      "x": 8000,
+      "y": 0,
+      "name": "tdd0003 / participant view",
+      "width": 375,
+      "height": 812,
+      "fill": "#FAFAF7",
+      "layout": "none",
+      "children": [
+        {
+          "id": "7eJaF",
+          "type": "ref",
+          "ref": "j8q4G",
+          "x": 0,
+          "y": 0,
+          "width": 375,
+          "height": 56,
+          "name": "pvNav"
+        },
+        {
+          "type": "frame",
+          "id": "T8XTL",
+          "x": 0,
+          "y": 56,
+          "name": "content",
+          "width": 375,
+          "height": 700,
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "SAdw7",
+              "name": "eyebrow",
+              "width": "fill_container",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "B10bb",
+                  "type": "ref",
+                  "ref": "XZZUA",
+                  "name": "pvGrp",
+                  "descendants": {
+                    "BMk8O": {
+                      "content": "Save Willow Creek"
+                    }
+                  }
+                },
+                {
+                  "id": "9zvLK",
+                  "type": "ref",
+                  "ref": "YncFw",
+                  "name": "pvOrg",
+                  "descendants": {
+                    "BhQCu": {
+                      "content": "Bob Dorrigan"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "1aTsz",
+              "name": "title",
+              "fill": "#1E2420",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Kickoff Meeting",
+              "lineHeight": 1.1,
+              "fontFamily": "Zilla Slab",
+              "fontSize": 32,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "zKOz0",
+              "name": "whenRow",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "3Kp7e",
+                  "name": "pvWhenIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "calendar",
+                  "iconFontFamily": "lucide",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "text",
+                  "id": "9E6oE",
+                  "name": "pvWhenText",
+                  "fill": "#1E2420",
+                  "content": "This Friday · 7 PM",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yyAqL",
+              "name": "whereWrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wsGGj",
+                  "name": "whereRow",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "bB1Ea",
+                      "name": "pvWhereIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3D6B52"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pHuWv",
+                      "name": "pvWhereText",
+                      "fill": "#1E2420",
+                      "content": "Handlebar Coffee, Ventura CA",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "l0rw9",
+                  "name": "directionsLink",
+                  "gap": 4,
+                  "padding": [
+                    0,
+                    0,
+                    0,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pTmsC",
+                      "name": "pvDirIcon",
+                      "width": 13,
+                      "height": 13,
+                      "iconFontName": "external-link",
+                      "iconFontFamily": "lucide",
+                      "fill": "#D95F3B"
+                    },
+                    {
+                      "type": "text",
+                      "id": "p6hNc",
+                      "name": "pvDirText",
+                      "fill": "#D95F3B",
+                      "content": "Get Directions",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "9i7tO",
+              "name": "photoStrip",
+              "context": "IMPL: Auto-populated via Google Places API using location.placeId stored at turnout creation (TDD0002). Organizer never uploads manually. Falls back to warm placeholder if Places returns no photos.",
+              "clip": true,
+              "width": "fill_container",
+              "height": 140,
+              "cornerRadius": 8,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9rD1R",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "vvivvat",
+                    "link": "https://unsplash.com/@vvivvat",
+                    "author": "[A.G] ابو يوسف"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1699200724336-41abb0ddd68e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjM5MzZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "ozm8L",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "greenliustudio",
+                    "link": "https://unsplash.com/@greenliustudio",
+                    "author": "Green Liu"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1743211099054-5217c0865703?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjM5MzZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "8VH9F",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "micheile",
+                    "link": "https://unsplash.com/@micheile",
+                    "author": "micheile henderson"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1562932007-2294c96310b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjM5Mzd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "sJreI",
+              "name": "description",
+              "fill": "#7A6E65",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Join us for our first planning meeting to figure out how to fight the proposed gravel mine threatening Willow Creek. Come with ideas, questions, and your calendar.",
+              "lineHeight": 1.5,
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "jdBzR",
+              "name": "rsvpCount",
+              "context": "IMPL: getRsvpCount(opportunityId) — Engagements where status=CONFIRMED. Softened: exact if <10, 'Over N' (rounded down to nearest 5) if >=10. Shows 'Be the first to RSVP!' if 0.",
+              "width": "fill_container",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "tuW19",
+                  "name": "pvUsersIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "users",
+                  "iconFontFamily": "lucide",
+                  "fill": "#7A6E65"
+                },
+                {
+                  "type": "text",
+                  "id": "DLeLB",
+                  "name": "pvUsersText",
+                  "fill": "#7A6E65",
+                  "content": "23 people are going",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xuB5d",
+          "x": 0,
+          "y": 756,
+          "name": "bottomBar",
+          "context": "IMPL: RsvpButton client component. Session present → rsvpAction(slug) direct, no modal. No session → AuthModal (TDD0001). Button disabled during pending. Double-submit prevention.",
+          "width": 375,
+          "height": 56,
+          "fill": "#FAFAF7",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E5E0D8"
+          },
+          "padding": [
+            8,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "Rkpso",
+              "type": "ref",
+              "ref": "C3KOZ",
+              "width": "fill_container",
+              "name": "pvBtn",
+              "descendants": {
+                "UiOOr": {
+                  "iconFontName": "chevron-right"
+                },
+                "NEMHS": {
+                  "content": "RSVP Now"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nAUnq",
+      "x": 8430,
+      "y": 0,
+      "name": "tdd0003 / participant view – going",
+      "width": 375,
+      "height": 812,
+      "fill": "#FAFAF7",
+      "layout": "none",
+      "children": [
+        {
+          "id": "YlaHZ",
+          "type": "ref",
+          "ref": "j8q4G",
+          "x": 0,
+          "y": 0,
+          "width": 375,
+          "height": 56,
+          "name": "pvgNav"
+        },
+        {
+          "type": "frame",
+          "id": "tKiwr",
+          "x": 0,
+          "y": 56,
+          "name": "content",
+          "width": 375,
+          "height": 700,
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "XGHAm",
+              "name": "eyebrow",
+              "width": "fill_container",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "IVy46",
+                  "type": "ref",
+                  "ref": "XZZUA",
+                  "name": "pvgGrp",
+                  "descendants": {
+                    "BMk8O": {
+                      "content": "Save Willow Creek"
+                    }
+                  }
+                },
+                {
+                  "id": "oZPB9",
+                  "type": "ref",
+                  "ref": "YncFw",
+                  "name": "pvgOrg",
+                  "descendants": {
+                    "BhQCu": {
+                      "content": "Bob Dorrigan"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "leVbK",
+              "name": "title",
+              "fill": "#1E2420",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Kickoff Meeting",
+              "lineHeight": 1.1,
+              "fontFamily": "Zilla Slab",
+              "fontSize": 32,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "2g1y0",
+              "name": "whenRow",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "Q6XY8",
+                  "name": "pvgWhenIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "calendar",
+                  "iconFontFamily": "lucide",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "text",
+                  "id": "LjqPH",
+                  "name": "pvgWhenText",
+                  "fill": "#1E2420",
+                  "content": "This Friday · 7 PM",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "6y8NA",
+              "name": "whereWrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LMJF1",
+                  "name": "whereRow",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "gs1DP",
+                      "name": "pvgWhereIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3D6B52"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y5EOZ",
+                      "name": "pvgWhereText",
+                      "fill": "#1E2420",
+                      "content": "Handlebar Coffee, Ventura CA",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "5dB5i",
+                  "name": "directionsLink",
+                  "gap": 4,
+                  "padding": [
+                    0,
+                    0,
+                    0,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pXoh7",
+                      "name": "pvgDirIcon",
+                      "width": 13,
+                      "height": 13,
+                      "iconFontName": "external-link",
+                      "iconFontFamily": "lucide",
+                      "fill": "#D95F3B"
+                    },
+                    {
+                      "type": "text",
+                      "id": "N1Neo",
+                      "name": "pvgDirText",
+                      "fill": "#D95F3B",
+                      "content": "Get Directions",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H02a3",
+              "name": "photoStrip",
+              "clip": true,
+              "width": "fill_container",
+              "height": 140,
+              "cornerRadius": 8,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "3ngr2",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "khyeonie18",
+                    "link": "https://unsplash.com/@khyeonie18",
+                    "author": "Ngo Ngoc Khai Huyen"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1710134514966-e7fe6a628a8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQwMTF8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "iEyZQ",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "emre_ca",
+                    "link": "https://unsplash.com/@emre_ca",
+                    "author": "Emre Canbazer"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1762040598334-51d816d8f71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQwMTJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "BK3oe",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "_bahador",
+                    "link": "https://unsplash.com/@_bahador",
+                    "author": "Bahador"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1560422540-f91765ed6238?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQwMTJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "MY1zP",
+              "name": "description",
+              "fill": "#7A6E65",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Join us for our first planning meeting to figure out how to fight the proposed gravel mine threatening Willow Creek. Come with ideas, questions, and your calendar.",
+              "lineHeight": 1.5,
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "kP7dw",
+              "name": "confirmCard",
+              "context": "IMPL: Client state machine in RsvpButton: idle→loading→confirmed|error. rsvpAction() success → set confirmed state → router.refresh() to update server-rendered count. Never navigates.",
+              "width": "fill_container",
+              "fill": "#E8F2EC",
+              "cornerRadius": 10,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1.5,
+                "fill": "#3D6B5240"
+              },
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                14,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vvmYF",
+                  "name": "confirmTop",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "D4geb",
+                      "name": "pvgCheckIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3D6B52"
+                    },
+                    {
+                      "type": "text",
+                      "id": "A47h2",
+                      "name": "pvgConfirmTitle",
+                      "fill": "#1E2420",
+                      "content": "You're going!",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "1zMQh",
+                  "name": "pvgConfirmSub",
+                  "fill": "#5A8A6E",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "24 people going · We'll send you reminders.",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QBTtq",
+          "x": 0,
+          "y": 756,
+          "name": "bottomBar",
+          "context": "IMPL: Add to Calendar = <a href='/api/turnout/[slug]/ics' download> pure HTML. Get Directions = maps.google.com/maps?q={lat},{lng} in new tab. Both degrade gracefully without JS.",
+          "width": 375,
+          "height": 56,
+          "fill": "#FAFAF7",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E5E0D8"
+          },
+          "gap": 8,
+          "padding": [
+            8,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "3aa7B",
+              "type": "ref",
+              "ref": "gou6u",
+              "width": "fill_container",
+              "name": "pvgCalBtn",
+              "descendants": {
+                "kFgRh": {
+                  "iconFontName": "calendar"
+                },
+                "g9Wxn": {
+                  "content": "Add to Calendar"
+                }
+              }
+            },
+            {
+              "id": "DNkvy",
+              "type": "ref",
+              "ref": "ghKmL",
+              "width": "fill_container",
+              "name": "pvgDirBtn",
+              "descendants": {
+                "JvOHX": {
+                  "iconFontName": "navigation"
+                },
+                "ydXf3": {
+                  "content": "Get Directions"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "OrtsN",
+      "x": 8860,
+      "y": 0,
+      "name": "tdd0003 / organizer view",
+      "width": 375,
+      "height": 812,
+      "fill": "#FAFAF7",
+      "layout": "none",
+      "children": [
+        {
+          "id": "Mw0ww",
+          "type": "ref",
+          "ref": "30iNU",
+          "x": 0,
+          "y": 0,
+          "width": 375,
+          "height": 56,
+          "name": "pogNav",
+          "context": "IMPL: topNav/authed. Back label = group.name (AWACm descendant). Avatar initials from user.displayName. Back → /organize/[groupSlug] (group dashboard, TDD0006). Only rendered when getUser() returns a session."
+        },
+        {
+          "type": "frame",
+          "id": "T53GD",
+          "x": 0,
+          "y": 56,
+          "name": "content",
+          "width": 375,
+          "height": 560,
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "HmuiG",
+              "name": "eyebrow",
+              "width": "fill_container",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "TCGGS",
+                  "type": "ref",
+                  "ref": "XZZUA",
+                  "name": "pogGrp",
+                  "descendants": {
+                    "BMk8O": {
+                      "content": "Save Willow Creek"
+                    }
+                  }
+                },
+                {
+                  "id": "EgORL",
+                  "type": "ref",
+                  "ref": "YncFw",
+                  "name": "pogOrg",
+                  "descendants": {
+                    "BhQCu": {
+                      "content": "Bob Dorrigan"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "jCp9N",
+              "name": "title",
+              "fill": "#1E2420",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Kickoff Meeting",
+              "lineHeight": 1.1,
+              "fontFamily": "Zilla Slab",
+              "fontSize": 32,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "bIjen",
+              "name": "whenRow",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "5TUVE",
+                  "name": "pogWhenIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "calendar",
+                  "iconFontFamily": "lucide",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "text",
+                  "id": "hXZpK",
+                  "name": "pogWhenText",
+                  "fill": "#1E2420",
+                  "content": "This Friday · 7 PM",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZUIV7",
+              "name": "whereWrap",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "QYBhZ",
+                  "name": "pogWhereRow",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "khORC",
+                      "name": "pogWhereIcon",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "map-pin",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3D6B52"
+                    },
+                    {
+                      "type": "text",
+                      "id": "5LlS7",
+                      "name": "pogWhereText",
+                      "fill": "#1E2420",
+                      "content": "Handlebar Coffee, Ventura CA",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "O9YVB",
+                  "name": "pogDirRow",
+                  "gap": 4,
+                  "padding": [
+                    0,
+                    0,
+                    0,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "gD5R1",
+                      "name": "pogDirIcon",
+                      "width": 13,
+                      "height": 13,
+                      "iconFontName": "external-link",
+                      "iconFontFamily": "lucide",
+                      "fill": "#D95F3B"
+                    },
+                    {
+                      "type": "text",
+                      "id": "P6DFU",
+                      "name": "pogDirText",
+                      "fill": "#D95F3B",
+                      "content": "Get Directions",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cim5E",
+              "name": "photoStrip",
+              "clip": true,
+              "width": "fill_container",
+              "height": 120,
+              "cornerRadius": 8,
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "4D1RY",
+                  "name": "photo1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "ichiyo",
+                    "link": "https://unsplash.com/@ichiyo",
+                    "author": "yo ichi"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1585998479621-a56ebbcff374?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQ0NjV8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "3m07m",
+                  "name": "photo2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "huyenthanh1128",
+                    "link": "https://unsplash.com/@huyenthanh1128",
+                    "author": "Huyen Pham"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1577196808630-653a6d2ba568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQ0Njd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "XYFlI",
+                  "name": "photo3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "wellgraf",
+                    "link": "https://unsplash.com/@wellgraf",
+                    "author": "Pontus Wellgraf"
+                  },
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1557199868-02a704b27808?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI3NjQ0Njd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Mqf7a",
+              "name": "description",
+              "fill": "#7A6E65",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Join us for our first planning meeting to figure out how to fight the proposed gravel mine threatening Willow Creek. Come with ideas, questions, and your calendar.",
+              "lineHeight": 1.5,
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "saHLH",
+              "name": "organizerStatus",
+              "context": "IMPL: Server-side check only. getUser() + groupOrganizer.findFirst({where:{groupId,userId}}). Never shown to participants. Card reads live RSVP count via getRsvpCount(opportunityId).",
+              "width": "fill_container",
+              "fill": "#F5F5F8",
+              "cornerRadius": 10,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1.5,
+                "fill": "#3D6B5250"
+              },
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                14,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EZAP7",
+                  "name": "orgTop",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "cogKK",
+                      "name": "pogOrgCheck",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "circle-check",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3D6B52"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CN0oI",
+                      "name": "pogOrgTitle",
+                      "fill": "#1E2420",
+                      "content": "You're organizing this.",
+                      "fontFamily": "Plus Jakarta Sans",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "q6aMd",
+                  "name": "pogOrgSub",
+                  "fill": "#7A6E65",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "23 RSVPs · 2 days to go — share the link!",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DXKHt",
+          "x": 0,
+          "y": 620,
+          "name": "shareBar",
+          "context": "IMPL: ShareButtons client component. navigator.share() on mobile triggers native share sheet with inviteMessage + turnoutUrl. Desktop: copy-to-clipboard fallback. inviteMessage generated server-side from turnout data.",
+          "width": 375,
+          "height": 64,
+          "fill": "#F0EDE8",
+          "layout": "vertical",
+          "padding": [
+            8,
+            16
+          ],
+          "children": [
+            {
+              "id": "bISpS",
+              "type": "ref",
+              "ref": "C3KOZ",
+              "width": "fill_container",
+              "name": "pogShareBtn",
+              "descendants": {
+                "UiOOr": {
+                  "iconFontName": "share-2"
+                },
+                "NEMHS": {
+                  "content": "Share"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v063P",
+          "x": 0,
+          "y": 756,
+          "name": "pogTabNav",
+          "context": "IMPL: Preview tab = this public view (active, sage text). RSVPs tab → organizer RSVP list view (TDD0006, shows name + phone). Edit tab = post-MVP, render disabled/greyed for now. Active tab determined by current route segment.",
+          "width": 375,
+          "height": 56,
+          "fill": "#FFFFFF",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E5E0D8"
+          },
+          "justifyContent": "space_around",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pRCIK",
+              "name": "tab-preview",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "SVDlX",
+                  "name": "tab1Icon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "eye",
+                  "iconFontFamily": "lucide",
+                  "fill": "#3D6B52"
+                },
+                {
+                  "type": "text",
+                  "id": "bjE5K",
+                  "name": "tab1Label",
+                  "fill": "#3D6B52",
+                  "content": "Preview",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jLzIu",
+              "name": "tab-rsvps",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "bJlCr",
+                  "name": "tab3Icon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "ticket",
+                  "iconFontFamily": "lucide",
+                  "fill": "#7A6E65"
+                },
+                {
+                  "type": "text",
+                  "id": "Q2WTf",
+                  "name": "tab3Label",
+                  "fill": "#7A6E65",
+                  "content": "RSVPs",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TzXdf",
+              "name": "tab-edit",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "Ntkw0",
+                  "name": "tab2Icon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "pencil",
+                  "iconFontFamily": "lucide",
+                  "fill": "#7A6E65"
+                },
+                {
+                  "type": "text",
+                  "id": "rwhJJ",
+                  "name": "tab2Label",
+                  "fill": "#7A6E65",
+                  "content": "Edit",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
