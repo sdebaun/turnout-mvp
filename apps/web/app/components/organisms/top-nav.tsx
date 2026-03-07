@@ -3,18 +3,14 @@ import { ChevronLeft } from 'lucide-react'
 import { NavAvatarDropdown } from './nav-avatar-dropdown'
 import { NavSignInButton } from '../atoms/nav-sign-in-button'
 
-// Three nav variants matching the design system:
+// Two variants:
 //
-// focused — wizard/task flows. Centered wordmark only. Darker bg (#243D30 = forest).
-//           No navigation chrome — user is mid-task, back lives in the action bar.
+// focused — wizard/task flows. Centered wordmark, no chrome, darker forest bg.
+//           Back lives in the action bar so there's no nav chrome here.
 //
-// public  — discovery + any public screen (authenticated or not).
-//           Wordmark left. Right: avatar dropdown if logged in, ghost Sign in if not.
-//           Lighter bg (#2F5441 = pine).
-//
-// authed  — organizer turnout detail. Left: back chevron + group name (contextual
-//           breadcrumb, not generic "back"). Right: avatar dropdown.
-//           Lighter bg (#2F5441 = pine).
+// default — all other screens. Pine bg, justify-between.
+//           Left: back chevron + label if provided, else wordmark.
+//           Right: avatar dropdown if user present, else sign-in button.
 
 function getInitials(displayName: string) {
   const words = displayName.trim().split(/\s+/)
@@ -25,49 +21,42 @@ function getInitials(displayName: string) {
 
 type TopNavProps =
   | { variant: 'focused' }
-  | { variant: 'public'; user?: { displayName?: string | null } | null }
-  | { variant: 'authed'; backLabel: string; backHref: string; displayName: string }
+  | { variant?: never; user?: { displayName?: string | null } | null; backLabel?: string; backHref?: string }
 
 export function TopNav(props: TopNavProps) {
   if (props.variant === 'focused') {
     return (
       <nav className="sticky top-0 z-10 h-14 flex items-center justify-center bg-forest flex-shrink-0">
-        <span className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
+        <Link href="/" className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
           turnout.network
-        </span>
+        </Link>
       </nav>
     )
   }
 
-  if (props.variant === 'public') {
-    const displayName = props.user?.displayName ?? null
+  const { user, backLabel, backHref } = props
+  const displayName = user?.displayName ?? null
 
-    return (
-      <nav className="sticky top-0 z-10 h-14 flex items-center justify-between bg-pine flex-shrink-0 px-4">
-        <span className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
-          turnout.network
-        </span>
-        {displayName ? (
-          <NavAvatarDropdown initials={getInitials(displayName)} displayName={displayName} />
-        ) : (
-          <NavSignInButton />
-        )}
-      </nav>
-    )
-  }
-
-  // authed — back breadcrumb + avatar dropdown
-  const { backLabel, backHref, displayName } = props
   return (
     <nav className="sticky top-0 z-10 h-14 flex items-center justify-between bg-pine flex-shrink-0 px-4">
-      <Link
-        href={backHref}
-        className="flex items-center gap-1 text-offwhite hover:text-offwhite/80 transition-colors"
-      >
-        <ChevronLeft size={18} strokeWidth={2} />
-        <span className="text-[15px] font-medium font-sans">{backLabel}</span>
-      </Link>
-      <NavAvatarDropdown initials={getInitials(displayName)} displayName={displayName} />
+      {backLabel && backHref ? (
+        <Link
+          href={backHref}
+          className="flex items-center gap-1 text-offwhite hover:text-offwhite/80 transition-colors"
+        >
+          <ChevronLeft size={18} strokeWidth={2} />
+          <span className="text-[15px] font-medium font-sans">{backLabel}</span>
+        </Link>
+      ) : (
+        <span className="font-syne font-bold text-[13px] text-offwhite tracking-[0.01em]">
+          turnout.network
+        </span>
+      )}
+      {displayName ? (
+        <NavAvatarDropdown initials={getInitials(displayName)} displayName={displayName} />
+      ) : (
+        <NavSignInButton />
+      )}
     </nav>
   )
 }

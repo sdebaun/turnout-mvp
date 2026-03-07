@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar } from 'lucide-react'
+import { CalendarIcon } from '@/app/components/atoms/icons'
 import { IconInputWrapper, LabeledField, INPUT_CLASSES } from './primitives'
 
 function getTodayString() {
@@ -10,7 +10,7 @@ function getTodayString() {
 export function DateField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <LabeledField label="Date">
-      <IconInputWrapper icon={<Calendar size={16} strokeWidth={1.75} />}>
+      <IconInputWrapper icon={<CalendarIcon />}>
         <input
           type="date"
           value={value}

@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { Calendar, MapPin } from 'lucide-react'
+import { differenceInCalendarDays, format } from 'date-fns'
+import { CalendarIcon, MapPinIcon } from '../atoms/icons'
 import { GroupPill, OrganizerPill } from '../atoms/turnout-pills'
 
 interface TurnoutPreviewProps {
@@ -14,33 +15,25 @@ interface TurnoutPreviewProps {
   locationCity?: string   // "City ST" derived from formattedAddress
 }
 
-// Formats HH:MM into a human-readable time like "7 PM" or "10:30 AM"
-function formatTime(time: string): string {
-  const [hourStr, minuteStr] = time.split(':')
-  const hour = parseInt(hourStr, 10)
-  const minute = parseInt(minuteStr, 10)
-  const ampm = hour >= 12 ? 'PM' : 'AM'
-  const displayHour = hour % 12 || 12
-  if (minute === 0) return `${displayHour} ${ampm}`
-  return `${displayHour}:${minuteStr} ${ampm}`
+// Parse YYYY-MM-DD at local noon to avoid DST-boundary day shifts
+function parseDateStr(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day, 12, 0, 0)
 }
 
-// Formats YYYY-MM-DD as human-relative text when within 7 days,
-// otherwise as a short formatted date. Parses directly to avoid timezone drift.
-function formatDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-').map(Number)
-  // Local noon prevents DST-boundary day shifts
-  const date = new Date(year, month - 1, day, 12, 0, 0)
-  const today = new Date()
-  today.setHours(12, 0, 0, 0)
-  const diffDays = Math.round((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+function formatTime(time: string): string {
+  const [h, m] = time.split(':').map(Number)
+  // dummy date — only the time portion matters for formatting
+  return format(new Date(2000, 0, 1, h, m), m === 0 ? 'h a' : 'h:mm a')
+}
 
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Tomorrow'
-  if (diffDays > 1 && diffDays < 7) {
-    return `This ${date.toLocaleDateString('en-US', { weekday: 'long' })}`
-  }
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+function formatDate(dateStr: string): string {
+  const date = parseDateStr(dateStr)
+  const diff = differenceInCalendarDays(date, new Date())
+  if (diff === 0) return 'Today'
+  if (diff === 1) return 'Tomorrow'
+  if (diff > 1 && diff < 7) return `This ${format(date, 'EEEE')}`
+  return format(date, 'MMM d')
 }
 
 
@@ -100,9 +93,7 @@ export function TurnoutPreview({
 
       {/* Date/time row — icon is sand-colored when ghost, terracotta when filled */}
       <div className="flex items-center gap-1.5">
-        <Calendar
-          size={14}
-          strokeWidth={1.75}
+        <CalendarIcon
           className={`flex-shrink-0 ${dateTimeText ? 'text-terracotta' : 'text-sand'}`}
           aria-hidden="true"
         />
@@ -115,9 +106,7 @@ export function TurnoutPreview({
 
       {/* Location row — same icon pattern as date row */}
       <div className="flex items-center gap-1.5">
-        <MapPin
-          size={14}
-          strokeWidth={1.75}
+        <MapPinIcon
           className={`flex-shrink-0 ${locationText ? 'text-terracotta' : 'text-sand'}`}
           aria-hidden="true"
         />

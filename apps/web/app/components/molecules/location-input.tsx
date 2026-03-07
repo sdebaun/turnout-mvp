@@ -3,7 +3,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { APIProvider, useApiIsLoaded } from '@vis.gl/react-google-maps'
 import dynamic from 'next/dynamic'
-import { MapPin, X } from 'lucide-react'
+import { X } from 'lucide-react'
+import { MapPinIcon } from '@/app/components/atoms/icons'
 import type { LocationData } from '@/app/organize/actions'
 
 interface LocationInputInnerProps {
@@ -108,7 +109,7 @@ function LocationInputWrapper({ value, onChange, error }: LocationInputInnerProp
   if (value) {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 border border-sage/30">
-        <MapPin size={16} strokeWidth={1.75} className="text-terracotta flex-shrink-0" aria-hidden="true" />
+        <MapPinIcon className="text-terracotta flex-shrink-0" aria-hidden="true" />
         <span className="flex-1 min-w-0 text-sm text-charcoal font-sans truncate">{value.name}</span>
         <button
           type="button"
@@ -122,26 +123,8 @@ function LocationInputWrapper({ value, onChange, error }: LocationInputInnerProp
     )
   }
 
-  // No API key — render a plain text input so the form stays usable in dev without SST.
   if (!apiKey) {
-    return (
-      <div>
-        <input
-          type="text"
-          placeholder="Enter a location"
-          data-testid="location-input"
-          className="w-full rounded-lg bg-white px-3 py-2.5 border border-sage/30 text-sm text-charcoal font-sans placeholder:text-sand focus:outline-none focus:border-sage"
-          onChange={(e) => {
-            if (e.target.value) onChange({ name: e.target.value })
-          }}
-        />
-        {error && (
-          <p className="text-sm text-red-600 mt-1" role="alert">
-            {error}
-          </p>
-        )}
-      </div>
-    )
+    throw new Error('NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is required')
   }
 
   return (

@@ -1,18 +1,19 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { User } from '@prisma/client'
 import { WizardLayout } from '@/app/components/templates/wizard-layout'
 import { TurnoutPreview } from '@/app/components/organisms/turnout-preview'
 import { OptionGroup } from '@/app/components/molecules/option-group'
-import { OTPInputForm } from '../../auth/components/otp-input-form'
+import { OTPBoxes } from '../../auth/components/otp-boxes'
 import { DateField } from '@/app/components/molecules/fields/date-field'
 import { TimeField } from '@/app/components/molecules/fields/time-field'
 import { LocationField } from '@/app/components/molecules/fields/location-field'
 import { TextInputField } from '@/app/components/molecules/fields/text-input-field'
 import { DisplayNameField } from '@/app/components/molecules/fields/display-name-field'
 import { PhoneField } from '@/app/components/molecules/fields/phone-field'
-import { createGroupWithTurnoutAction } from '../actions'
+import { createGroupWithTurnoutAction, verifyOtpAndCreateGroupAction } from '../actions'
 import { checkPhoneAction, sendOTPAction } from '../../auth/actions'
 import { useWizardSession, type WizardState } from './use-wizard-session'
 import { useSubmit } from '../../hooks/use-submit'
@@ -36,14 +37,30 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
   const goToStep = (n: WizardStep) => router.push(`/organize?step=${n}`)
 
   const { state, update, clearSession } = useWizardSession()
+  const [otpCode, setOtpCode] = useState('')
   const { isSubmitting, submitError, setSubmitError, withSubmit } = useSubmit()
 
-  const doCreate = () => withSubmit(async () => {
+  const getGroupData = () => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const result = await createGroupWithTurnoutAction({
+    return {
       groupName: state.groupName, mission: state.groupName, turnoutTitle: state.turnoutTitle,
       location: state.location!, turnoutDate: state.turnoutDate, turnoutTime: state.turnoutTime, turnoutTimezone: timezone,
-    })
+    }
+  }
+
+  // For authenticated users (already have a session).
+  const doCreate = () => withSubmit(async () => {
+    const result = await createGroupWithTurnoutAction(getGroupData())
+    if ('error' in result) { setSubmitError(result.error); return }
+    clearSession()
+    router.push(`/t/${result.turnoutSlug}`)
+  })
+
+  // For the unauthenticated OTP step: verify OTP + create group in one server call,
+  // avoiding the two-request cookie timing race (signInAction sets cookie, but
+  // createGroupWithTurnoutAction may fire before the browser's cookie jar is updated).
+  const handleOtpComplete = (code: string) => withSubmit(async () => {
+    const result = await verifyOtpAndCreateGroupAction(state.phone, code, state.displayName || undefined, getGroupData())
     if ('error' in result) { setSubmitError(result.error); return }
     clearSession()
     router.push(`/t/${result.turnoutSlug}`)
@@ -194,7 +211,14 @@ export function OrganizeForm({ user }: OrganizeFormProps) {
           previewZone={preview}
           error={submitError}
         >
-          <OTPInputForm phone={state.phone} displayName={state.displayName} onSuccess={doCreate} />
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-center text-muted">We sent a 6-digit code to {state.phone}</p>
+            <OTPBoxes
+              value={otpCode}
+              onChange={(code) => { setOtpCode(code); if (code.length === 6) handleOtpComplete(code) }}
+              disabled={isSubmitting}
+            />
+          </div>
         </WizardLayout>
       )}
     </>

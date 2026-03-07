@@ -1,35 +1,38 @@
 import { test, expect } from '@playwright/test'
+import { fillOTP } from '../helpers/otp'
 
-// Test seed routes are enabled whenever NODE_ENV !== 'production'.
 const BYPASS_CODE = '000000'
 
-// NANP 555-01XX reserved test range — unique per test to avoid interference.
-// Using 12X range to avoid collision with TDD0002 (11X) and TDD0001 (other ranges).
-const PHONES = {
-  organizer: '+12025550119',
-  rsvpUnauthenticated: '+12025550120',
-  rsvpAuthenticated: '+12025550121',
-  rsvpAlreadyGoing: '+12025550122',
+// Per-project phone ranges — prevents cross-project parallel races in beforeAll.
+// NANP 555-01XX reserved test range.
+// Chromium: 119-122, Mobile: 123-126
+const PHONES_BY_PROJECT: Record<string, { organizer: string; rsvpUnauthenticated: string; rsvpAuthenticated: string; rsvpAlreadyGoing: string }> = {
+  chromium: {
+    organizer: '+12025550119',
+    rsvpUnauthenticated: '+12025550120',
+    rsvpAuthenticated: '+12025550121',
+    rsvpAlreadyGoing: '+12025550122',
+  },
+  mobile: {
+    organizer: '+12025550123',
+    rsvpUnauthenticated: '+12025550124',
+    rsvpAuthenticated: '+12025550125',
+    rsvpAlreadyGoing: '+12025550126',
+  },
 }
 
-// Shared turnout slug — created in beforeAll, used across all tests
+// Both are set once per worker in beforeAll — each Playwright worker (one per project)
+// has its own module scope, so these don't conflict across chromium/mobile.
+let PHONES: typeof PHONES_BY_PROJECT.chromium
 let testTurnoutSlug: string
-
-// Helper: fill OTP boxes by typing each digit (triggers the focus-advance behavior)
-async function fillOTP(page: import('@playwright/test').Page, code: string) {
-  const firstBox = page.locator('input[autocomplete="one-time-code"]').first()
-  await firstBox.focus()
-  for (const digit of code) {
-    await page.keyboard.type(digit)
-  }
-}
 
 // Serial mode: all 6 tests run in a single worker so beforeAll/afterAll execute exactly once.
 // The shared turnout slug from beforeAll would be undefined in parallel workers.
 test.describe.serial('public turnout page + RSVP (TDD0003)', () => {
   // Create a shared turnout once before all tests.
   // All tests read from the same turnout — cheaper than creating one per test.
-  test.beforeAll(async ({ request }) => {
+  test.beforeAll(async ({ request }, workerInfo) => {
+    PHONES = PHONES_BY_PROJECT[workerInfo.project.name] ?? PHONES_BY_PROJECT.chromium
     // Clean up any prior data for the organizer phone
     await request.post('/api/test/cleanup', {
       data: { phones: [PHONES.organizer] },
@@ -165,8 +168,7 @@ test.describe.serial('public turnout page + RSVP (TDD0003)', () => {
     // OTP step — type the bypass code and submit
     await expect(page.locator('input[autocomplete="one-time-code"]').first()).toBeVisible({ timeout: 5000 })
     await fillOTP(page, BYPASS_CODE)
-    // OTPInputForm is a single text input — requires explicit Verify click (no auto-submit)
-    await page.click('button:has-text("Verify")')
+    // OTPBoxes auto-submits on the 6th digit — no Verify click needed
 
     // Wait for RSVP to complete and confirmed state to appear
     await expect(page.getByText("You're going!")).toBeVisible({ timeout: 10000 })

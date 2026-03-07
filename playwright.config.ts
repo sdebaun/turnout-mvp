@@ -1,5 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// Mirror the flag that .env.local sets for the Next.js server so that
+// test.skip(!process.env.TEST_OTP_BYPASS) guards in spec files work correctly.
+// The server reads it from .env.local; the test process needs it explicitly.
+process.env.TEST_OTP_BYPASS = 'true'
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,

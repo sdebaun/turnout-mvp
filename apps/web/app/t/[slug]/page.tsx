@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { MapPin, Calendar, Eye, Users, Edit2 } from 'lucide-react'
+import { Eye, Users, Edit2 } from 'lucide-react'
+import { CalendarIcon, MapPinIcon } from '@/app/components/atoms/icons'
 import { getTurnoutBySlug, isGroupOrganizer } from '@/lib/groups'
 import { getUser } from '@/lib/auth/sessions'
 import { getDefaultOpportunity, getRsvpCount, getUserEngagement, formatRsvpCount } from '@/lib/engagements'
@@ -27,14 +28,14 @@ function TurnoutInfo({ title, relativeDate, locationLabel, directionsHref, descr
 
       {/* When */}
       <div className="flex items-center gap-2 text-charcoal">
-        <Calendar size={16} strokeWidth={1.75} className="text-sage flex-shrink-0" />
+        <CalendarIcon className="text-sage flex-shrink-0" />
         <span className="text-sm font-medium">{relativeDate}</span>
       </div>
 
       {/* Where */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2 text-charcoal">
-          <MapPin size={16} strokeWidth={1.75} className="text-sage flex-shrink-0" />
+          <MapPinIcon className="text-sage flex-shrink-0" />
           <span className="text-sm font-medium">{locationLabel}</span>
         </div>
         {directionsHref && (
@@ -131,8 +132,8 @@ export default async function TurnoutPage({ params }: TurnoutPageProps) {
   return (
     <PageLayout
       topNav={isOrganizer
-        ? <TopNav variant="authed" backLabel={turnout.group.name} backHref="/organize" displayName={user!.displayName ?? '??'} />
-        : <TopNav variant="public" user={user} />
+        ? <TopNav user={user} backLabel={turnout.group.name} backHref="/organize" />
+        : <TopNav user={user} />
       }
       bottomBar={isOrganizer ? (
         <>

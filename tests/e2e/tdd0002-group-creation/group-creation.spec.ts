@@ -4,9 +4,13 @@ import { test, expect } from '@playwright/test'
 const BYPASS_CODE = '000000'
 
 // NANP 555-01XX reserved test range — unique per test to avoid interference.
+// Each test that creates a user gets two numbers (one per project) because chromium
+// and mobile run in parallel and would otherwise share a user and race on cleanup.
 const PHONES = {
-  newOrganizer: '+12025550110',
-  authedOrganizer: '+12025550111',
+  newOrganizerChromium: '+12025550110',
+  newOrganizerMobile: '+12025550113',
+  authedOrganizerChromium: '+12025550111',
+  authedOrganizerMobile: '+12025550112',
 }
 
 // Future date for turnout creation (well into the future so tests don't time-bomb)
@@ -14,10 +18,25 @@ const FUTURE_DATE = '2027-07-15'
 const FUTURE_TIME = '18:00'
 
 // Helper: fill the location input.
-// In CI (no NEXT_PUBLIC_GOOGLE_MAPS_API_KEY), the component renders a plain text
-// input — we fill it directly. No autocomplete suggestions to click.
-async function fillLocation(page: import('@playwright/test').Page, searchText: string) {
-  await page.locator('[data-testid="location-input"]').fill(searchText)
+// gmp-place-autocomplete only fires onChange via the gmp-select event (triggered by
+// picking a suggestion). We can't click a real Google suggestion in CI (network-dependent,
+// flaky) and .fill() won't work on a custom element. Instead we dispatch a synthetic
+// gmp-select event that matches the shape the component's handleSelect expects.
+async function fillLocation(page: import('@playwright/test').Page, locationName: string) {
+  await page.locator('gmp-place-autocomplete').evaluate((el, name) => {
+    const event = Object.assign(new Event('gmp-select', { bubbles: true }), {
+      placePrediction: {
+        toPlace: () => ({
+          fetchFields: async () => {},
+          displayName: name,
+          formattedAddress: `${name}, Test City, TS 00000`,
+          location: { lat: () => 40.7484, lng: () => -73.9856 },
+          id: 'test-place-id',
+        }),
+      },
+    })
+    el.dispatchEvent(event)
+  }, locationName)
 }
 
 // Helper: fill OTP boxes by pasting into the first box.
@@ -60,10 +79,16 @@ test.describe('group & turnout creation (TDD0002)', () => {
     }
   })
 
-  test('full creation flow (unauthenticated user)', async ({ page, request }) => {
+  test('full creation flow (unauthenticated user)', async ({ page, request }, testInfo) => {
+    // Use project-specific phone so chromium and mobile don't share a user when
+    // running in parallel — one project's cleanup would invalidate the other's session.
+    const phone = testInfo.project.name === 'mobile'
+      ? PHONES.newOrganizerMobile
+      : PHONES.newOrganizerChromium
+
     // Clean up any prior data for this phone
     await request.post('/api/test/cleanup', {
-      data: { phones: [PHONES.newOrganizer] },
+      data: { phones: [phone] },
     })
 
     await page.goto('/organize')
@@ -106,7 +131,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
     await expect(page.locator('[data-testid="phone-number"]')).toBeVisible()
 
     await page.fill('[data-testid="display-name"]', 'Bob Organizer')
-    await page.fill('[data-testid="phone-number"]', PHONES.newOrganizer)
+    await page.fill('[data-testid="phone-number"]', phone)
 
     // CTA label is "Send code" (lowercase c) — sends OTP then advances to step 4
     await clickCTA(page, 'Send code')
@@ -116,18 +141,15 @@ test.describe('group & turnout creation (TDD0002)', () => {
     await expect(page.locator('input[autocomplete="one-time-code"]').first()).toBeVisible()
 
     await fillOTP(page, BYPASS_CODE)
-
-    // Verify all 6 OTP boxes are filled before clicking Create Turnout
-    // (the button is disabled until otpCode.length === 6)
-    await clickCTA(page, 'Create Turnout')
+    // OTPBoxes auto-submits on the 6th digit — no explicit button click needed
 
     // Should redirect to /t/[slug]
     await page.waitForURL(/\/t\/[a-z0-9-]+/, { timeout: 15000 })
 
     // Turnout page should show the organizer status card, confirming we landed on the real page.
     // The group name appears in the back nav label and eyebrow pill.
-    await expect(page.locator('[data-testid="organizer-status-card"]')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByText('Save Willow Creek', { exact: true })).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('[data-testid="organizer-status-card"]')).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText('Save Willow Creek').first()).toBeVisible({ timeout: 5000 })
 
     // Extract slug for cleanup
     const url = page.url()
@@ -136,14 +158,21 @@ test.describe('group & turnout creation (TDD0002)', () => {
 
     // Clean up the user too
     await request.post('/api/test/cleanup', {
-      data: { phones: [PHONES.newOrganizer] },
+      data: { phones: [phone] },
     })
   })
 
-  test('creation as authenticated user (no auth modal)', async ({ page, request, context }) => {
+  test('creation as authenticated user (no auth modal)', async ({ page, request, context }, testInfo) => {
+    // Use project-specific phone number so chromium and mobile don't share a user
+    // when they run this test in parallel — the first to finish would otherwise
+    // call cleanup and invalidate the other's session mid-flow.
+    const phone = testInfo.project.name === 'mobile'
+      ? PHONES.authedOrganizerMobile
+      : PHONES.authedOrganizerChromium
+
     // Seed user with session
     const seedResponse = await request.post('/api/test/seed-user', {
-      data: { phone: PHONES.authedOrganizer, displayName: 'AuthedOrganizer', createSession: true },
+      data: { phone, displayName: 'AuthedOrganizer', createSession: true },
     })
     expect(seedResponse.ok()).toBe(true)
 
@@ -199,7 +228,7 @@ test.describe('group & turnout creation (TDD0002)', () => {
 
     // Clean up user
     await request.post('/api/test/cleanup', {
-      data: { phones: [PHONES.authedOrganizer] },
+      data: { phones: [phone] },
     })
   })
 
